@@ -28,3 +28,19 @@
 ```STUDENT_GROUPS```, ```TEACHER_SUBJECTS```, ```SUBJECT_GROUPS```, ```TEACHER_TEST_GROUPS```
 
 ## Запуск
+
+client — фронтенд (React)
+server — бэкенд (Express)
+
+### 1. Установить зависимости
+
+Установить всё сразу ```pnpm run install:all```
+Или по отдельности:
++ ```pnpm run install:client```
++ ```pnpm run install:server```
+
+### 2. Запуск проекта
++ Запуск клиента и сервера: ```pnpm run dev```
++ Запуск только клиента: ```pnpm run client```
++ Запуск только сервера: ```pnpm run server```
+
