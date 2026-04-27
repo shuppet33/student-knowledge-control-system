@@ -34,7 +34,7 @@ server — бэкенд (Express)
 
 ### 1. Установить зависимости
 
-Установить всё сразу ```pnpm run install:all```
+Установить всё сразу ```pnpm run install:all```  
 Или по отдельности:
 + ```pnpm run install:client```
 + ```pnpm run install:server```
