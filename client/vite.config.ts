@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import {tanstackRouter} from '@tanstack/router-plugin/vite'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,4 +11,11 @@ export default defineConfig({
             autoCodeSplitting: true,
         }),
         react()],
+    resolve: {
+        alias: {
+            $app: path.resolve(__dirname, 'src/app'),
+            $pages: path.resolve(__dirname, 'src/pages'),
+            $routes: path.resolve(__dirname, 'src/routes'),
+        }
+    }
 })

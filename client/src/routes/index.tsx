@@ -1,13 +1,6 @@
-import {createFileRoute, Link} from '@tanstack/react-router'
+import {createFileRoute} from '@tanstack/react-router'
+import {MainPage} from "$pages/main/index.view.tsx";
 
 export const Route = createFileRoute('/')({
-    component: RouteComponent,
+    component: MainPage,
 })
-
-function RouteComponent() {
-    return (
-        <div>Hello "/"!
-            <Link to={'/profile'}>Profile</Link>{' '}
-        </div>
-    )
-}
