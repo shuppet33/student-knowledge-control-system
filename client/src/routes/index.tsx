@@ -1,5 +1,5 @@
 import {createFileRoute, redirect} from '@tanstack/react-router'
-import {MainPage} from "$pages/main/index.view.tsx";
+import {MainPage} from "$pages/main/main.view.tsx";
 import {isAuthResults} from "$entities/auth.ts";
 import {wrap} from "@reatom/core";
 
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/')({
 
         if (data) {
             throw redirect({
-                to: `/${data.role}` as 'admin' | 'student' | 'teacher'
+                to: `/${data.role}`
             })
         }
     },

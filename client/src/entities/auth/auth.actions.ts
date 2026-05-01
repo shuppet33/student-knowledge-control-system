@@ -23,6 +23,5 @@ export const loginAsync = action(async (email: string, password: string) => {
         role
     })
 
-    console.log('LOOOG 3')
     return await wrap(response.json())
 }, 'loginAsync').extend(withAsync())

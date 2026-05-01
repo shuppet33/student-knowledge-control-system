@@ -1,9 +1,15 @@
 import {createFileRoute} from '@tanstack/react-router'
+import {reatomComponent} from "@reatom/react";
 
-export const Route = createFileRoute('/_auth/admin/')({
-    component: RouteComponent,
+const AdminPage = reatomComponent(() => {
+    return (
+        <>
+            ffjjj
+        </>
+    )
 })
 
-function RouteComponent() {
-    return <div>Hello "/_auth/admin/"!</div>
-}
+export const Route = createFileRoute('/_auth/admin/')({
+    component: AdminPage,
+})
+

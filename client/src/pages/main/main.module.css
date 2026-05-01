@@ -15,6 +15,12 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+.signInWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .container {
     display: flex;
     align-items: center;
@@ -28,6 +34,7 @@
 
 .content {
     padding: 0 10px;
+    height: 100%;
 }
 
 .wrapper {

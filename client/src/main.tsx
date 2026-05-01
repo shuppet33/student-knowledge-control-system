@@ -2,6 +2,7 @@ import {createRoot} from 'react-dom/client'
 import {createRouter, RouterProvider} from '@tanstack/react-router'
 import {routeTree} from "./routeTree.gen.ts";
 import './shared/reset.css'
+import {App} from "./app.tsx";
 
 declare module '@tanstack/react-router' {
     interface Register {
@@ -20,7 +21,7 @@ const router = createRouter({
 const rootElement = document.getElementById('root')!
 
 createRoot(rootElement).render(
-    <>
+    <App>
         <RouterProvider router={router}/>
-    </>,
+    </App>,
 )

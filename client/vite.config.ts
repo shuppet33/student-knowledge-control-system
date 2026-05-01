@@ -18,6 +18,7 @@ export default defineConfig({
             $routes: path.resolve(__dirname, 'src/routes'),
             $entities: path.resolve(__dirname, 'src/entities'),
             $shared: path.resolve(__dirname, 'src/shared'),
+            $features: path.resolve(__dirname, 'src/features'),
         }
     }
 })

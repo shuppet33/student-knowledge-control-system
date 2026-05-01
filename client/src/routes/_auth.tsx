@@ -1,21 +1,28 @@
-import {createFileRoute, redirect} from '@tanstack/react-router'
+import {createFileRoute, Outlet, redirect} from '@tanstack/react-router'
 import {isAuthResults} from "$entities/auth.ts";
+import {wrap} from "@reatom/core";
+import {Layout} from "$features/layout/main-layout.tsx";
+import { Header } from '$features/layout/header';
+
+const AuthLayout = () => {
+    return (
+        <Layout>
+            <Header />
+            <Outlet/>
+        </Layout>
+    )
+}
+
 
 export const Route = createFileRoute('/_auth')({
-    component: RouteComponent,
+    component: AuthLayout,
     beforeLoad: async () => {
-        await isAuthResults()
+        await wrap(isAuthResults())
 
         const data = isAuthResults.data()
 
-        if (data) {
-            throw redirect({
-                to: `/${data.role}` as '/admin' | '/student' | '/teacher'
-            })
+        if (!data) {
+            throw redirect({ to: '/' })
         }
     }
 })
-
-function RouteComponent() {
-    return <div>Hello "/_auth"!</div>
-}
