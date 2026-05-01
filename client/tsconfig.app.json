@@ -10,7 +10,9 @@
     "paths": {
         "$app/*": ["src/app/*"],
         "$pages/*": ["src/pages/*"],
-        "$routes/*": ["src/routes/*"]
+        "$routes/*": ["src/routes/*"],
+        "$shared/*": ["src/shared/*"],
+        "$entities/*": ["src/entities/*"]
     },
 
 

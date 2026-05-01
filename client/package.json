@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@base-ui/react": "^1.4.1",
+    "@reatom/core": "^1000.15.2",
+    "@reatom/react": "^1000.2.2",
     "@tanstack/react-router": "1.168.25",
     "@tanstack/react-router-devtools": "1.166.13",
+    "antd": "^6.3.7",
+    "clsx": "^2.1.1",
     "react": "19.2.5",
     "react-dom": "19.2.5"
   },
