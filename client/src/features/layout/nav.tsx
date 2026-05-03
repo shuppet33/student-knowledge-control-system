@@ -1,5 +1,6 @@
 import {Button} from "antd";
-import {Link} from "@tanstack/react-router";
+import {Link} from "react-router";
+
 
 const navConfig = {
     admin: [

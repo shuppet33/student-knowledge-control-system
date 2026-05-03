@@ -1,11 +1,11 @@
-import { reatomComponent } from "@reatom/react"
-import {Switch} from "antd";
-import {themeAtom} from "$entities/theme.ts";
 import {MoonOutlined, SunOutlined} from "@ant-design/icons";
+import { reatomComponent } from "@reatom/npm-react";
 import {useEffect} from "react";
+import {themeAtom} from "../../entities/theme.ts";
+import {Switch} from "antd";
 
-export const ThemeSwitcher = reatomComponent(() => {
-    const theme = themeAtom()
+export const ThemeSwitcher = reatomComponent(({ctx}) => {
+    const theme =ctx.spy(themeAtom)
 
     useEffect(() => {
         localStorage.setItem('theme', theme)
@@ -15,7 +15,7 @@ export const ThemeSwitcher = reatomComponent(() => {
         <Switch
             checked={theme === 'dark'}
             onChange={(checked) =>
-                themeAtom.set(checked ? 'dark' : 'light')
+                themeAtom(ctx, checked ? 'dark' : 'light')
             }
             checkedChildren={<MoonOutlined />}
             unCheckedChildren={<SunOutlined />}

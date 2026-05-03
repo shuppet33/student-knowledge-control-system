@@ -1,46 +1,30 @@
-import {Layout} from "$features/layout/main-layout.tsx";
-import {Button, Form, Input, Modal, theme} from 'antd';
-import {authAtom} from "$entities/auth/auth.atom.ts";
-import {Link, useNavigate, useRouter} from "@tanstack/react-router";
-import {reatomComponent} from "@reatom/react";
-import {useEffect} from "react";
-import {loginAsync} from "$entities/auth/auth.actions.ts";
-import {modalAtom} from "$entities/modal.ts";
+import {reatomComponent} from "@reatom/npm-react";
+import {Button, Form, Input, Modal, theme as antdTheme} from "antd";
+import {authAtom, getTokenAuthAsync} from "../../entities/api.ts";
 import {Content, Header} from "antd/es/layout/layout";
+import {Link, useNavigate} from "react-router";
 
-import styles from './main.module.css'
-import {ThemeSwitcher} from "$features/shared/theme-switch";
+import styles from './style.module.css'
+import {atom} from "@reatom/framework";
+import {ThemeSwitcher} from "../../features/shared/theme-switch.tsx";
+import {Layout} from "../../features/layout/main-layout.tsx";
 
+const iaModalAuthAtom = atom(false)
 
-export const MainPage = reatomComponent(() => {
-    const router = useRouter()
-    const navigate = useNavigate()
+export const MainPage = reatomComponent(({ctx}) => {
+    const open = ctx.spy(iaModalAuthAtom)
+    const navigate = useNavigate();
     const {
         token: {colorBgContainer, colorText, colorLink},
-    } = theme.useToken();
-
-
-    const {token, role} = authAtom()
-    const open = modalAtom()
+    } = antdTheme.useToken();
 
     const [form] = Form.useForm();
 
     const onFinish = async (values: { email: string, password: string }) => {
-        form.resetFields();
-        modalAtom.set(false)
-        try {
-            await loginAsync(values.email, values.password)
-            router.invalidate()
-        } catch (e) {
-            console.error(e)
-        }
-    };
-
-    useEffect(() => {
-        if (token && role) {
-            navigate({to: `/${role}`})
-        }
-    }, [token, role])
+        await getTokenAuthAsync(ctx, values.email, values.password)
+        const {role} = ctx.get(authAtom);
+        navigate(`/${role}`);
+    }
 
     return (
         <Layout>
@@ -58,16 +42,14 @@ export const MainPage = reatomComponent(() => {
                     </Button>
                 </div>
                 <div className={styles.signInWrapper}>
-                    <Button onClick={() => modalAtom.set(true)}>
+                    <Button onClick={() => iaModalAuthAtom(ctx, true)}>
                         войти
                     </Button>
                     <ThemeSwitcher/>
                 </div>
             </Header>
 
-
             <Content className={styles.content}>
-
                 <div className={styles.wrapper}>
                     <div className={styles.title} style={{color: colorLink}}>
                         ИМСИТ
@@ -76,11 +58,9 @@ export const MainPage = reatomComponent(() => {
                         тесты
                     </div>
                 </div>
-
             </Content>
 
-
-            <Modal title='Вход' open={open} onCancel={() => modalAtom.set(false)} footer={null}>
+            <Modal title='Вход' open={open} onCancel={() => iaModalAuthAtom(ctx, false)} footer={null}>
                 <Form onFinish={onFinish} form={form} initialValues={{
                     email: '',
                     password: ''
@@ -92,11 +72,11 @@ export const MainPage = reatomComponent(() => {
                         <Input/>
                     </Form.Item>
                     <Form.Item name={null}>
-                        <Button block type={'primary'} htmlType="submit">Войти</Button>
+                        <Button loading={ctx.spy(getTokenAuthAsync.statusesAtom).isPending} block type={'primary'}
+                                htmlType="submit">Войти</Button>
                     </Form.Item>
                 </Form>
             </Modal>
-
         </Layout>
-    )
+    );
 })

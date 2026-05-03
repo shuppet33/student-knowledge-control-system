@@ -1,25 +1,23 @@
-import {reatomComponent} from "@reatom/react";
-import {authAtom} from "$entities/auth/auth.atom.ts";
-import {useNavigate, useRouter} from "@tanstack/react-router";
+import { reatomComponent } from "@reatom/npm-react";
 import {Button} from "antd";
+import {authAtom, logoutAsync} from "../../entities/api.ts";
+import {Navigate, useLocation} from "react-router";
 
-export const PersonalButton = reatomComponent(() => {
-    const { role } = authAtom()
-    const navigate = useNavigate()
-    const router = useRouter()
+export const PersonalButton = reatomComponent(({ctx}) => {
+    const { role } = ctx.spy(authAtom)
+    const location = useLocation();
 
     const logout = () => {
-        authAtom.set({ token: null, role: null })
+        logoutAsync(ctx)
 
-        navigate({ to: '/' })
-        router.invalidate()
+        return <Navigate to="/" state={{from: location}} replace/>;
     }
 
     return (
         <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
             <span>{role}</span>
 
-            <Button onClick={logout}>
+            <Button loading={ctx.spy(logoutAsync.statusesAtom).isPending} onClick={logout}>
                 выйти
             </Button>
         </div>
