@@ -52,6 +52,7 @@ export const teachersModel = {
 
         return rows[0]
     },
+
     async getTeacherSubjectTests({ teacher_id, subject_id }) {
         const query = `
         SELECT

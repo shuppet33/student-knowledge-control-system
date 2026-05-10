@@ -1,6 +1,7 @@
 import {
     reatomAsync,
     reatomResource,
+    withCache,
     withDataAtom,
     withStatusesAtom,
 } from '@reatom/framework'
@@ -13,11 +14,13 @@ import {
     createSubject,
     getSubjects,
 } from '$shared/api/admin/subjects/subjects.api.ts'
+import { getTeacherTests } from '$shared/api/admin/teacher-tests/teacher-tests.api.ts'
 import { getTeachers } from '$shared/api/admin/teachers/teachers.api.ts'
 
 import {
     newSubjectNameAtom,
     selectedNewSubjectIdAtom,
+    selectedSubjectIdAtom,
     selectedTeacherAtom,
 } from './teachers.atoms.ts'
 
@@ -70,3 +73,19 @@ export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
 
     await subjectsResource(ctx)
 }, 'createSubjectAndAssignAsync')
+
+export const teacherTestsResource = reatomResource(async (ctx) => {
+    const teacher = ctx.get(selectedTeacherAtom)
+
+    const subjectId = ctx.get(selectedSubjectIdAtom)
+
+    if (!teacher || !subjectId) {
+        return []
+    }
+
+    return await getTeacherTests(teacher.id, subjectId)
+}, 'teacherTestsResource').pipe(
+    withCache(),
+    withDataAtom([]),
+    withStatusesAtom(),
+)

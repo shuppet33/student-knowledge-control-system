@@ -55,7 +55,7 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                 <Button
                     icon={<PlusOutlined />}
                     size="large"
-                    type={isOpen ? 'primary' : 'default'}
+                    type="primary"
                     className={isOpen ? styles.activeButton : undefined}
                     onClick={
                         isOpen ? undefined : () => openAddSubjectAction(ctx)

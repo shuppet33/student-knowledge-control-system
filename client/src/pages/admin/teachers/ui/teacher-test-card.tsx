@@ -5,6 +5,8 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
+import type { TeacherTest } from '$shared/api/admin/teacher-tests/teacher-tests.types.ts'
+
 import { toggleTestAction } from '../model/teachers.actions.ts'
 import { expandedTestIdAtom } from '../model/teachers.atoms.ts'
 
@@ -12,15 +14,8 @@ import { TeacherQuestionList } from './teacher-question-list'
 
 const { Title } = Typography
 
-type Test = {
-    id: string
-    subjectId: string
-    title: string
-    questions: number[]
-}
-
 export const TeacherTestCard: FC<{
-    test: Test
+    test: TeacherTest
 }> = reatomComponent(({ ctx, test }) => {
     const expandedTestId = ctx.spy(expandedTestIdAtom)
 
@@ -61,7 +56,7 @@ export const TeacherTestCard: FC<{
                 />
             </Flex>
 
-            {isExpanded && <TeacherQuestionList questions={test.questions} />}
+            {isExpanded && <TeacherQuestionList questions={[1, 2, 3, 4]} />}
         </Card>
     )
 })
