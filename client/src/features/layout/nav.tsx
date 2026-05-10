@@ -2,7 +2,11 @@ import {Button} from "antd";
 import {Link} from "react-router";
 
 
-const navConfig = {
+const navConfig: {
+    admin: {label: string, to: string}[],
+    teacher: {label: string, to: string}[],
+    student: {label: string, to: string}[],
+} = {
     admin: [
         { label: 'главная', to: '/admin' },
         { label: 'студенты', to: '/admin/students' },
@@ -19,7 +23,7 @@ const navConfig = {
     ],
 }
 
-export const Nav = ({role}) => {
+export const Nav = ({role}: {role: 'student' | 'teacher' | 'admin'}) => {
     const items = navConfig[role] ?? []
 
     return (

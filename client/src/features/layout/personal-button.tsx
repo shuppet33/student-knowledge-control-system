@@ -1,6 +1,6 @@
 import { reatomComponent } from "@reatom/npm-react";
 import {Button} from "antd";
-import {authAtom, logoutAsync} from "../../entities/api.ts";
+import {authAtom, logoutAsync} from "$entities/api.ts";
 import {Navigate, useLocation} from "react-router";
 
 export const PersonalButton = reatomComponent(({ctx}) => {

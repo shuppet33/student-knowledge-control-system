@@ -1,7 +1,7 @@
 import {MoonOutlined, SunOutlined} from "@ant-design/icons";
 import { reatomComponent } from "@reatom/npm-react";
 import {useEffect} from "react";
-import {themeAtom} from "../../entities/theme.ts";
+import {themeAtom} from "$entities/theme.ts";
 import {Switch} from "antd";
 
 export const ThemeSwitcher = reatomComponent(({ctx}) => {

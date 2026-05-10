@@ -1,11 +1,11 @@
 import {reatomComponent} from "@reatom/npm-react";
 import {BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation} from "react-router";
 import {ConfigProvider, theme as antdTheme} from "antd";
-import {authAtom, isAuthAtom, refreshAsync} from './entities/api';
+import {authAtom, isAuthAtom, refreshAsync} from '$entities/api';
 import {type FC, type ReactNode, useEffect} from "react";
-import {AdminMainPage} from "./pages/admin";
-import {themeAtom} from "./entities/theme.ts";
-import {MainPage} from "./pages/main";
+import {AdminMainPage} from "$pages/admin";
+import {themeAtom} from "$entities/theme.ts";
+import {MainPage} from "$pages/main";
 
 // admin@test.com
 

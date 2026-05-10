@@ -7,6 +7,14 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    "baseUrl": ".",
+    "paths": {
+      "$features/*": ["src/features/*"],
+      "$pages/*": ["src/pages/*"],
+      "$entities/*": ["src/entities/*"],
+      "$shared/*": ["src/shared/*"]
+    },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,

@@ -2,8 +2,8 @@ import styles from './style.module.css'
 import {reatomComponent} from "@reatom/npm-react";
 import {Breadcrumb} from "antd";
 import {Content} from "antd/es/layout/layout";
-import { Header } from '../../features/layout/header';
-import {Layout} from "../../features/layout/main-layout.tsx";
+import { Header } from '$features/layout/header.tsx';
+import {Layout} from "$features/layout/main-layout.tsx";
 
 
 export const AdminMainPage = reatomComponent(() => {

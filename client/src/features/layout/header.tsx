@@ -1,6 +1,6 @@
 import { reatomComponent } from "@reatom/npm-react";
 import {Header as HeaderAntd} from "antd/es/layout/layout"
-import {authAtom} from "../../entities/api.ts";
+import {authAtom} from "$entities/api.ts";
 import {theme} from "antd";
 import {Nav} from "./nav.tsx";
 import {PersonalButton} from "./personal-button.tsx";
