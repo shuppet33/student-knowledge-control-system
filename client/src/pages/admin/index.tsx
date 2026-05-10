@@ -7,6 +7,9 @@ import { Header } from '$features/layout/header.tsx'
 import { Layout } from '$features/layout/main-layout.tsx'
 
 import styles from './style.module.css'
+import { Route, Routes } from 'react-router'
+import { TeachersPage } from '$pages/admin/teachers.view.tsx'
+
 
 export const AdminMainPage = reatomComponent(() => {
     return (
@@ -29,30 +32,17 @@ export const AdminMainPage = reatomComponent(() => {
                             ]}
                         />
 
-                        <div className={styles.wrapperCard}>
-                            <div className={styles.card}>
-                                <h3 className={styles.title}>
-                                    Аналитическая геометрия
-                                </h3>
+                        <Routes>
+                            <Route
+                                index
+                                element={<div>Главная админки</div>}
+                            />
 
-                                <div className={styles.bottom}>
-                                    <div className={styles.badge}>4.78</div>
-
-                                    <div className={styles.badge}>8 / 18</div>
-                                </div>
-                            </div>
-                            <div className={styles.card}>
-                                <h3 className={styles.title}>
-                                    Аналитическая геометрия
-                                </h3>
-
-                                <div className={styles.bottom}>
-                                    <div className={styles.badge}>4.78</div>
-
-                                    <div className={styles.badge}>8 / 18</div>
-                                </div>
-                            </div>
-                        </div>
+                            <Route
+                                path="teachers"
+                                element={<TeachersPage />}
+                            />
+                        </Routes>
                     </div>
                 </Content>
             </div>

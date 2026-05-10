@@ -1,18 +1,17 @@
-import {Button} from "antd";
+import { Button } from 'antd'
 
-import {Link} from "react-router";
-
+import { NavLink } from 'react-router'
 
 const navConfig: {
-    admin: {label: string, to: string}[],
-    teacher: {label: string, to: string}[],
-    student: {label: string, to: string}[],
+    admin: { label: string; to: string }[]
+    teacher: { label: string; to: string }[]
+    student: { label: string; to: string }[]
 } = {
     admin: [
         { label: 'главная', to: '/admin' },
+        { label: 'преподаватели', to: '/admin/teachers' },
         { label: 'студенты', to: '/admin/students' },
         { label: 'тесты', to: '/admin/tests' },
-        { label: 'преподаватели', to: '/admin/teachers' },
     ],
     teacher: [
         { label: 'главная', to: '/teacher' },
@@ -24,17 +23,19 @@ const navConfig: {
     ],
 }
 
-export const Nav = ({role}: {role: 'student' | 'teacher' | 'admin'}) => {
+export const Nav = ({ role }: { role: 'student' | 'teacher' | 'admin' }) => {
     const items = navConfig[role] ?? []
 
     return (
-        <nav style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
-            {items.map(item => (
-                <Button>
-                    <Link key={item.to} to={item.to}>
-                        {item.label}
-                    </Link>
-                </Button>
+        <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {items.map((item) => (
+                <NavLink key={item.to} to={item.to} end={item.to === '/admin'}>
+                    {({ isActive }) => (
+                        <Button type={isActive ? 'primary' : 'default'}>
+                            {item.label}
+                        </Button>
+                    )}
+                </NavLink>
             ))}
         </nav>
     )

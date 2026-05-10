@@ -64,7 +64,7 @@ export const App = reatomComponent(({ctx}) => {
                             <MainPage/>
                         </RequireGuest>
                     }/>
-                    <Route path="/admin" element={
+                    <Route path="/admin/*" element={
                         <RequireAuth>
                             <AdminMainPage/>
                         </RequireAuth>
