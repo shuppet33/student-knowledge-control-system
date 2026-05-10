@@ -1,0 +1,6 @@
+.activeButton,
+.activeButton:hover,
+.activeButton:active,
+.activeButton:focus {
+    pointer-events: none;
+}

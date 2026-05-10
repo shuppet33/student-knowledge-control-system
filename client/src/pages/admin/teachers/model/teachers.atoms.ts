@@ -16,3 +16,21 @@ export const expandedTestIdAtom = atom<string | null>(
     null,
     'expandedTestIdAtom',
 )
+
+
+export const isAddSubjectOpenAtom = atom(
+    false,
+    'isAddSubjectOpenAtom',
+)
+
+export const selectedNewSubjectIdAtom = atom<
+    string | undefined
+>(
+    undefined,
+    'selectedNewSubjectIdAtom',
+)
+
+export const newSubjectNameAtom = atom(
+    '',
+    'newSubjectNameAtom',
+)

@@ -11,7 +11,6 @@ import {
 } from 'antd'
 import {
     CloseOutlined,
-    PlusOutlined,
     SearchOutlined,
     SettingOutlined,
 } from '@ant-design/icons'
@@ -26,6 +25,7 @@ import {
     selectedTeacherAtom,
 } from '../model/teachers.atoms.ts'
 
+import { AddSubjectPopover } from './add-subject-popover.tsx'
 import { TeacherSubjectList } from './teacher-subject-list'
 import { TeacherTests } from './teacher-tests'
 
@@ -70,12 +70,7 @@ export const TeacherModal = reatomComponent(
                                 {teacher?.fullName}
                             </Title>
 
-                            <Button
-                                icon={<PlusOutlined />}
-                                size="large"
-                            >
-                                Предмет
-                            </Button>
+                            <AddSubjectPopover />
 
                             <Input
                                 placeholder="Поиск"
