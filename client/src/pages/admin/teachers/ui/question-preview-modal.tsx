@@ -1,18 +1,16 @@
-import { Button, Card, Flex, Typography } from 'antd'
-import { InfoCircleOutlined } from '@ant-design/icons'
+import { Button, Flex, Modal } from 'antd'
+import { CloseOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import type { FC } from 'react'
+import { closeQuestionPreviewAction } from '../model/question-preview.actions.ts'
+import {
+    isQuestionPreviewOpenAtom,
+    selectedQuestionIdAtom,
+} from '../model/question-preview.atoms.ts'
 
-import type { TeacherTest } from '$shared/api/admin/teacher-tests/teacher-tests.types.ts'
-
-import { toggleTestAction } from '../model/teachers.actions.ts'
-import { expandedTestIdAtom } from '../model/teachers.atoms.ts'
-
-import { TeacherQuestionList } from './teacher-question-list'
-
-const { Title } = Typography
+import { QuestionContent } from './question-content'
+import { QuestionNavigation } from './question-navigation'
 
 const questions = [
     {
@@ -121,49 +119,62 @@ const questions = [
     },
 ]
 
-export const TeacherTestCard: FC<{
-    test: TeacherTest
-}> = reatomComponent(({ ctx, test }) => {
-    const expandedTestId = ctx.spy(expandedTestIdAtom)
+export const QuestionPreviewModal = reatomComponent(({ ctx }) => {
+    const isOpen = ctx.spy(isQuestionPreviewOpenAtom)
 
-    const isExpanded = expandedTestId === test.id
+    const selectedQuestionId = ctx.spy(selectedQuestionIdAtom)
+
+    const selectedQuestion =
+        questions.find((question) => question.id === selectedQuestionId) ??
+        questions[0]
 
     return (
-        <Card
-            hoverable
-            styles={{
-                body: {
-                    padding: 0,
-                },
-            }}
-            onClick={() => toggleTestAction(ctx, test.id)}
+        <Modal
+            open={isOpen}
+            footer={null}
+            width={820}
+            centered
+            closeIcon={false}
         >
             <Flex
                 justify="space-between"
                 align="center"
                 style={{
-                    padding: '16px 20px',
-                    borderBottom: isExpanded ? '1px solid #f0f0f0' : 'none',
+                    marginBottom: 20,
                 }}
             >
-                <Title
-                    level={4}
+                <Button
+                    type="primary"
                     style={{
-                        margin: 0,
+                        width: 40,
                     }}
                 >
-                    {test.title}
-                </Title>
+                    {selectedQuestion.id}
+                </Button>
 
                 <Button
-                    icon={<InfoCircleOutlined />}
-                    onClick={(event) => {
-                        event.stopPropagation()
-                    }}
+                    icon={<CloseOutlined />}
+                    onClick={() => closeQuestionPreviewAction(ctx)}
                 />
             </Flex>
+            <Flex
+                vertical
+                justify="space-between"
+                style={{
+                    minHeight: 680,
+                }}
+            >
+                <QuestionContent
+                    questionNumber={selectedQuestion.id}
+                    questionText={selectedQuestion.text}
+                    answers={selectedQuestion.answers}
+                />
 
-            {isExpanded && <TeacherQuestionList questions={questions} />}
-        </Card>
+                <QuestionNavigation
+                    currentQuestion={selectedQuestion.id}
+                    questions={questions}
+                />
+            </Flex>
+        </Modal>
     )
 })

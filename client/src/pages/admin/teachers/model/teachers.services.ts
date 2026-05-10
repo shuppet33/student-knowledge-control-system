@@ -77,7 +77,7 @@ export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
 export const teacherTestsResource = reatomResource(async (ctx) => {
     const teacher = ctx.get(selectedTeacherAtom)
 
-    const subjectId = ctx.get(selectedSubjectIdAtom)
+    const subjectId = ctx.spy(selectedSubjectIdAtom)
 
     if (!teacher || !subjectId) {
         return []

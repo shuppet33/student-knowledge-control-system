@@ -11,15 +11,13 @@ import {
 } from 'antd'
 import {
     CloseOutlined,
+    InfoCircleOutlined,
     SearchOutlined,
-    SettingOutlined,
 } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import {
-    closeTeacherModalAction,
-} from '../model/teachers.actions.ts'
+import { closeTeacherModalAction } from '../model/teachers.actions.ts'
 import {
     selectedSubjectIdAtom,
     selectedTeacherAtom,
@@ -32,130 +30,113 @@ import { TeacherTests } from './teacher-tests'
 const { Sider, Content } = Layout
 const { Title } = Typography
 
-export const TeacherModal = reatomComponent(
-    ({ ctx }) => {
-        const teacher = ctx.spy(selectedTeacherAtom)
-        const selectedSubjectId = ctx.spy(
-            selectedSubjectIdAtom,
-        )
+export const TeacherModal = reatomComponent(({ ctx }) => {
+    const teacher = ctx.spy(selectedTeacherAtom)
+    const selectedSubjectId = ctx.spy(selectedSubjectIdAtom)
 
-        return (
-            <Modal
-                open={!!teacher}
-                footer={null}
-                width={1200}
-                centered
-                closeIcon={false}
+    return (
+        <Modal
+            open={!!teacher}
+            footer={null}
+            width={1200}
+            centered
+            closeIcon={false}
+        >
+            <Layout
+                style={{
+                    background: 'transparent',
+                    minHeight: 700,
+                }}
             >
-                <Layout
+                <Sider
+                    width={260}
                     style={{
                         background: 'transparent',
-                        minHeight: 700,
+                        paddingRight: 16,
                     }}
                 >
-                    <Sider
-                        width={260}
-                        style={{
-                            background: 'transparent',
-                            paddingRight: 16,
-                        }}
-                    >
-                        <Flex vertical gap={16}>
+                    <Flex vertical gap={16}>
+                        <Title
+                            level={4}
+                            style={{
+                                margin: 0,
+                            }}
+                        >
+                            {teacher?.fullName}
+                        </Title>
+
+                        <AddSubjectPopover />
+
+                        <Input
+                            placeholder="Поиск"
+                            prefix={<SearchOutlined />}
+                            size="large"
+                        />
+
+                        <TeacherSubjectList />
+                    </Flex>
+                </Sider>
+
+                <Content>
+                    <Flex vertical gap={12}>
+                        <Flex justify="space-between" align="center">
                             <Title
-                                level={4}
+                                level={5}
                                 style={{
                                     margin: 0,
                                 }}
                             >
-                                {teacher?.fullName}
+                                Фильтры
                             </Title>
 
-                            <AddSubjectPopover />
+                            <Space>
+                                <Button icon={<InfoCircleOutlined />} />
 
-                            <Input
-                                placeholder="Поиск"
-                                prefix={<SearchOutlined />}
-                                size="large"
-                            />
-
-                            <TeacherSubjectList />
+                                <Button
+                                    icon={<CloseOutlined />}
+                                    onClick={() => closeTeacherModalAction(ctx)}
+                                />
+                            </Space>
                         </Flex>
-                    </Sider>
 
-                    <Content>
-                        <Flex vertical gap={12}>
+                        {!selectedSubjectId ? (
                             <Flex
-                                justify="space-between"
+                                justify="center"
                                 align="center"
+                                style={{
+                                    height: 500,
+                                }}
                             >
-                                <Title
-                                    level={4}
-                                    style={{
-                                        margin: 0,
-                                    }}
-                                >
-                                    Тесты
-                                </Title>
-
-                                <Space>
-                                    <Button
-                                        icon={
-                                            <SettingOutlined />
-                                        }
+                                <Empty description="Выберите предмет" />
+                            </Flex>
+                        ) : (
+                            <>
+                                <Space size={16}>
+                                    <Input
+                                        placeholder="Поиск"
+                                        prefix={<SearchOutlined />}
+                                        size="large"
+                                        style={{
+                                            width: 220,
+                                        }}
                                     />
 
-                                    <Button
-                                        icon={<CloseOutlined />}
-                                        onClick={() =>
-                                            closeTeacherModalAction(
-                                                ctx,
-                                            )
-                                        }
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Группы"
+                                        size="large"
+                                        style={{
+                                            width: 220,
+                                        }}
                                     />
                                 </Space>
-                            </Flex>
 
-                            {!selectedSubjectId ? (
-                                <Flex
-                                    justify="center"
-                                    align="center"
-                                    style={{
-                                        height: 500,
-                                    }}
-                                >
-                                    <Empty description="Выберите предмет" />
-                                </Flex>
-                            ) : (
-                                <>
-                                    <Space size={16}>
-                                        <Input
-                                            placeholder="Поиск"
-                                            prefix={
-                                                <SearchOutlined />
-                                            }
-                                            size="large"
-                                            style={{
-                                                width: 220,
-                                            }}
-                                        />
-
-                                        <Select
-                                            mode="multiple"
-                                            placeholder="Группы"
-                                            size="large"
-                                            style={{
-                                                width: 220,
-                                            }}
-                                        />
-                                    </Space>
-
-                                    <TeacherTests />
-                                </>
-                            )}
-                        </Flex>
-                    </Content>
-                </Layout>
-            </Modal>
-        )
-    },
-)
+                                <TeacherTests />
+                            </>
+                        )}
+                    </Flex>
+                </Content>
+            </Layout>
+        </Modal>
+    )
+})

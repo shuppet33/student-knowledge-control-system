@@ -3,6 +3,8 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
+import { QuestionPreviewModal } from '$pages/admin/teachers/ui/question-preview-modal.tsx'
+
 import {
     changeNewSubjectNameAction,
     changeSelectedSubjectAction,
@@ -129,6 +131,8 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                     </Card>
                 )}
             </div>
+
+            <QuestionPreviewModal />
         </>
     )
 })
