@@ -1,0 +1,8 @@
+.questions {
+    flex: 1;
+    overflow: hidden;
+}
+
+.button {
+    min-width: 40px;
+}

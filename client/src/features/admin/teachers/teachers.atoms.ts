@@ -17,20 +17,23 @@ export const expandedTestIdAtom = atom<string | null>(
     'expandedTestIdAtom',
 )
 
+export const isAddSubjectOpenAtom = atom(false, 'isAddSubjectOpenAtom')
 
-export const isAddSubjectOpenAtom = atom(
-    false,
-    'isAddSubjectOpenAtom',
-)
-
-export const selectedNewSubjectIdAtom = atom<
-    string | undefined
->(
+export const selectedNewSubjectIdAtom = atom<string | undefined>(
     undefined,
     'selectedNewSubjectIdAtom',
 )
 
-export const newSubjectNameAtom = atom(
-    '',
-    'newSubjectNameAtom',
+export const newSubjectNameAtom = atom('', 'newSubjectNameAtom')
+
+export const isCreateTeacherOpenAtom = atom(false, 'isCreateTeacherOpenAtom')
+
+export const createTeacherFormAtom = atom(
+    {
+        fullName: '',
+        email: '',
+        password: '',
+        repeatPassword: '',
+    },
+    'createTeacherFormAtom',
 )

@@ -17,15 +17,18 @@ import {
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { closeTeacherModalAction } from '../model/teachers.actions.ts'
+import { AddSubjectPopover } from '$features/admin/teachers/add-subject-popover/add-subject-popover.tsx'
+
+import { closeTeacherModalAction } from '../teachers.actions.ts'
 import {
     selectedSubjectIdAtom,
     selectedTeacherAtom,
-} from '../model/teachers.atoms.ts'
+} from '../teachers.atoms.ts'
 
-import { AddSubjectPopover } from './add-subject-popover.tsx'
-import { TeacherSubjectList } from './teacher-subject-list'
-import { TeacherTests } from './teacher-tests'
+import { TeacherTests } from './ teacher-tests'
+import { TeacherSubjectList } from './teacher-subject-list.view.tsx'
+
+import styles from './teacher-modal.module.css'
 
 const { Sider, Content } = Layout
 const { Title } = Typography
@@ -41,27 +44,12 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
             width={1200}
             centered
             closeIcon={false}
+            onCancel={() => closeTeacherModalAction(ctx)}
         >
-            <Layout
-                style={{
-                    background: 'transparent',
-                    minHeight: 700,
-                }}
-            >
-                <Sider
-                    width={260}
-                    style={{
-                        background: 'transparent',
-                        paddingRight: 16,
-                    }}
-                >
+            <Layout className={styles.layout}>
+                <Sider width={260} className={styles.sider}>
                     <Flex vertical gap={16}>
-                        <Title
-                            level={4}
-                            style={{
-                                margin: 0,
-                            }}
-                        >
+                        <Title level={4} className={styles.teacherTitle}>
                             {teacher?.fullName}
                         </Title>
 
@@ -79,55 +67,49 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
 
                 <Content>
                     <Flex vertical gap={12}>
-                        <Flex justify="space-between" align="center">
-                            <Title
-                                level={5}
-                                style={{
-                                    margin: 0,
-                                }}
-                            >
-                                Фильтры
-                            </Title>
-
-                            <Space>
-                                <Button icon={<InfoCircleOutlined />} />
-
-                                <Button
-                                    icon={<CloseOutlined />}
-                                    onClick={() => closeTeacherModalAction(ctx)}
-                                />
-                            </Space>
-                        </Flex>
-
                         {!selectedSubjectId ? (
                             <Flex
                                 justify="center"
                                 align="center"
-                                style={{
-                                    height: 500,
-                                }}
+                                className={styles.empty}
                             >
                                 <Empty description="Выберите предмет" />
                             </Flex>
                         ) : (
                             <>
+                                <Flex justify="space-between" align="center">
+                                    <Title
+                                        level={5}
+                                        className={styles.filtersTitle}
+                                    >
+                                        Фильтры
+                                    </Title>
+
+                                    <Space>
+                                        <Button icon={<InfoCircleOutlined />} />
+
+                                        <Button
+                                            icon={<CloseOutlined />}
+                                            onClick={() =>
+                                                closeTeacherModalAction(ctx)
+                                            }
+                                        />
+                                    </Space>
+                                </Flex>
+
                                 <Space size={16}>
                                     <Input
                                         placeholder="Поиск"
                                         prefix={<SearchOutlined />}
                                         size="large"
-                                        style={{
-                                            width: 220,
-                                        }}
+                                        className={styles.searchInput}
                                     />
 
                                     <Select
                                         mode="multiple"
                                         placeholder="Группы"
                                         size="large"
-                                        style={{
-                                            width: 220,
-                                        }}
+                                        className={styles.groupsSelect}
                                     />
                                 </Space>
 

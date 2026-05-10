@@ -1,10 +1,15 @@
 import { Card, Flex, Input } from 'antd'
 
-import { QuestionAnswerCard } from './question-answer-card'
+import type { FC } from 'react'
+
+import { QuestionAnswerCard } from './question-answer-card.view.tsx'
+import type { QuestionContentProps } from './question-content.types.ts'
+
+import styles from './question-content.module.css'
 
 const { TextArea } = Input
 
-export const QuestionContent = ({ questionText, answers }) => {
+export const QuestionContent: FC<QuestionContentProps> = ({ questionText, answers }) => {
     return (
         <Flex vertical gap={24}>
             <Card
@@ -18,10 +23,7 @@ export const QuestionContent = ({ questionText, answers }) => {
                     value={questionText}
                     readOnly
                     autoSize={false}
-                    style={{
-                        height: 180,
-                        resize: 'none',
-                    }}
+                    className={styles.textarea}
                 />
             </Card>
 

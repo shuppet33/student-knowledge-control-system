@@ -3,7 +3,7 @@ import { action } from '@reatom/core'
 import {
     isQuestionPreviewOpenAtom,
     selectedQuestionIdAtom,
-} from './question-preview.atoms'
+} from './question-preview.atoms.ts'
 
 export const openQuestionPreviewAction = action((ctx, questionId: number) => {
     selectedQuestionIdAtom(ctx, questionId)
@@ -16,10 +16,6 @@ export const closeQuestionPreviewAction = action((ctx) => {
 
     selectedQuestionIdAtom(ctx, null)
 }, 'closeQuestionPreviewAction')
-
-export const selectQuestionAction = action((ctx, questionId: number) => {
-    selectedQuestionIdAtom(ctx, questionId)
-}, 'selectQuestionAction')
 
 export const nextQuestionAction = action(
     (

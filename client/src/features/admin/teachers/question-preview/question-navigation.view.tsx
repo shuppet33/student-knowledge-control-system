@@ -5,15 +5,17 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
-import { selectedQuestionIdAtom } from '$pages/admin/teachers/model/question-preview.atoms.ts'
-
 import {
     nextQuestionAction,
     prevQuestionAction,
-} from '../model/question-preview.actions.ts'
+} from './model/question-preview.actions.ts'
+import { selectedQuestionIdAtom } from './model/question-preview.atoms.ts'
+import type { QuestionNavigationProps } from './question-navigation.types'
 
-export const QuestionNavigation: FC<{ currentQuestion: any; questions: any }> =
-    reatomComponent(({ ctx, currentQuestion, questions }) => {
+import styles from './question-navigation.module.css'
+
+export const QuestionNavigation: FC<QuestionNavigationProps> = reatomComponent(
+    ({ ctx, currentQuestion, questions }) => {
         return (
             <Card
                 styles={{
@@ -28,13 +30,7 @@ export const QuestionNavigation: FC<{ currentQuestion: any; questions: any }> =
                         onClick={() => prevQuestionAction(ctx, questions)}
                     />
 
-                    <Flex
-                        gap={8}
-                        style={{
-                            flex: 1,
-                            overflow: 'hidden',
-                        }}
-                    >
+                    <Flex gap={8} className={styles.questions}>
                         {questions.map((question) => (
                             <Button
                                 key={question.id}
@@ -43,9 +39,7 @@ export const QuestionNavigation: FC<{ currentQuestion: any; questions: any }> =
                                         ? 'primary'
                                         : 'default'
                                 }
-                                style={{
-                                    minWidth: 40,
-                                }}
+                                className={styles.button}
                                 onClick={() =>
                                     selectedQuestionIdAtom(ctx, question.id)
                                 }
@@ -62,4 +56,5 @@ export const QuestionNavigation: FC<{ currentQuestion: any; questions: any }> =
                 </Flex>
             </Card>
         )
-    })
+    },
+)

@@ -2,9 +2,9 @@ import { Flex } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { teacherTestsResource } from '../model/teachers.services'
+import { teacherTestsResource } from '../../teachers.services'
 
-import { TeacherTestCard } from './teacher-test-card'
+import { TeacherTestCard } from './teacher-test-card/teacher-test-card.view.tsx'
 
 export const TeacherTests = reatomComponent(({ ctx }) => {
     const tests = ctx.spy(teacherTestsResource.dataAtom)

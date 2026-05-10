@@ -2,9 +2,9 @@ import { Button, Flex } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { selectSubjectAction } from '../model/teachers.actions.ts'
-import { selectedSubjectIdAtom } from '../model/teachers.atoms.ts'
-import { teacherSubjectsResource } from '../model/teachers.services.ts'
+import { selectSubjectAction } from '../teachers.actions.ts'
+import { selectedSubjectIdAtom } from '../teachers.atoms.ts'
+import { teacherSubjectsResource } from '../teachers.services.ts'
 
 export const TeacherSubjectList = reatomComponent(({ ctx }) => {
     const subjects = ctx.spy(teacherSubjectsResource.dataAtom)

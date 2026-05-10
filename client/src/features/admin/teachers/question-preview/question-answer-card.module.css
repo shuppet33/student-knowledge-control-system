@@ -1,0 +1,10 @@
+.card {
+    width: calc(50% - 10px);
+}
+
+.text {
+    font-size: 18px;
+    font-weight: 600;
+    max-height: 120px;
+    overflow-y: auto;
+}

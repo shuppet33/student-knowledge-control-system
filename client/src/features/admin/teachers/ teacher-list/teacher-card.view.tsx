@@ -4,29 +4,26 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
-import type { Teacher } from '$shared/api/admin/teachers/teachers.types.ts'
+import { openTeacherModalAction } from '../teachers.actions.ts'
 
-import { openTeacherModalAction } from '../model/teachers.actions.ts'
+import type { TeacherCardProps } from './teacher-list.types.ts'
+
+import styles from './teacher-list.module.css'
 
 const { Title } = Typography
 
-export const TeacherCard: FC<{ teacher: Teacher }> = reatomComponent(
+export const TeacherCard: FC<TeacherCardProps> = reatomComponent(
     ({ ctx, teacher }) => {
         return (
             <Card
                 hoverable
                 size="small"
-                style={{
-                    width: 180,
-                    cursor: 'pointer',
-                }}
+                className={styles.card}
                 onClick={() => openTeacherModalAction(ctx, teacher)}
             >
                 <Title
                     level={5}
-                    style={{
-                        margin: 0,
-                    }}
+                    className={styles.title}
                 >
                     {teacher.fullName}
                 </Title>

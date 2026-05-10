@@ -1,0 +1,29 @@
+.layout {
+    background: transparent;
+    min-height: 700px;
+}
+
+.sider {
+    background: transparent !important;
+    padding-right: 16px;
+}
+
+.teacherTitle {
+    margin: 0 !important;
+}
+
+.filtersTitle {
+    margin: 0 !important;
+}
+
+.empty {
+    height: 500px;
+}
+
+.searchInput {
+    width: 220px;
+}
+
+.groupsSelect {
+    width: 220px;
+}

@@ -4,17 +4,21 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
-import { openQuestionPreviewAction } from '../model/question-preview.actions.ts'
+import { openQuestionPreviewAction } from '$features/admin/teachers/question-preview/model/question-preview.actions.ts'
 
-export const TeacherQuestionList: FC<{ questions: any }> = reatomComponent(
+import type {
+    TeacherQuestionListProps
+} from './teacher-question-list.types.ts'
+
+import styles from './teacher-question-list.module.css'
+
+export const TeacherQuestionList: FC<TeacherQuestionListProps> = reatomComponent(
     ({ ctx, questions }) => {
         return (
             <Flex
                 wrap
                 gap={12}
-                style={{
-                    padding: '20px',
-                }}
+                className={styles.questions}
                 onClick={(event) => {
                     event.stopPropagation()
                 }}
@@ -26,10 +30,7 @@ export const TeacherQuestionList: FC<{ questions: any }> = reatomComponent(
                         }
                         key={question.id}
                         size="small"
-                        style={{
-                            width: 28,
-                            height: 28,
-                        }}
+                        className={styles.button}
                     >
                         {question.id}
                     </Button>

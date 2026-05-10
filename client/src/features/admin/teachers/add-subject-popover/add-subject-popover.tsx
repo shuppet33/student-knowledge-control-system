@@ -3,24 +3,23 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { QuestionPreviewModal } from '$pages/admin/teachers/ui/question-preview-modal.tsx'
-
+import { QuestionPreviewModal } from '$features/admin/teachers/question-preview/question-preview.view.tsx'
 import {
     changeNewSubjectNameAction,
     changeSelectedSubjectAction,
     closeAddSubjectAction,
     openAddSubjectAction,
-} from '../model/teachers.actions.ts'
+} from '$features/admin/teachers/teachers.actions.ts'
 import {
     isAddSubjectOpenAtom,
     newSubjectNameAtom,
     selectedNewSubjectIdAtom,
-} from '../model/teachers.atoms'
+} from '$features/admin/teachers/teachers.atoms.ts'
 import {
     assignSubjectToTeacherAsync,
     createSubjectAndAssignAsync,
     subjectsResource,
-} from '../model/teachers.services.ts'
+} from '$features/admin/teachers/teachers.services.ts'
 
 import styles from './add-subject-popover.module.css'
 
@@ -42,7 +41,7 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                     style={{
                         position: 'fixed',
                         inset: 0,
-                        background: 'rgba(0,0,0,0.45)',
+                        background: 'rgba(0,0,0,0.65)',
                         zIndex: 1000,
                     }}
                 />

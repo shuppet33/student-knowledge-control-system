@@ -1,10 +1,16 @@
 import { Card } from 'antd'
 
-export const QuestionAnswerCard = ({ answer }) => {
+import type { FC } from 'react'
+
+import type { QuestionAnswerCardProps } from './question-answer-card.types'
+
+import styles from './question-answer-card.module.css'
+
+export const QuestionAnswerCard: FC<QuestionAnswerCardProps> = ({ answer }) => {
     return (
         <Card
+            className={styles.card}
             style={{
-                width: 'calc(50% - 10px)',
                 border: answer.isCorrect ? '1px solid #52c41a' : undefined,
             }}
             styles={{
@@ -13,14 +19,7 @@ export const QuestionAnswerCard = ({ answer }) => {
                 },
             }}
         >
-            <div
-                style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    maxHeight: 120,
-                    overflowY: 'auto',
-                }}
-            >
+            <div className={styles.text}>
                 {answer.id}. {answer.text}
             </div>
         </Card>

@@ -6,6 +6,8 @@ import {
     withStatusesAtom,
 } from '@reatom/framework'
 
+import { teachersResource } from '$entities/teachers/teachers.services.ts'
+
 import {
     assignSubjectToTeacher,
     getTeacherSubjects,
@@ -15,18 +17,34 @@ import {
     getSubjects,
 } from '$shared/api/admin/subjects/subjects.api.ts'
 import { getTeacherTests } from '$shared/api/admin/teacher-tests/teacher-tests.api.ts'
-import { getTeachers } from '$shared/api/admin/teachers/teachers.api.ts'
+import { createTeacher } from '$shared/api/admin/teachers/teachers.api.ts'
 
+import { closeCreateTeacherAction } from './teachers.actions.ts'
 import {
+    createTeacherFormAtom,
     newSubjectNameAtom,
     selectedNewSubjectIdAtom,
     selectedSubjectIdAtom,
     selectedTeacherAtom,
 } from './teachers.atoms.ts'
 
-export const teachersResource = reatomResource(async () => {
-    return await getTeachers()
-}, 'teachersResource').pipe(withDataAtom([]), withStatusesAtom())
+export const createTeacherAsync = reatomAsync(async (ctx) => {
+    const form = ctx.get(createTeacherFormAtom)
+
+    if (form.password !== form.repeatPassword) {
+        throw new Error('Пароли не совпадают')
+    }
+
+    await createTeacher({
+        fullName: form.fullName,
+        email: form.email,
+        password: form.password,
+    })
+
+    await teachersResource(ctx)
+
+    closeCreateTeacherAction(ctx)
+}, 'createTeacherAsync')
 
 export const teacherSubjectsResource = reatomResource(async (ctx) => {
     const teacher = ctx.get(selectedTeacherAtom)
@@ -75,7 +93,7 @@ export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
 }, 'createSubjectAndAssignAsync')
 
 export const teacherTestsResource = reatomResource(async (ctx) => {
-    const teacher = ctx.get(selectedTeacherAtom)
+    const teacher = ctx.spy(selectedTeacherAtom)
 
     const subjectId = ctx.spy(selectedSubjectIdAtom)
 
