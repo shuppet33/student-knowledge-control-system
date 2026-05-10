@@ -1,7 +1,7 @@
-import { teachersMapper } from './teachers.mapper'
-
-import { type Teacher, type TeacherDto } from './teachers.types'
 import { API_URL } from '$entities/api.ts'
+
+import { teachersMapper } from './teachers.mapper'
+import { type Teacher, type TeacherDto } from './teachers.types'
 
 export const getTeachers = async (): Promise<Teacher[]> => {
     const response = await fetch(`${API_URL}/teachers`, {

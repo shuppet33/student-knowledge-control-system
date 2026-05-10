@@ -1,14 +1,15 @@
-import { Breadcrumb } from 'antd'
 import { Content } from 'antd/es/layout/layout'
 
 import { reatomComponent } from '@reatom/npm-react'
+
+import { Route, Routes } from 'react-router'
+
+import { TeachersPage } from '$pages/admin/teachers/teachers-page.view'
 
 import { Header } from '$features/layout/header.tsx'
 import { Layout } from '$features/layout/main-layout.tsx'
 
 import styles from './style.module.css'
-import { Route, Routes } from 'react-router'
-import { TeachersPage } from '$pages/admin/teachers.view.tsx'
 
 
 export const AdminMainPage = reatomComponent(() => {
@@ -24,14 +25,6 @@ export const AdminMainPage = reatomComponent(() => {
             >
                 <Content style={{ padding: '0 10px' }}>
                     <div className={styles.wrapper}>
-                        <Breadcrumb
-                            items={[
-                                {
-                                    title: 'Home',
-                                },
-                            ]}
-                        />
-
                         <Routes>
                             <Route
                                 index

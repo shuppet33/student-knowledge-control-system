@@ -5,6 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import unusedImports from 'eslint-plugin-unused-imports'
 import importPlugin from 'eslint-plugin-import'
 
 export default defineConfig([
@@ -14,6 +15,7 @@ export default defineConfig([
         plugins: {
             'simple-import-sort': simpleImportSort,
             'react-hooks': reactHooks,
+            'unused-imports': unusedImports,
             import: importPlugin,
         },
         settings: {
