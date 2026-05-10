@@ -1,5 +1,5 @@
 import {reatomComponent} from "@reatom/npm-react";
-import {BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation} from "react-router";
+import {BrowserRouter as Router, Navigate, Route, Routes, useLocation} from "react-router";
 import {ConfigProvider, theme as antdTheme} from "antd";
 import {authAtom, isAuthAtom, refreshAsync} from '$entities/api';
 import {type FC, type ReactNode, useEffect} from "react";
@@ -53,32 +53,20 @@ export const App = reatomComponent(({ctx}) => {
             }}
         >
             <Router>
-                <div>
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                                <Link to="/admin">Admin</Link>
-                            </li>
-                        </ul>
-                    </nav>
+                <Routes>
+                    <Route path="/" element={
+                        <RequireGuest>
+                            <MainPage/>
+                        </RequireGuest>
+                    }/>
+                    <Route path="/admin" element={
+                        <RequireAuth>
+                            <AdminMainPage/>
+                        </RequireAuth>
+                    }
+                    />
+                </Routes>
 
-                    <Routes>
-                        <Route path="/" element={
-                            <RequireGuest>
-                                <MainPage/>
-                            </RequireGuest>
-                        }/>
-                        <Route path="/admin" element={
-                            <RequireAuth>
-                                <AdminMainPage/>
-                            </RequireAuth>
-                        }
-                        />
-                    </Routes>
-                </div>
             </Router>
         </ConfigProvider>
     )

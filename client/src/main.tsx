@@ -1,9 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {App} from './App.tsx'
+import {App} from './app.tsx'
 
 import { createCtx } from '@reatom/framework'
 import { reatomContext } from '@reatom/npm-react'
+
+import '$shared/style/reset.css'
 
 const ctx = createCtx()
 
