@@ -1,10 +1,11 @@
-import {Router} from "express";
-import {authController} from "../features/auth/auth.controller.js";
-import {authMiddleware} from "../middleware/auth.middleware.js";
+import { Router } from 'express'
 
-export const authRouter = Router();
+import { authController } from '../features/auth/auth.controller.js'
+import { authMiddleware } from '../middleware/auth.middleware.js'
 
-authRouter.post('/login', authController.login);
-authRouter.get('/me', authMiddleware, authController.me);
-authRouter.post('/refresh', authController.refresh);
-authRouter.post('/logout', authController.logout);
+export const authRouter = Router()
+
+authRouter.post('/login', authController.login)
+authRouter.get('/me', authMiddleware, authController.me)
+authRouter.post('/refresh', authController.refresh)
+authRouter.post('/logout', authController.logout)
