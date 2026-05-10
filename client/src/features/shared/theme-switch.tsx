@@ -1,8 +1,11 @@
-import {MoonOutlined, SunOutlined} from "@ant-design/icons";
-import { reatomComponent } from "@reatom/npm-react";
 import {useEffect} from "react";
-import {themeAtom} from "$entities/theme.ts";
+
 import {Switch} from "antd";
+import {MoonOutlined, SunOutlined} from "@ant-design/icons";
+
+import { reatomComponent } from "@reatom/npm-react";
+
+import {themeAtom} from "$entities/theme.ts";
 
 export const ThemeSwitcher = reatomComponent(({ctx}) => {
     const theme =ctx.spy(themeAtom)

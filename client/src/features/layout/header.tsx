@@ -1,10 +1,14 @@
-import { reatomComponent } from "@reatom/npm-react";
-import {Header as HeaderAntd} from "antd/es/layout/layout"
-import {authAtom} from "$entities/api.ts";
 import {theme} from "antd";
+import {Header as HeaderAntd} from "antd/es/layout/layout"
+
+import { reatomComponent } from "@reatom/npm-react";
+
+import {authAtom} from "$entities/api.ts";
+
+import {ThemeSwitcher} from "../shared/theme-switch.tsx";
+
 import {Nav} from "./nav.tsx";
 import {PersonalButton} from "./personal-button.tsx";
-import {ThemeSwitcher} from "../shared/theme-switch.tsx";
 
 
 export const Header = reatomComponent(({ctx}) => {

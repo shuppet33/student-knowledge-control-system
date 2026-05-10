@@ -1,13 +1,17 @@
-import {reatomComponent} from "@reatom/npm-react";
 import {Button, Form, Input, Modal, theme as antdTheme} from "antd";
-import {authAtom, getTokenAuthAsync} from "$entities/api.ts";
 import {Content, Header} from "antd/es/layout/layout";
+
+import {atom} from "@reatom/framework";
+import {reatomComponent} from "@reatom/npm-react";
+
 import {Link, useNavigate} from "react-router";
 
-import styles from './style.module.css'
-import {atom} from "@reatom/framework";
-import {ThemeSwitcher} from "$features/shared/theme-switch.tsx";
 import {Layout} from "$features/layout/main-layout.tsx";
+import {ThemeSwitcher} from "$features/shared/theme-switch.tsx";
+
+import {authAtom, getTokenAuthAsync} from "$entities/api.ts";
+
+import styles from './style.module.css'
 
 const iaModalAuthAtom = atom(false)
 

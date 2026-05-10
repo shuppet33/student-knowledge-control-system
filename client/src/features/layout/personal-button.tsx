@@ -1,7 +1,10 @@
-import { reatomComponent } from "@reatom/npm-react";
 import {Button} from "antd";
-import {authAtom, logoutAsync} from "$entities/api.ts";
+
+import { reatomComponent } from "@reatom/npm-react";
+
 import {Navigate, useLocation} from "react-router";
+
+import {authAtom, logoutAsync} from "$entities/api.ts";
 
 export const PersonalButton = reatomComponent(({ctx}) => {
     const { role } = ctx.spy(authAtom)
