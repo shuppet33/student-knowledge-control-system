@@ -1,20 +1,22 @@
-import jwt from "jsonwebtoken";
-
-import {clientError} from "../utils/errors.util.js";
+import jwt from 'jsonwebtoken'
 
 export const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization
 
     if (!authHeader) {
-        return clientError(res, 'Нет токена');
+        return res.status(401).json({
+            error: 'Нет токена',
+        })
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1]
 
     try {
-        req.user = jwt.verify(token, process.env.JWT_SECRET);
-        next();
+        req.user = jwt.verify(token, process.env.JWT_SECRET)
+        next()
     } catch {
-        return clientError(res, 'Токен невалиден или истёк');
+        return res.status(401).json({
+            error: 'Токен невалиден или истёк',
+        })
     }
 }
