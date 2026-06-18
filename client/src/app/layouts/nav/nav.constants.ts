@@ -2,17 +2,17 @@ import type { NavConfig } from './nav.types'
 
 export const NAV_CONFIG: NavConfig = {
     admin: [
-        { label: 'Главная', to: '/admin' },
-        { label: 'Преподаватели', to: '/admin/teachers' },
-        { label: 'Студенты', to: '/admin/students' },
-        { label: 'Тесты', to: '/admin/tests' },
+        { label: 'главная', to: '/admin' },
+        { label: 'преподаватели', to: '/admin/teachers' },
+        { label: 'студенты', to: '/admin/students' },
+        { label: 'тесты', to: '/admin/tests' },
     ],
     teacher: [
-        { label: 'Главная', to: '/teacher' },
-        { label: 'Тесты', to: '/teacher/tests' },
+        { label: 'главная', to: '/teacher' },
+        { label: 'тесты', to: '/teacher/tests' },
     ],
     student: [
-        { label: 'Главная', to: '/student' },
-        { label: 'Тесты', to: '/student/tests' },
+        { label: 'главная', to: '/student' },
+        { label: 'тесты', to: '/student/tests' },
     ],
 }

@@ -4,6 +4,8 @@ import type { FC } from 'react'
 
 import type { MainLayoutProps } from './main-layout.types'
 
+import styles from './main-layout.module.css'
+
 export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
-    return <AntdLayout style={{ minHeight: '100vh' }}>{children}</AntdLayout>
+    return <AntdLayout className={styles.layout}>{children}</AntdLayout>
 }

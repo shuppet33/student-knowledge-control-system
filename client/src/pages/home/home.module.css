@@ -4,9 +4,9 @@
 }
 
 .header {
-
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     height: 64px;
     padding: 10px 10px;
@@ -66,4 +66,20 @@
     line-height: 1;
 
     color: #000;
+}
+
+.homeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 32px;
+    padding: 0 15px;
+
+    color: #fff;
+    background-color: #1677ff;
+    border-radius: 6px;
+
+    font-weight: 400;
+    cursor: default;
 }

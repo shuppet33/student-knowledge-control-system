@@ -39,21 +39,11 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
             {isOpen && (
                 <div
                     onClick={() => closeAddSubjectAction(ctx)}
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        background: 'rgba(0,0,0,0.65)',
-                        zIndex: 1000,
-                    }}
+                    className={styles.overlay}
                 />
             )}
 
-            <div
-                style={{
-                    position: 'relative',
-                    zIndex: 1001,
-                }}
-            >
+            <div className={styles.wrapper}>
                 <Button
                     icon={<PlusOutlined />}
                     size="large"
@@ -64,30 +54,18 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                     }
                     block
                 >
-                    Предмет
+                    предмет
                 </Button>
 
                 {isOpen && (
-                    <Card
-                        style={{
-                            position: 'absolute',
-                            top: '110%',
-                            left: 0,
-                            width: 420,
-                            zIndex: 1002,
-                        }}
-                    >
+                    <Card className={styles.card}>
                         <Flex vertical gap={20}>
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                }}
-                            >
-                                Выберите предмет из списка или добавьте новый
+                            <Text className={styles.description}>
+                                выберите предмет из списка или добавьте новый
                             </Text>
 
                             <Select
-                                placeholder="Выбор предмета"
+                                placeholder="выбор предмета"
                                 size="large"
                                 value={selectedSubjectId}
                                 options={subjects.map((subject) => ({
@@ -100,7 +78,7 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                             />
 
                             <Input
-                                placeholder="Введите новый предмет"
+                                placeholder="введите новый предмет"
                                 size="large"
                                 value={newSubjectName}
                                 onChange={(event) =>
@@ -125,7 +103,7 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                                     !selectedSubjectId && !newSubjectName.trim()
                                 }
                             >
-                                Добавить предмет
+                                добавить предмет
                             </Button>
                         </Flex>
                     </Card>

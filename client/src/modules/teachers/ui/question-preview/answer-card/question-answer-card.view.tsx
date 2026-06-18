@@ -9,10 +9,9 @@ import styles from './question-answer-card.module.css'
 export const QuestionAnswerCard: FC<QuestionAnswerCardProps> = ({ answer }) => {
     return (
         <Card
-            className={styles.card}
-            style={{
-                border: answer.isCorrect ? '1px solid #52c41a' : undefined,
-            }}
+            className={`${styles.card} ${
+                answer.isCorrect ? styles.correct : ''
+            }`}
             styles={{
                 body: {
                     padding: '16px 20px',

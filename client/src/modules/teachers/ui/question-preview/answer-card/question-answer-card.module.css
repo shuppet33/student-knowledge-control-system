@@ -2,6 +2,10 @@
     width: calc(50% - 10px);
 }
 
+.correct {
+    border: 1px solid #52c41a;
+}
+
 .text {
     font-size: 18px;
     font-weight: 600;

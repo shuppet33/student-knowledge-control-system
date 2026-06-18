@@ -55,7 +55,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                         <AddSubjectPopover />
 
                         <Input
-                            placeholder="Поиск"
+                            placeholder="поиск"
                             prefix={<SearchOutlined />}
                             size="large"
                         />
@@ -72,7 +72,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                                 align="center"
                                 className={styles.empty}
                             >
-                                <Empty description="Выберите предмет" />
+                                <Empty description="выберите предмет" />
                             </Flex>
                         ) : (
                             <>
@@ -81,7 +81,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                                         level={5}
                                         className={styles.filtersTitle}
                                     >
-                                        Фильтры
+                                        фильтры
                                     </Title>
 
                                     <Space>
@@ -98,7 +98,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
 
                                 <Space size={16}>
                                     <Input
-                                        placeholder="Поиск"
+                                        placeholder="поиск"
                                         prefix={<SearchOutlined />}
                                         size="large"
                                         className={styles.searchInput}
@@ -106,7 +106,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
 
                                     <Select
                                         mode="multiple"
-                                        placeholder="Группы"
+                                        placeholder="группы"
                                         size="large"
                                         className={styles.groupsSelect}
                                     />

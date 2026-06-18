@@ -12,14 +12,8 @@ export const AdminLayout = () => {
         <MainLayout>
             <Header />
 
-            <div
-                style={{
-                    maxWidth: '1280px',
-                    width: '100%',
-                    margin: '0 auto',
-                }}
-            >
-                <Content style={{ padding: '0 10px' }}>
+            <div className={styles.container}>
+                <Content className={styles.content}>
                     <div className={styles.wrapper}>
                         <Outlet />
                     </div>

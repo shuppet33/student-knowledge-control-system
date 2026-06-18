@@ -1,4 +1,3 @@
-import { theme } from 'antd'
 import { Header as AntdHeader } from 'antd/es/layout/layout'
 
 import { reatomComponent } from '@reatom/npm-react'
@@ -8,38 +7,17 @@ import { ThemeSwitcher } from '$modules/theme'
 
 import { Nav } from '../nav/nav.view'
 
+import styles from './header.module.css'
+
 export const Header = reatomComponent(({ ctx }) => {
     const { role } = ctx.spy(authAtom)
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken()
 
     return (
-        <AntdHeader
-            style={{
-                padding: '0 10px',
-                backgroundColor: colorBgContainer,
-            }}
-        >
-            <div
-                style={{
-                    maxWidth: '1280px',
-                    width: '100%',
-                    margin: '0 auto',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
+        <AntdHeader className={styles.header}>
+            <div className={styles.container}>
                 {role !== 'guest' && <Nav role={role} />}
 
-                <div
-                    style={{
-                        display: 'flex',
-                        gap: '10px',
-                        alignItems: 'center',
-                    }}
-                >
+                <div className={styles.actions}>
                     <PersonalButton />
                     <ThemeSwitcher />
                 </div>

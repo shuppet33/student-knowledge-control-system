@@ -5,13 +5,12 @@ import {
     Input,
     Layout,
     Modal,
-    theme as antdTheme,
 } from 'antd'
 import { Content, Header } from 'antd/es/layout/layout'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import { loginAsync } from '$modules/auth'
 import { ThemeSwitcher } from '$modules/theme'
@@ -25,20 +24,12 @@ export const MainPage = reatomComponent(({ ctx }) => {
     const isAuthModalOpen = ctx.spy(isAuthModalOpenAtom)
     const loginError = ctx.spy(loginAsync.errorAtom)
     const navigate = useNavigate()
-    const {
-        token: { colorBgContainer, colorText, colorLink },
-    } = antdTheme.useToken()
-
     const [form] = Form.useForm<LoginFormValues>()
 
     const onFinish = async (values: LoginFormValues) => {
         loginAsync.errorAtom.reset(ctx)
 
-        const { role } = await loginAsync(
-            ctx,
-            values.email,
-            values.password,
-        )
+        const { role } = await loginAsync(ctx, values.email, values.password)
 
         navigate(`/${role}`)
         isAuthModalOpenAtom(ctx, false)
@@ -50,22 +41,15 @@ export const MainPage = reatomComponent(({ ctx }) => {
     }
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
-            <Header
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: colorBgContainer,
-                }}
-            >
-                <Button>
-                    <Link to="/">Главная</Link>
-                </Button>
+        <Layout className={styles.layout}>
+            <Header className={styles.header}>
+                <div className={styles.homeButton}>
+                    главная
+                </div>
 
                 <div className={styles.signInWrapper}>
                     <Button onClick={() => isAuthModalOpenAtom(ctx, true)}>
-                        Войти
+                        войти
                     </Button>
                     <ThemeSwitcher />
                 </div>
@@ -73,27 +57,23 @@ export const MainPage = reatomComponent(({ ctx }) => {
 
             <Content className={styles.content}>
                 <div className={styles.wrapper}>
-                    <div className={styles.title} style={{ color: colorLink }}>
+                    <div className={styles.title}>
                         ИМСИТ
                     </div>
-                    <div className={styles.subtitle} style={{ color: colorText }}>
+                    <div className={styles.subtitle}>
                         тесты
                     </div>
                 </div>
             </Content>
 
             <Modal
-                title="Вход"
+                title="вход"
                 open={isAuthModalOpen}
                 onCancel={closeAuthModal}
                 footer={null}
             >
                 {loginError && (
-                    <Alert
-                        type="error"
-                        message={loginError.message}
-                        showIcon
-                    />
+                    <Alert type="error" title={loginError.message} showIcon />
                 )}
 
                 <Form
@@ -103,7 +83,7 @@ export const MainPage = reatomComponent(({ ctx }) => {
                 >
                     <Form.Item
                         layout="vertical"
-                        label="Email"
+                        label="email"
                         name="email"
                         rules={[{ required: true }]}
                     >
@@ -112,7 +92,7 @@ export const MainPage = reatomComponent(({ ctx }) => {
 
                     <Form.Item
                         layout="vertical"
-                        label="Пароль"
+                        label="пароль"
                         name="password"
                         rules={[{ required: true }]}
                     >
@@ -126,7 +106,7 @@ export const MainPage = reatomComponent(({ ctx }) => {
                             type="primary"
                             htmlType="submit"
                         >
-                            Войти
+                            войти
                         </Button>
                     </Form.Item>
                 </Form>

@@ -1,3 +1,3 @@
 export const AdminPage = () => {
-    return <div>Главная администратора</div>
+    return <div>главная администратора</div>
 }

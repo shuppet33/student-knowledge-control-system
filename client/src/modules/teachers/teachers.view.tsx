@@ -8,6 +8,8 @@ import { TeacherModal } from '$modules/teachers/ui/teacher-modal'
 import { CreateTeacherPopover } from './ui/create-teacher-popover'
 import { teachersResource } from './teachers.service'
 
+import styles from './teachers.module.css'
+
 const { Search } = Input
 
 export const TeachersManagement = reatomComponent(({ ctx }) => {
@@ -19,18 +21,14 @@ export const TeachersManagement = reatomComponent(({ ctx }) => {
                 <Space size={16} wrap>
                     <CreateTeacherPopover />
                     <Search
-                        placeholder="Поиск преподавателя"
+                        placeholder="поиск преподавателя"
                         allowClear
-                        style={{
-                            width: 260,
-                        }}
+                        className={styles.filter}
                     />
 
                     <Select
-                        placeholder="Сортировка по предметам"
-                        style={{
-                            width: 260,
-                        }}
+                        placeholder="сортировка по предметам"
+                        className={styles.filter}
                     />
                 </Space>
 

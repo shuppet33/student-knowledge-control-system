@@ -37,7 +37,7 @@ export const createTeacherAsync = reatomAsync(async (ctx) => {
     const form = ctx.get(createTeacherFormAtom)
 
     if (form.password !== form.repeatPassword) {
-        throw new Error('Пароли не совпадают')
+        throw new Error('пароли не совпадают')
     }
 
     await createTeacher({

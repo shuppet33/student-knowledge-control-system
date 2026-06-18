@@ -31,7 +31,7 @@ export const createApiError = async (
         payload?.message ??
             payload?.error ??
             response.statusText ??
-            'Ошибка API',
+            'ошибка API',
         response.status,
         payload,
     )

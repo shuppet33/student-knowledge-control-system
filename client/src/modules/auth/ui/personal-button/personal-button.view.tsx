@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router'
 import { logoutAsync } from '../../auth.service'
 import { authAtom } from '../../auth.state'
 
+import styles from './personal-button.module.css'
+
 export const PersonalButton = reatomComponent(({ ctx }) => {
     const { role } = ctx.spy(authAtom)
     const navigate = useNavigate()
@@ -20,14 +22,14 @@ export const PersonalButton = reatomComponent(({ ctx }) => {
     }
 
     return (
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div className={styles.wrapper}>
             <span>{role}</span>
 
             <Button
                 loading={ctx.spy(logoutAsync.statusesAtom).isPending}
                 onClick={logout}
             >
-                Выйти
+                выйти
             </Button>
         </div>
     )

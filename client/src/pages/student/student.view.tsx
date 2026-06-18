@@ -1,3 +1,3 @@
 export const StudentPage = () => {
-    return <div>Главная студента</div>
+    return <div>главная студента</div>
 }

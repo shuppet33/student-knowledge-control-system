@@ -1,3 +1,3 @@
 export const TeacherPage = () => {
-    return <div>Главная преподавателя</div>
+    return <div>главная преподавателя</div>
 }

@@ -26,21 +26,11 @@ export const CreateTeacherPopover = reatomComponent(({ ctx }) => {
             {isOpen && (
                 <div
                     onClick={() => closeCreateTeacherAction(ctx)}
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        background: 'rgba(0,0,0,0.65)',
-                        zIndex: 98,
-                    }}
+                    className={styles.overlay}
                 />
             )}
 
-            <div
-                style={{
-                    position: 'relative',
-                    zIndex: 99,
-                }}
-            >
+            <div className={styles.wrapper}>
                 <Button
                     icon={<PlusOutlined />}
                     type="primary"
@@ -50,19 +40,11 @@ export const CreateTeacherPopover = reatomComponent(({ ctx }) => {
                     }
                     block
                 >
-                    Добавить
+                    добавить
                 </Button>
 
                 {isOpen && (
-                    <Card
-                        style={{
-                            position: 'absolute',
-                            top: '120%',
-                            left: 0,
-                            width: 420,
-                            zIndex: 1002,
-                        }}
-                    >
+                    <Card className={styles.card}>
                         <Flex vertical gap={16}>
                             <Input
                                 placeholder="ФИО"
@@ -87,7 +69,7 @@ export const CreateTeacherPopover = reatomComponent(({ ctx }) => {
                             />
 
                             <Input.Password
-                                placeholder="Пароль"
+                                placeholder="пароль"
                                 value={form.password}
                                 onChange={(event) =>
                                     changeCreateTeacherFieldAction(ctx, {
@@ -98,7 +80,7 @@ export const CreateTeacherPopover = reatomComponent(({ ctx }) => {
                             />
 
                             <Input.Password
-                                placeholder="Повторите пароль"
+                                placeholder="повторите пароль"
                                 value={form.repeatPassword}
                                 onChange={(event) =>
                                     changeCreateTeacherFieldAction(ctx, {
@@ -112,7 +94,7 @@ export const CreateTeacherPopover = reatomComponent(({ ctx }) => {
                                 type="primary"
                                 onClick={() => createTeacherAsync(ctx)}
                             >
-                                Добавить
+                                добавить
                             </Button>
                         </Flex>
                     </Card>
