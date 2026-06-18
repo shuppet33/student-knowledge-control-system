@@ -9,10 +9,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "$features/*": ["src/features/*"],
+      "$app/*": ["src/app/*"],
+      "$modules/*": ["src/modules/*"],
       "$pages/*": ["src/pages/*"],
-      "$entities/*": ["src/entities/*"],
-      "$shared/*": ["src/shared/*"]
+      "$common/*": ["src/common/*"]
     },
 
     /* Bundler mode */

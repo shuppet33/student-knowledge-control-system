@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -12,31 +12,36 @@
   },
   "dependencies": {
     "@ant-design/icons": "~6.2.2",
-    "@reatom/core": "^1000.15.2",
-    "@reatom/framework": "^3.4.68",
-    "@reatom/npm-react": "^3.10.6",
-    "antd": "^6.3.7",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-router": "^7.14.2"
+    "@reatom/framework": "3.4.68",
+    "@reatom/npm-react": "3.10.6",
+    "antd": "6.3.7",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "react-router": "7.14.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/node": "^24.12.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^9.39.4",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "eslint-plugin-unused-imports": "^4.4.1",
+    "@eslint/js": "9.39.4",
+    "@types/node": "24.12.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "eslint": "9.39.4",
+    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.2",
+    "eslint-plugin-simple-import-sort": "13.0.0",
+    "eslint-plugin-unused-imports": "4.4.1",
     "globals": "^17.5.0",
+    "msw": "^2.14.6",
     "prettier": "^3.8.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.10"
+    "typescript-eslint": "8.58.2",
+    "vite": "8.0.10"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

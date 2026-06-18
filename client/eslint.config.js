@@ -9,7 +9,7 @@ import unusedImports from 'eslint-plugin-unused-imports'
 import importPlugin from 'eslint-plugin-import'
 
 export default defineConfig([
-    globalIgnores(['dist']),
+    globalIgnores(['dist', 'public/mockServiceWorker.js']),
     {
         files: ['**/*.{ts,tsx}'],
         plugins: {
@@ -50,13 +50,11 @@ export default defineConfig([
                         // остальные библиотеки
                         ['^@?\\w'],
 
-                        // fsd layers
+                        // FEOD layers
                         ['^\\$app'],
                         ['^\\$pages'],
-                        ['^\\$widgets'],
-                        ['^\\$features'],
-                        ['^\\$entities'],
-                        ['^\\$shared'],
+                        ['^\\$modules'],
+                        ['^\\$common'],
 
                         // relative imports
                         ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
