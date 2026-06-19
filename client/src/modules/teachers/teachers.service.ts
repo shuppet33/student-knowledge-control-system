@@ -3,6 +3,7 @@ import {
     reatomResource,
     withCache,
     withDataAtom,
+    withErrorAtom,
     withStatusesAtom,
 } from '@reatom/framework'
 
@@ -25,7 +26,7 @@ import {
     createTeacherFormAtom,
     newSubjectNameAtom,
     selectedNewSubjectIdAtom,
-    selectedSubjectIdAtom,
+    selectedSubjectAtom,
     selectedTeacherAtom,
 } from './teachers.state'
 
@@ -75,7 +76,7 @@ export const assignSubjectToTeacherAsync = reatomAsync(async (ctx) => {
 
     await assignSubjectToTeacher(teacher.id, { subjectId })
     await teacherSubjectsResource(ctx)
-}, 'assignSubjectToTeacherAsync')
+}, 'assignSubjectToTeacherAsync').pipe(withStatusesAtom(), withErrorAtom())
 
 export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
     const teacher = ctx.get(selectedTeacherAtom)
@@ -92,17 +93,17 @@ export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
     })
     await teacherSubjectsResource(ctx)
     await subjectsResource(ctx)
-}, 'createSubjectAndAssignAsync')
+}, 'createSubjectAndAssignAsync').pipe(withStatusesAtom(), withErrorAtom())
 
 export const teacherTestsResource = reatomResource(async (ctx) => {
     const teacher = ctx.spy(selectedTeacherAtom)
-    const subjectId = ctx.spy(selectedSubjectIdAtom)
+    const subject = ctx.spy(selectedSubjectAtom)
 
-    if (!teacher || !subjectId) {
+    if (!teacher || (!subject.id && !subject.name)) {
         return []
     }
 
-    return await getTeacherTests(teacher.id, subjectId)
+    return await getTeacherTests(teacher.id, subject.id)
 }, 'teacherTestsResource').pipe(
     withCache(),
     withDataAtom([]),

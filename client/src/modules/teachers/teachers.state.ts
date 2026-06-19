@@ -1,5 +1,10 @@
 import { action, atom } from '@reatom/framework'
 
+import {
+    assignSubjectToTeacherAsync,
+    createSubjectAndAssignAsync,
+} from '$modules/teachers/teachers.service.ts'
+
 import type { Teacher } from '$common/api/teachers/teachers.types'
 
 import type {
@@ -11,9 +16,9 @@ export const selectedTeacherAtom = atom(
     null as Teacher | null,
     'selectedTeacherAtom',
 )
-export const selectedSubjectIdAtom = atom(
-    null as string | null,
-    'selectedSubjectIdAtom',
+export const selectedSubjectAtom = atom(
+    { id: null, name: null } as { id: string | null; name: string | null },
+    'selectedSubjectAtom',
 )
 export const expandedTestIdAtom = atom(
     null as string | null,
@@ -36,19 +41,28 @@ export const createTeacherFormAtom = atom<CreateTeacherForm>(
     'createTeacherFormAtom',
 )
 
+export const subjectSearchAtom = atom('', 'subjectSearchAtom')
+
+export const changeSubjectSearchAction = action((ctx, value: string) => {
+    subjectSearchAtom(ctx, value)
+}, 'changeSubjectSearchAction')
+
 export const openTeacherModalAction = action((ctx, teacher: Teacher) => {
     selectedTeacherAtom(ctx, teacher)
 }, 'openTeacherModalAction')
 
 export const closeTeacherModalAction = action((ctx) => {
     selectedTeacherAtom(ctx, null)
-    selectedSubjectIdAtom(ctx, null)
+    selectedSubjectAtom(ctx, { id: null, name: null })
     expandedTestIdAtom(ctx, null)
 }, 'closeTeacherModalAction')
 
-export const selectSubjectAction = action((ctx, subjectId: string) => {
-    selectedSubjectIdAtom(ctx, subjectId)
-}, 'selectSubjectAction')
+export const selectSubjectAction = action(
+    (ctx, subject: { id: string; name: string }) => {
+        selectedSubjectAtom(ctx, subject)
+    },
+    'selectSubjectAction',
+)
 
 export const toggleTestAction = action((ctx, testId: string) => {
     const current = ctx.get(expandedTestIdAtom)
@@ -64,6 +78,11 @@ export const closeAddSubjectAction = action((ctx) => {
     isAddSubjectOpenAtom(ctx, false)
     selectedNewSubjectIdAtom(ctx, undefined)
     newSubjectNameAtom(ctx, '')
+
+    createSubjectAndAssignAsync.errorAtom.reset(ctx)
+    createSubjectAndAssignAsync.statusesAtom.reset(ctx)
+    assignSubjectToTeacherAsync.errorAtom.reset(ctx)
+    assignSubjectToTeacherAsync.statusesAtom.reset(ctx)
 }, 'closeAddSubjectAction')
 
 export const changeSelectedSubjectAction = action((ctx, value: string) => {

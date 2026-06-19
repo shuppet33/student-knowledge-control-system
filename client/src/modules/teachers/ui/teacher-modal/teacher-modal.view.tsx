@@ -17,9 +17,9 @@ import {
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { closeTeacherModalAction } from '../../teachers.state'
 import {
-    selectedSubjectIdAtom,
+    closeTeacherModalAction,
+    selectedSubjectAtom,
     selectedTeacherAtom,
 } from '../../teachers.state'
 import { AddSubjectPopover } from '../add-subject-popover'
@@ -34,7 +34,7 @@ const { Title } = Typography
 
 export const TeacherModal = reatomComponent(({ ctx }) => {
     const teacher = ctx.spy(selectedTeacherAtom)
-    const selectedSubjectId = ctx.spy(selectedSubjectIdAtom)
+    const selectedSubject = ctx.spy(selectedSubjectAtom)
 
     return (
         <Modal
@@ -47,7 +47,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
         >
             <Layout className={styles.layout}>
                 <Sider width={260} className={styles.sider}>
-                    <Flex vertical gap={16}>
+                    <Flex vertical gap={16} className={styles.siderContent}>
                         <Title level={4} className={styles.teacherTitle}>
                             {teacher?.fullName}
                         </Title>
@@ -66,14 +66,24 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
 
                 <Content>
                     <Flex vertical gap={12}>
-                        {!selectedSubjectId ? (
-                            <Flex
-                                justify="center"
-                                align="center"
-                                className={styles.empty}
-                            >
-                                <Empty description="выберите предмет" />
-                            </Flex>
+                        {!selectedSubject.id ? (
+                            <>
+                                <Flex justify="end" align="center">
+                                    <Button
+                                        icon={<CloseOutlined />}
+                                        onClick={() =>
+                                            closeTeacherModalAction(ctx)
+                                        }
+                                    />
+                                </Flex>
+                                <Flex
+                                    justify="center"
+                                    align="center"
+                                    className={styles.empty}
+                                >
+                                    <Empty description="выберите предмет" />
+                                </Flex>
+                            </>
                         ) : (
                             <>
                                 <Flex justify="space-between" align="center">
