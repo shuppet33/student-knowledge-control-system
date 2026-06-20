@@ -9,21 +9,27 @@ servers:
   - url: http://localhost:3000
     description: Локальный сервер
 
+security:
+  - bearerAuth: []
+
 tags:
   - name: Auth
     description: Авторизация и управление сессией
-  - name: Users
-    description: Пользователи системы
-  - name: Groups
-    description: Учебные группы
-  - name: Subjects
-    description: Учебные предметы
-  - name: Teachers
-    description: Преподаватели, их предметы и тесты
+  - name: Admin Users
+    description: Управление пользователями администратором
+  - name: Admin Groups
+    description: Управление учебными группами администратором
+  - name: Admin Subjects
+    description: Управление предметами администратором
+  - name: Admin Teachers
+    description: Назначение предметов преподавателям
+  - name: Admin Tests
+    description: Системное управление тестами
 
 paths:
   /auth/login:
     post:
+      security: []
       tags: [Auth]
       summary: Войти в систему
       operationId: login
@@ -53,25 +59,23 @@ paths:
   /auth/me:
     get:
       tags: [Auth]
-      summary: Получить данные авторизованного пользователя
+      summary: Получить текущего пользователя
       operationId: getCurrentUser
-      security:
-        - bearerAuth: []
       responses:
         '200':
-          description: Данные из access-токена
+          description: Данные активного пользователя
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenUser'
+                $ref: '#/components/schemas/CurrentUser'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
   /auth/refresh:
     post:
+      security: []
       tags: [Auth]
       summary: Обновить access-токен
-      description: Использует refreshToken из HttpOnly cookie
       operationId: refreshAccessToken
       responses:
         '200':
@@ -85,9 +89,9 @@ paths:
 
   /auth/logout:
     post:
+      security: []
       tags: [Auth]
       summary: Выйти из системы
-      description: Удаляет refresh-токен и очищает cookie
       operationId: logout
       responses:
         '200':
@@ -102,10 +106,10 @@ paths:
                     type: boolean
                     example: true
 
-  /users:
+  /admin/users:
     get:
-      tags: [Users]
-      summary: Получить пользователей
+      tags: [Admin Users]
+      summary: Получить активных пользователей
       operationId: getUsers
       responses:
         '200':
@@ -116,10 +120,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
     post:
-      tags: [Users]
+      tags: [Admin Users]
       summary: Создать пользователя
       operationId: createUser
       requestBody:
@@ -137,27 +145,36 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /users/{id}:
+  /admin/users/{id}:
     delete:
-      tags: [Users]
-      summary: Удалить пользователя
-      description: Выполняет мягкое удаление пользователя
+      tags: [Admin Users]
+      summary: Выполнить soft delete пользователя
       operationId: deleteUser
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '200':
           $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /groups:
+  /admin/groups:
     get:
-      tags: [Groups]
-      summary: Получить учебные группы
+      tags: [Admin Groups]
+      summary: Получить активные учебные группы
       operationId: getGroups
       responses:
         '200':
@@ -168,10 +185,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
     post:
-      tags: [Groups]
+      tags: [Admin Groups]
       summary: Создать учебную группу
       operationId: createGroup
       requestBody:
@@ -189,27 +210,167 @@ paths:
                 $ref: '#/components/schemas/Group'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /groups/{id}:
+  /admin/groups/{id}:
     delete:
-      tags: [Groups]
-      summary: Удалить учебную группу
-      description: Выполняет мягкое удаление группы
+      tags: [Admin Groups]
+      summary: Выполнить soft delete группы
       operationId: deleteGroup
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '200':
           $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /subjects:
+  /admin/groups/{groupId}/students:
+    post:
+      tags: [Admin Groups]
+      summary: Добавить студента в группу
+      operationId: addStudentToGroup
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddStudentRequest'
+      responses:
+        '201':
+          description: Связь студента с группой создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/groups/{groupId}/students/{studentId}:
+    delete:
+      tags: [Admin Groups]
+      summary: Удалить студента из группы
+      operationId: removeStudentFromGroup
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+        - $ref: '#/components/parameters/StudentId'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/groups/{groupId}/subjects:
     get:
-      tags: [Subjects]
-      summary: Получить предметы
+      tags: [Admin Groups]
+      summary: Получить предметы группы
+      operationId: getGroupSubjects
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        '200':
+          description: Список предметов группы
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Admin Groups]
+      summary: Назначить предмет группе
+      operationId: addSubjectToGroup
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddSubjectRequest'
+      responses:
+        '201':
+          description: Связь предмета с группой создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectGroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/groups/{groupId}/subjects/{subjectId}:
+    delete:
+      tags: [Admin Groups]
+      summary: Удалить предмет у группы
+      operationId: removeSubjectFromGroup
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+        - $ref: '#/components/parameters/SubjectId'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/subjects:
+    get:
+      tags: [Admin Subjects]
+      summary: Получить активные предметы
       operationId: getSubjects
       responses:
         '200':
@@ -220,10 +381,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Subject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
     post:
-      tags: [Subjects]
+      tags: [Admin Subjects]
       summary: Создать предмет
       operationId: createSubject
       requestBody:
@@ -241,27 +406,38 @@ paths:
                 $ref: '#/components/schemas/Subject'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /subjects/{id}:
+  /admin/subjects/{id}:
     delete:
-      tags: [Subjects]
-      summary: Удалить предмет
-      description: Выполняет мягкое удаление предмета
+      tags: [Admin Subjects]
+      summary: Выполнить soft delete предмета
       operationId: deleteSubject
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
         '200':
           $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /teachers:
+  /admin/teachers:
     get:
-      tags: [Teachers]
-      summary: Получить преподавателей
+      tags: [Admin Teachers]
+      summary: Получить активных преподавателей
       operationId: getTeachers
       responses:
         '200':
@@ -272,12 +448,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Teacher'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /teachers/{id}/subjects:
+  /admin/teachers/{id}/subjects:
     get:
-      tags: [Teachers]
+      tags: [Admin Teachers]
       summary: Получить предметы преподавателя
       operationId: getTeacherSubjects
       parameters:
@@ -291,10 +471,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Subject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/ServerError'
     post:
-      tags: [Teachers]
+      tags: [Admin Teachers]
       summary: Назначить предмет преподавателю
       operationId: addSubjectToTeacher
       parameters:
@@ -304,7 +488,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddTeacherSubjectRequest'
+              $ref: '#/components/schemas/AddSubjectRequest'
       responses:
         '201':
           description: Связь преподавателя с предметом создана
@@ -314,14 +498,21 @@ paths:
                 $ref: '#/components/schemas/TeacherSubject'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /teachers/{teacherId}/subjects/{subjectId}:
+  /admin/teachers/{teacherId}/subjects/{subjectId}:
     delete:
-      tags: [Teachers]
+      tags: [Admin Teachers]
       summary: Удалить предмет у преподавателя
-      description: Удаляет только связь преподавателя с предметом
       operationId: removeSubjectFromTeacher
       parameters:
         - $ref: '#/components/parameters/TeacherId'
@@ -329,17 +520,44 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
-  /teachers/{teacherId}/subjects/{subjectId}/tests:
+  /admin/teachers/{teacherId}/subjects/{subjectId}/tests:
     get:
-      tags: [Teachers]
+      tags: [Admin Teachers]
       summary: Получить тесты преподавателя по предмету
       operationId: getTeacherSubjectTests
       parameters:
         - $ref: '#/components/parameters/TeacherId'
         - $ref: '#/components/parameters/SubjectId'
+      responses:
+        '200':
+          description: Список тестов преподавателя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeacherTest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/tests:
+    get:
+      tags: [Admin Tests]
+      summary: Получить все активные тесты системы
+      operationId: getTests
       responses:
         '200':
           description: Список тестов
@@ -348,7 +566,31 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Test'
+                  $ref: '#/components/schemas/AdminTest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/tests/{id}:
+    delete:
+      tags: [Admin Tests]
+      summary: Выполнить soft delete теста
+      description: Дополнительно устанавливает is_active = false
+      operationId: deleteTest
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/ServerError'
 
@@ -364,26 +606,32 @@ components:
       name: id
       in: path
       required: true
-      description: Идентификатор сущности
       schema:
-        type: integer
-        minimum: 1
+        $ref: '#/components/schemas/Id'
+    GroupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    StudentId:
+      name: studentId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
     TeacherId:
       name: teacherId
       in: path
       required: true
-      description: Идентификатор преподавателя
       schema:
-        type: integer
-        minimum: 1
+        $ref: '#/components/schemas/Id'
     SubjectId:
       name: subjectId
       in: path
       required: true
-      description: Идентификатор предмета
       schema:
-        type: integer
-        minimum: 1
+        $ref: '#/components/schemas/Id'
 
   responses:
     BadRequest:
@@ -394,6 +642,24 @@ components:
             $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Требуется корректный access-токен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Недостаточно прав
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Сущность не найдена
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Связь или сущность уже существует
       content:
         application/json:
           schema:
@@ -412,6 +678,16 @@ components:
             $ref: '#/components/schemas/Message'
 
   schemas:
+    Id:
+      type: integer
+      format: int64
+      minimum: 1
+      example: 1
+
+    Role:
+      type: string
+      enum: [admin, teacher, student]
+
     LoginRequest:
       type: object
       additionalProperties: false
@@ -420,11 +696,11 @@ components:
         email:
           type: string
           format: email
-          example: teacher@example.com
+          example: admin@example.com
         password:
           type: string
           format: password
-          example: password
+          minLength: 1
 
     AuthResponse:
       type: object
@@ -436,21 +712,19 @@ components:
           type: string
           description: JWT access-токен
 
-    TokenUser:
+    CurrentUser:
       type: object
-      required: [id, role, email]
+      required: [id, email, role, full_name]
       properties:
         id:
-          type: integer
-        role:
-          $ref: '#/components/schemas/Role'
+          $ref: '#/components/schemas/Id'
         email:
           type: string
           format: email
-        iat:
-          type: integer
-        exp:
-          type: integer
+        role:
+          $ref: '#/components/schemas/Role'
+        full_name:
+          type: string
 
     CreateUserRequest:
       type: object
@@ -463,22 +737,20 @@ components:
         password:
           type: string
           format: password
+          minLength: 1
         role:
           $ref: '#/components/schemas/Role'
         full_name:
           type: string
+          minLength: 1
           example: Иванов Иван Иванович
-
-    Role:
-      type: string
-      enum: [admin, teacher, student]
 
     User:
       type: object
       required: [id, email, role, full_name, created_at]
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         email:
           type: string
           format: email
@@ -495,7 +767,7 @@ components:
       required: [id, email, full_name, created_at]
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         email:
           type: string
           format: email
@@ -510,33 +782,20 @@ components:
       required: [id, name]
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         name:
           type: string
-        created_at:
-          type: string
-          format: date-time
-        deleted_at:
-          type:
-            - string
-            - 'null'
-          format: date-time
 
     Subject:
       type: object
       required: [id, name, created_at]
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         name:
           type: string
         created_at:
           type: string
-          format: date-time
-        deleted_at:
-          type:
-            - string
-            - 'null'
           format: date-time
 
     NameRequest:
@@ -548,25 +807,56 @@ components:
           type: string
           minLength: 1
 
-    AddTeacherSubjectRequest:
+    AddStudentRequest:
+      type: object
+      additionalProperties: false
+      required: [student_id]
+      properties:
+        student_id:
+          $ref: '#/components/schemas/Id'
+
+    AddSubjectRequest:
       type: object
       additionalProperties: false
       required: [subject_id]
       properties:
         subject_id:
-          type: integer
-          minimum: 1
+          $ref: '#/components/schemas/Id'
+
+    StudentGroup:
+      type: object
+      required: [id, student_id, group_id]
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        student_id:
+          $ref: '#/components/schemas/Id'
+        group_id:
+          $ref: '#/components/schemas/Id'
+
+    SubjectGroup:
+      type: object
+      required: [id, subject_id, group_id]
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        subject_id:
+          $ref: '#/components/schemas/Id'
+        group_id:
+          $ref: '#/components/schemas/Id'
 
     TeacherSubject:
       type: object
-      required: [teacher_id, subject_id]
+      required: [id, teacher_id, subject_id]
       properties:
+        id:
+          $ref: '#/components/schemas/Id'
         teacher_id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         subject_id:
-          type: integer
+          $ref: '#/components/schemas/Id'
 
-    Test:
+    TestBase:
       type: object
       required:
         - id
@@ -576,16 +866,16 @@ components:
         - is_private
         - show_answers
         - show_score
-        - max_attempts
         - created_at
-        - teacher_test_id
       properties:
         id:
-          type: integer
+          $ref: '#/components/schemas/Id'
         title:
           type: string
         subject_id:
-          type: integer
+          oneOf:
+            - $ref: '#/components/schemas/Id'
+            - type: 'null'
         is_active:
           type: boolean
         is_private:
@@ -595,15 +885,45 @@ components:
         show_score:
           type: boolean
         max_attempts:
-          type: integer
+          type:
+            - integer
+            - 'null'
+          minimum: 1
         created_at:
           type: string
           format: date-time
-        teacher_test_id:
-          type: integer
+
+    TeacherTest:
+      allOf:
+        - $ref: '#/components/schemas/TestBase'
+        - type: object
+          required: [teacher_test_id]
+          properties:
+            teacher_test_id:
+              $ref: '#/components/schemas/Id'
+
+    AdminTest:
+      allOf:
+        - $ref: '#/components/schemas/TestBase'
+        - type: object
+          required: [subject_name, created_by, created_by_name]
+          properties:
+            subject_name:
+              type:
+                - string
+                - 'null'
+            created_by:
+              oneOf:
+                - $ref: '#/components/schemas/Id'
+                - type: 'null'
+            created_by_name:
+              type:
+                - string
+                - 'null'
 
     Message:
       type: object
+      required: [message]
       properties:
         message:
           type: string
@@ -611,7 +931,7 @@ components:
     Error:
       type: object
       properties:
-        error:
-          type: string
         message:
+          type: string
+        error:
           type: string
