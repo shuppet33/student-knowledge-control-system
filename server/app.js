@@ -28,7 +28,17 @@ app.use(
 app.use(cookieParser())
 app.use(express.json())
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument))
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(openapiDocument, {
+        customSiteTitle: 'Student Knowledge Control System API',
+        swaggerOptions: {
+            docExpansion: 'list',
+            displayRequestDuration: true,
+        },
+    }),
+)
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)

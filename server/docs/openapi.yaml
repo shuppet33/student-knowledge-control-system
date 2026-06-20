@@ -9,27 +9,23 @@ servers:
   - url: http://localhost:3000
     description: Локальный сервер
 
-security:
-  - bearerAuth: []
-
 tags:
   - name: Auth
     description: Авторизация и управление сессией
   - name: Admin Users
-    description: Управление пользователями администратором
+    description: Защищено сервером — доступ только для роли admin
   - name: Admin Groups
-    description: Управление учебными группами администратором
+    description: Защищено сервером — доступ только для роли admin
   - name: Admin Subjects
-    description: Управление предметами администратором
+    description: Защищено сервером — доступ только для роли admin
   - name: Admin Teachers
-    description: Назначение предметов преподавателям
+    description: Защищено сервером — доступ только для роли admin
   - name: Admin Tests
-    description: Системное управление тестами
+    description: Защищено сервером — доступ только для роли admin
 
 paths:
   /auth/login:
     post:
-      security: []
       tags: [Auth]
       summary: Войти в систему
       operationId: login
@@ -73,7 +69,6 @@ paths:
 
   /auth/refresh:
     post:
-      security: []
       tags: [Auth]
       summary: Обновить access-токен
       operationId: refreshAccessToken
@@ -89,7 +84,6 @@ paths:
 
   /auth/logout:
     post:
-      security: []
       tags: [Auth]
       summary: Выйти из системы
       operationId: logout
@@ -595,12 +589,6 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
   parameters:
     Id:
       name: id
