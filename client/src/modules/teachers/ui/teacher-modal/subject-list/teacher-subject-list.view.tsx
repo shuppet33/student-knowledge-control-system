@@ -5,7 +5,7 @@ import { reatomComponent } from '@reatom/npm-react'
 import { ButtonUI } from '$common/ui/button'
 import { LoaderUI } from '$common/ui/loader'
 
-import { teacherSubjectsResource } from '../../../teachers.service'
+import { deleteTeacherSubjectAsync, teacherSubjectsResource } from '../../../teachers.service'
 import {
     selectedSubjectAtom,
     selectSubjectAction,
@@ -35,6 +35,7 @@ export const TeacherSubjectList = reatomComponent(({ ctx }) => {
                     title={subject.name}
                     active={selectedSubject.id === subject.id}
                     onClick={() => selectSubjectAction(ctx, subject)}
+                    onDelete={() => deleteTeacherSubjectAsync(ctx, subject.id)}
                 >
                     {subject.name}
                 </ButtonUI>
