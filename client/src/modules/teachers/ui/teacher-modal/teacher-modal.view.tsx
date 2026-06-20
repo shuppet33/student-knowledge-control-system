@@ -91,7 +91,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                                         level={5}
                                         className={styles.filtersTitle}
                                     >
-                                        фильтры
+                                        {selectedSubject.name}
                                     </Title>
 
                                     <Space>
