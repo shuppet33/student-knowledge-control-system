@@ -1,5 +1,4 @@
-import { API_ROUTES } from '../api.constants'
-import { apiRequest } from '../api-client.service'
+import { API_URL } from '../api.constants'
 
 import {
     mapCreateSubjectPayloadToDto,
@@ -13,9 +12,16 @@ import type {
 } from './subjects.types'
 
 export const getSubjects = async (): Promise<Subject[]> => {
-    const data = await apiRequest<SubjectDto[]>(
-        API_ROUTES.subjects,
-    )
+    const response = await fetch(`${API_URL}/subjects`, {
+        method: 'GET',
+        credentials: 'include',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения предметов')
+    }
+
+    const data: SubjectDto[] = await response.json()
 
     return subjectsMapper(data)
 }
@@ -23,15 +29,22 @@ export const getSubjects = async (): Promise<Subject[]> => {
 export const createSubject = async (
     payload: CreateSubjectPayload,
 ): Promise<Subject> => {
-    const data = await apiRequest<SubjectDto>(
-        API_ROUTES.subjects,
-        {
-            method: 'POST',
-            body: JSON.stringify(
-                mapCreateSubjectPayloadToDto(payload),
-            ),
+    const response = await fetch(`${API_URL}/subjects`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
         },
-    )
+        body: JSON.stringify(
+            mapCreateSubjectPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка создания предмета')
+    }
+
+    const data: SubjectDto = await response.json()
 
     return subjectMapper(data)
 }

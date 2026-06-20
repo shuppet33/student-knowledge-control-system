@@ -1,5 +1,4 @@
-import { API_ROUTES } from '../api.constants'
-import { apiRequest } from '../api-client.service'
+import { API_URL } from '../api.constants'
 
 import {
     mapCreateTeacherPayloadToDto,
@@ -12,9 +11,16 @@ import type {
 } from './teachers.types'
 
 export const getTeachers = async (): Promise<Teacher[]> => {
-    const data = await apiRequest<TeacherDto[]>(
-        API_ROUTES.teachers,
-    )
+    const response = await fetch(`${API_URL}/teachers`, {
+        method: 'GET',
+        credentials: 'include',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения преподавателей')
+    }
+
+    const data: TeacherDto[] = await response.json()
 
     return teachersMapper(data)
 }
@@ -22,10 +28,18 @@ export const getTeachers = async (): Promise<Teacher[]> => {
 export const createTeacher = async (
     payload: CreateTeacherPayload,
 ): Promise<void> => {
-    await apiRequest(API_ROUTES.users, {
+    const response = await fetch(`${API_URL}/users`, {
         method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(
             mapCreateTeacherPayloadToDto(payload),
         ),
     })
+
+    if (!response.ok) {
+        throw new Error('Ошибка создания преподавателя')
+    }
 }

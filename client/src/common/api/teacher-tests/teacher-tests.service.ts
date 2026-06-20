@@ -1,5 +1,4 @@
-import { API_ROUTES } from '../api.constants'
-import { apiRequest } from '../api-client.service'
+import { API_URL } from '../api.constants'
 
 import { teacherTestsMapper } from './teacher-tests.mapper'
 import type {
@@ -11,9 +10,19 @@ export const getTeacherTests = async (
     teacherId: string,
     subjectId: string,
 ): Promise<TeacherTest[]> => {
-    const data = await apiRequest<TeacherTestDto[]>(
-        API_ROUTES.teacherTests(teacherId, subjectId),
+    const response = await fetch(
+        `${API_URL}/teachers/${teacherId}/subjects/${subjectId}/tests`,
+        {
+            method: 'GET',
+            credentials: 'include',
+        },
     )
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения тестов')
+    }
+
+    const data: TeacherTestDto[] = await response.json()
 
     return teacherTestsMapper(data)
 }

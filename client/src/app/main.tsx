@@ -3,15 +3,12 @@ import { reatomContext } from '@reatom/npm-react'
 
 import { createRoot } from 'react-dom/client'
 
-import { configureAppApiClient } from './api/api-client.config'
 import { App } from './app.view'
 
 import '$common/styles/reset.css'
 
 const ctx = createCtx()
 const rootElement = document.getElementById('root')!
-
-configureAppApiClient(ctx)
 
 const enableMocks = async () => {
     if (import.meta.env.VITE_ENABLE_MOCKS !== 'true') {

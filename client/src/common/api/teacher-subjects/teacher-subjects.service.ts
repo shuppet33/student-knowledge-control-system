@@ -1,5 +1,4 @@
-import { API_ROUTES } from '../api.constants'
-import { apiRequest } from '../api-client.service'
+import { API_URL } from '../api.constants'
 
 import {
     mapAssignSubjectPayloadToDto,
@@ -14,9 +13,21 @@ import type {
 export const getTeacherSubjects = async (
     teacherId: string,
 ): Promise<TeacherSubject[]> => {
-    const data = await apiRequest<TeacherSubjectDto[]>(
-        API_ROUTES.teacherSubjects(teacherId),
+    const response = await fetch(
+        `${API_URL}/teachers/${teacherId}/subjects`,
+        {
+            method: 'GET',
+            credentials: 'include',
+        },
     )
+
+    if (!response.ok) {
+        throw new Error(
+            'Ошибка получения предметов преподавателя',
+        )
+    }
+
+    const data: TeacherSubjectDto[] = await response.json()
 
     return teacherSubjectsMapper(data)
 }
@@ -25,13 +36,40 @@ export const assignSubjectToTeacher = async (
     teacherId: string,
     payload: AssignSubjectPayload,
 ): Promise<void> => {
-    await apiRequest(
-        API_ROUTES.teacherSubjects(teacherId),
+    const response = await fetch(
+        `${API_URL}/teachers/${teacherId}/subjects`,
         {
             method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(
                 mapAssignSubjectPayloadToDto(payload),
             ),
         },
     )
+
+    if (!response.ok) {
+        throw new Error('Ошибка назначения предмета')
+    }
+}
+
+export const deleteTeacherSubject = async (
+    teacherId: string,
+    subjectId: string,
+): Promise<void> => {
+    const response = await fetch(
+        `${API_URL}/teachers/${teacherId}/subjects/${subjectId}`,
+        {
+            method: 'DELETE',
+            credentials: 'include',
+        },
+    )
+
+    if (!response.ok) {
+        throw new Error(
+            'Ошибка удаления предмета у преподавателя',
+        )
+    }
 }

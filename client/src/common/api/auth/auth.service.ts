@@ -1,5 +1,4 @@
-import { API_ROUTES } from '../api.constants'
-import { apiRequest } from '../api-client.service'
+import { API_URL } from '../api.constants'
 
 import { mapAuthDtoToDomain } from './auth.mapper'
 import type { Auth, AuthDto, LoginPayload } from './auth.types'
@@ -7,35 +6,46 @@ import type { Auth, AuthDto, LoginPayload } from './auth.types'
 export const login = async (
     payload: LoginPayload,
 ): Promise<Auth> => {
-    const data = await apiRequest<AuthDto>(
-        API_ROUTES.auth.login,
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            skipAuth: true,
-            skipRefresh: true,
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
         },
-    )
+        body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка авторизации')
+    }
+
+    const data: AuthDto = await response.json()
 
     return mapAuthDtoToDomain(data)
 }
 
 export const refreshSession = async (): Promise<Auth> => {
-    const data = await apiRequest<AuthDto>(
-        API_ROUTES.auth.refresh,
-        {
-            method: 'POST',
-            skipAuth: true,
-            skipRefresh: true,
-        },
-    )
+    const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка обновления сессии')
+    }
+
+    const data: AuthDto = await response.json()
 
     return mapAuthDtoToDomain(data)
 }
 
 export const logout = async (): Promise<void> => {
-    await apiRequest(API_ROUTES.auth.logout, {
+    const response = await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
-        skipRefresh: true,
+        credentials: 'include',
     })
+
+    if (!response.ok) {
+        throw new Error('Ошибка выхода из системы')
+    }
 }
