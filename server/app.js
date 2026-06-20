@@ -1,7 +1,11 @@
+import { readFileSync } from 'node:fs'
+
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import YAML from 'yaml'
 
 import { authRouter } from './routes/auth.routes.js'
 import { groupsRouter } from './routes/groups.routes.js'
@@ -14,6 +18,10 @@ const PORT = 3000
 
 dotenv.config()
 
+const openapiDocument = YAML.parse(
+    readFileSync(new URL('./docs/openapi.yaml', import.meta.url), 'utf8'),
+)
+
 app.use(
     cors({
         origin: 'http://localhost:5173',
@@ -22,6 +30,8 @@ app.use(
 )
 app.use(cookieParser())
 app.use(express.json())
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument))
 
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)

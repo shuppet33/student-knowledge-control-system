@@ -1,0 +1,617 @@
+openapi: 3.1.0
+
+info:
+  title: Student Knowledge Control System API
+  description: API системы контроля знаний студентов
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Локальный сервер
+
+tags:
+  - name: Auth
+    description: Авторизация и управление сессией
+  - name: Users
+    description: Пользователи системы
+  - name: Groups
+    description: Учебные группы
+  - name: Subjects
+    description: Учебные предметы
+  - name: Teachers
+    description: Преподаватели, их предметы и тесты
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Войти в систему
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Авторизация выполнена
+          headers:
+            Set-Cookie:
+              description: HttpOnly cookie с refresh-токеном
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Получить данные авторизованного пользователя
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Данные из access-токена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Обновить access-токен
+      description: Использует refreshToken из HttpOnly cookie
+      operationId: refreshAccessToken
+      responses:
+        '200':
+          description: Новый access-токен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Выйти из системы
+      description: Удаляет refresh-токен и очищает cookie
+      operationId: logout
+      responses:
+        '200':
+          description: Выход выполнен
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Получить пользователей
+      operationId: getUsers
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Users]
+      summary: Создать пользователя
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /users/{id}:
+    delete:
+      tags: [Users]
+      summary: Удалить пользователя
+      description: Выполняет мягкое удаление пользователя
+      operationId: deleteUser
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /groups:
+    get:
+      tags: [Groups]
+      summary: Получить учебные группы
+      operationId: getGroups
+      responses:
+        '200':
+          description: Список групп
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Groups]
+      summary: Создать учебную группу
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameRequest'
+      responses:
+        '201':
+          description: Группа создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /groups/{id}:
+    delete:
+      tags: [Groups]
+      summary: Удалить учебную группу
+      description: Выполняет мягкое удаление группы
+      operationId: deleteGroup
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /subjects:
+    get:
+      tags: [Subjects]
+      summary: Получить предметы
+      operationId: getSubjects
+      responses:
+        '200':
+          description: Список предметов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Subjects]
+      summary: Создать предмет
+      operationId: createSubject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameRequest'
+      responses:
+        '201':
+          description: Предмет создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /subjects/{id}:
+    delete:
+      tags: [Subjects]
+      summary: Удалить предмет
+      description: Выполняет мягкое удаление предмета
+      operationId: deleteSubject
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /teachers:
+    get:
+      tags: [Teachers]
+      summary: Получить преподавателей
+      operationId: getTeachers
+      responses:
+        '200':
+          description: Список преподавателей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Teacher'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /teachers/{id}/subjects:
+    get:
+      tags: [Teachers]
+      summary: Получить предметы преподавателя
+      operationId: getTeacherSubjects
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Список предметов преподавателя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: [Teachers]
+      summary: Назначить предмет преподавателю
+      operationId: addSubjectToTeacher
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTeacherSubjectRequest'
+      responses:
+        '201':
+          description: Связь преподавателя с предметом создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherSubject'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /teachers/{teacherId}/subjects/{subjectId}:
+    delete:
+      tags: [Teachers]
+      summary: Удалить предмет у преподавателя
+      description: Удаляет только связь преподавателя с предметом
+      operationId: removeSubjectFromTeacher
+      parameters:
+        - $ref: '#/components/parameters/TeacherId'
+        - $ref: '#/components/parameters/SubjectId'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessMessage'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /teachers/{teacherId}/subjects/{subjectId}/tests:
+    get:
+      tags: [Teachers]
+      summary: Получить тесты преподавателя по предмету
+      operationId: getTeacherSubjectTests
+      parameters:
+        - $ref: '#/components/parameters/TeacherId'
+        - $ref: '#/components/parameters/SubjectId'
+      responses:
+        '200':
+          description: Список тестов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Идентификатор сущности
+      schema:
+        type: integer
+        minimum: 1
+    TeacherId:
+      name: teacherId
+      in: path
+      required: true
+      description: Идентификатор преподавателя
+      schema:
+        type: integer
+        minimum: 1
+    SubjectId:
+      name: subjectId
+      in: path
+      required: true
+      description: Идентификатор предмета
+      schema:
+        type: integer
+        minimum: 1
+
+  responses:
+    BadRequest:
+      description: Некорректный запрос
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Требуется корректный access-токен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Внутренняя ошибка сервера
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SuccessMessage:
+      description: Операция выполнена
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: teacher@example.com
+        password:
+          type: string
+          format: password
+          example: password
+
+    AuthResponse:
+      type: object
+      required: [role, token]
+      properties:
+        role:
+          $ref: '#/components/schemas/Role'
+        token:
+          type: string
+          description: JWT access-токен
+
+    TokenUser:
+      type: object
+      required: [id, role, email]
+      properties:
+        id:
+          type: integer
+        role:
+          $ref: '#/components/schemas/Role'
+        email:
+          type: string
+          format: email
+        iat:
+          type: integer
+        exp:
+          type: integer
+
+    CreateUserRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password, role, full_name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        role:
+          $ref: '#/components/schemas/Role'
+        full_name:
+          type: string
+          example: Иванов Иван Иванович
+
+    Role:
+      type: string
+      enum: [admin, teacher, student]
+
+    User:
+      type: object
+      required: [id, email, role, full_name, created_at]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/Role'
+        full_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Teacher:
+      type: object
+      required: [id, email, full_name, created_at]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Group:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+
+    Subject:
+      type: object
+      required: [id, name, created_at]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+
+    NameRequest:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    AddTeacherSubjectRequest:
+      type: object
+      additionalProperties: false
+      required: [subject_id]
+      properties:
+        subject_id:
+          type: integer
+          minimum: 1
+
+    TeacherSubject:
+      type: object
+      required: [teacher_id, subject_id]
+      properties:
+        teacher_id:
+          type: integer
+        subject_id:
+          type: integer
+
+    Test:
+      type: object
+      required:
+        - id
+        - title
+        - subject_id
+        - is_active
+        - is_private
+        - show_answers
+        - show_score
+        - max_attempts
+        - created_at
+        - teacher_test_id
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subject_id:
+          type: integer
+        is_active:
+          type: boolean
+        is_private:
+          type: boolean
+        show_answers:
+          type: boolean
+        show_score:
+          type: boolean
+        max_attempts:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        teacher_test_id:
+          type: integer
+
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
