@@ -16,6 +16,8 @@ tags:
     description: Защищено сервером — доступ только для роли admin
   - name: Admin Groups
     description: Защищено сервером — доступ только для роли admin
+  - name: Admin Students
+    description: Защищено сервером — доступ только для роли admin
   - name: Admin Subjects
     description: Защищено сервером — доступ только для роли admin
   - name: Admin Teachers
@@ -361,6 +363,27 @@ paths:
         '500':
           $ref: '#/components/responses/ServerError'
 
+  /admin/students:
+    get:
+      tags: [Admin Students]
+      summary: Получить активных студентов
+      operationId: getStudents
+      responses:
+        '200':
+          description: Список студентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
   /admin/subjects:
     get:
       tags: [Admin Subjects]
@@ -554,13 +577,13 @@ paths:
       operationId: getTests
       responses:
         '200':
-          description: Список тестов
+          description: Тесты, сгруппированные по предметам
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AdminTest'
+                  $ref: '#/components/schemas/AdminTestGroup'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -765,6 +788,21 @@ components:
           type: string
           format: date-time
 
+    Student:
+      type: object
+      required: [id, email, full_name, created_at]
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
     Group:
       type: object
       required: [id, name]
@@ -891,23 +929,61 @@ components:
               $ref: '#/components/schemas/Id'
 
     AdminTest:
-      allOf:
-        - $ref: '#/components/schemas/TestBase'
-        - type: object
-          required: [subject_name, created_by, created_by_name]
-          properties:
-            subject_name:
-              type:
-                - string
-                - 'null'
-            created_by:
-              oneOf:
-                - $ref: '#/components/schemas/Id'
-                - type: 'null'
-            created_by_name:
-              type:
-                - string
-                - 'null'
+      type: object
+      required:
+        - id
+        - title
+        - created_by
+        - created_by_name
+        - is_active
+        - is_private
+        - show_answers
+        - show_score
+        - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        title:
+          type: string
+        created_by:
+          oneOf:
+            - $ref: '#/components/schemas/Id'
+            - type: 'null'
+        created_by_name:
+          type:
+            - string
+            - 'null'
+        is_active:
+          type: boolean
+        is_private:
+          type: boolean
+        show_answers:
+          type: boolean
+        show_score:
+          type: boolean
+        max_attempts:
+          type:
+            - integer
+            - 'null'
+          minimum: 1
+        created_at:
+          type: string
+          format: date-time
+
+    AdminTestGroup:
+      type: object
+      required: [subject_id, subject_name, tests]
+      properties:
+        subject_id:
+          oneOf:
+            - $ref: '#/components/schemas/Id'
+            - type: 'null'
+        subject_name:
+          type: string
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminTest'
 
     Message:
       type: object
