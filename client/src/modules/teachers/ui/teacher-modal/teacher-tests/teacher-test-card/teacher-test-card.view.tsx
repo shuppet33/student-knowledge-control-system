@@ -1,13 +1,17 @@
-import { Button, Card, Flex, Typography } from 'antd'
-import { InfoCircleOutlined } from '@ant-design/icons'
+import { Button, Card, Flex, Popconfirm, Typography } from 'antd'
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
 import { questions } from '../../../../teachers.mock'
-import { toggleTestAction } from '../../../../teachers.state'
-import { expandedTestIdAtom } from '../../../../teachers.state'
+import { deleteTeacherTestAsync } from '../../../../teachers.service'
+import {
+    expandedTestIdAtom,
+    openTestInfoAction,
+    toggleTestAction,
+} from '../../../../teachers.state'
 import { TeacherQuestionList } from '../teacher-question-list/teacher-question-list.view'
 
 import type { TeacherTestCardProps } from './teacher-test-card.types'
@@ -18,6 +22,9 @@ const { Title } = Typography
 
 export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx, test }) => {
     const expandedTestId = ctx.spy(expandedTestIdAtom)
+    const { isPending: isDeleting } = ctx.spy(
+        deleteTeacherTestAsync.statusesAtom,
+    )
 
     const isExpanded = expandedTestId === test.id
 
@@ -43,12 +50,34 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx,
                     {test.title}
                 </Title>
 
-                <Button
-                    icon={<InfoCircleOutlined />}
-                    onClick={(event) => {
-                        event.stopPropagation()
-                    }}
-                />
+                <Flex gap={8}>
+                    <Button
+                        icon={<InfoCircleOutlined />}
+                        onClick={(event) => {
+                            event.stopPropagation()
+                            openTestInfoAction(ctx)
+                        }}
+                    />
+
+                    <Popconfirm
+                        title="Удалить тест?"
+                        description="Тест будет удалён через soft delete."
+                        okText="Удалить"
+                        cancelText="Отмена"
+                        onConfirm={(event) => {
+                            event?.stopPropagation()
+                            return deleteTeacherTestAsync(ctx, test.id)
+                        }}
+                        onCancel={(event) => event?.stopPropagation()}
+                    >
+                        <Button
+                            danger
+                            icon={<DeleteOutlined />}
+                            loading={isDeleting}
+                            onClick={(event) => event.stopPropagation()}
+                        />
+                    </Popconfirm>
+                </Flex>
             </Flex>
 
             {isExpanded && <TeacherQuestionList questions={questions} />}

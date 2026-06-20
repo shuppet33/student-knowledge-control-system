@@ -2,10 +2,10 @@ import { Flex, Input, Select, Space } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
+import { CreateUserPopover } from '$modules/create-user-popover'
 import { TeacherList } from '$modules/teachers/ui/teacher-list'
 import { TeacherModal } from '$modules/teachers/ui/teacher-modal'
 
-import { CreateTeacherPopover } from './ui/create-teacher-popover'
 import { teachersResource } from './teachers.service'
 
 import styles from './teachers.module.css'
@@ -19,7 +19,7 @@ export const TeachersManagement = reatomComponent(({ ctx }) => {
         <>
             <Flex vertical gap={24}>
                 <Space size={16} wrap>
-                    <CreateTeacherPopover />
+                    <CreateUserPopover role="teacher" />
                     <Search
                         placeholder="поиск преподавателя"
                         allowClear

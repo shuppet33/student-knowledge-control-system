@@ -19,13 +19,16 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import {
     closeTeacherModalAction,
+    openSubjectInfoAction,
     selectedSubjectAtom,
     selectedTeacherAtom,
 } from '../../teachers.state'
 import { AddSubjectPopover } from '../add-subject-popover'
 
 import { TeacherSubjectList } from './subject-list/teacher-subject-list.view'
+import { SubjectInfoModal } from './subject-info-modal'
 import { TeacherTests } from './teacher-tests'
+import { TestInfoModal } from './test-info-modal'
 
 import styles from './teacher-modal.module.css'
 
@@ -95,7 +98,12 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                                     </Title>
 
                                     <Space>
-                                        <Button icon={<InfoCircleOutlined />} />
+                                        <Button
+                                            icon={<InfoCircleOutlined />}
+                                            onClick={() =>
+                                                openSubjectInfoAction(ctx)
+                                            }
+                                        />
 
                                         <Button
                                             icon={<CloseOutlined />}
@@ -128,6 +136,9 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                     </Flex>
                 </Content>
             </Layout>
+
+            <SubjectInfoModal />
+            <TestInfoModal />
         </Modal>
     )
 })

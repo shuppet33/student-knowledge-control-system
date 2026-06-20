@@ -1,0 +1,12 @@
+.search {
+    width: 260px;
+}
+
+.testList {
+    display: grid;
+    gap: 16px;
+}
+
+.title {
+    margin: 0 !important;
+}

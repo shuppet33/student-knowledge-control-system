@@ -62,10 +62,12 @@
 
 .container {
     width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
+    padding-inline: 10px;
+    box-sizing: border-box;
 }
 
 .content {
-    padding: 0 10px;
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
 }

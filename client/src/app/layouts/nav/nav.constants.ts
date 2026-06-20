@@ -5,6 +5,7 @@ export const NAV_CONFIG: NavConfig = {
         { label: 'главная', to: '/admin' },
         { label: 'преподаватели', to: '/admin/teachers' },
         { label: 'студенты', to: '/admin/students' },
+        { label: 'предметы', to: '/admin/subjects' },
         { label: 'тесты', to: '/admin/tests' },
     ],
     teacher: [

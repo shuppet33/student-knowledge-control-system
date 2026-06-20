@@ -7,11 +7,6 @@ import {
 
 import type { Teacher } from '$common/api/teachers/teachers.types'
 
-import type {
-    ChangeCreateTeacherFieldPayload,
-    CreateTeacherForm,
-} from './teachers.types'
-
 export const selectedTeacherAtom = atom(
     null as Teacher | null,
     'selectedTeacherAtom',
@@ -24,23 +19,14 @@ export const expandedTestIdAtom = atom(
     null as string | null,
     'expandedTestIdAtom',
 )
+export const isSubjectInfoOpenAtom = atom(false, 'isSubjectInfoOpenAtom')
+export const isTestInfoOpenAtom = atom(false, 'isTestInfoOpenAtom')
 export const isAddSubjectOpenAtom = atom(false, 'isAddSubjectOpenAtom')
 export const selectedNewSubjectIdAtom = atom(
     undefined as string | undefined,
     'selectedNewSubjectIdAtom',
 )
 export const newSubjectNameAtom = atom('', 'newSubjectNameAtom')
-export const isCreateTeacherOpenAtom = atom(false, 'isCreateTeacherOpenAtom')
-export const createTeacherFormAtom = atom<CreateTeacherForm>(
-    {
-        fullName: '',
-        email: '',
-        password: '',
-        repeatPassword: '',
-    },
-    'createTeacherFormAtom',
-)
-
 export const subjectSearchAtom = atom('', 'subjectSearchAtom')
 
 export const changeSubjectSearchAction = action((ctx, value: string) => {
@@ -55,6 +41,8 @@ export const closeTeacherModalAction = action((ctx) => {
     selectedTeacherAtom(ctx, null)
     selectedSubjectAtom(ctx, { id: null, name: null })
     expandedTestIdAtom(ctx, null)
+    isSubjectInfoOpenAtom(ctx, false)
+    isTestInfoOpenAtom(ctx, false)
 }, 'closeTeacherModalAction')
 
 export const selectSubjectAction = action(
@@ -69,6 +57,22 @@ export const toggleTestAction = action((ctx, testId: string) => {
 
     expandedTestIdAtom(ctx, current === testId ? null : testId)
 }, 'toggleTestAction')
+
+export const openSubjectInfoAction = action((ctx) => {
+    isSubjectInfoOpenAtom(ctx, true)
+}, 'openSubjectInfoAction')
+
+export const closeSubjectInfoAction = action((ctx) => {
+    isSubjectInfoOpenAtom(ctx, false)
+}, 'closeSubjectInfoAction')
+
+export const openTestInfoAction = action((ctx) => {
+    isTestInfoOpenAtom(ctx, true)
+}, 'openTestInfoAction')
+
+export const closeTestInfoAction = action((ctx) => {
+    isTestInfoOpenAtom(ctx, false)
+}, 'closeTestInfoAction')
 
 export const openAddSubjectAction = action((ctx) => {
     isAddSubjectOpenAtom(ctx, true)
@@ -94,29 +98,3 @@ export const changeNewSubjectNameAction = action((ctx, value: string) => {
     newSubjectNameAtom(ctx, value)
     selectedNewSubjectIdAtom(ctx, undefined)
 }, 'changeNewSubjectNameAction')
-
-export const openCreateTeacherAction = action((ctx) => {
-    isCreateTeacherOpenAtom(ctx, true)
-}, 'openCreateTeacherAction')
-
-export const closeCreateTeacherAction = action((ctx) => {
-    isCreateTeacherOpenAtom(ctx, false)
-    createTeacherFormAtom(ctx, {
-        fullName: '',
-        email: '',
-        password: '',
-        repeatPassword: '',
-    })
-}, 'closeCreateTeacherAction')
-
-export const changeCreateTeacherFieldAction = action(
-    (ctx, payload: ChangeCreateTeacherFieldPayload) => {
-        const form = ctx.get(createTeacherFormAtom)
-
-        createTeacherFormAtom(ctx, {
-            ...form,
-            [payload.field]: payload.value,
-        })
-    },
-    'changeCreateTeacherFieldAction',
-)

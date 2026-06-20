@@ -9,23 +9,19 @@ import {
     withStatusesAtom,
 } from '@reatom/framework'
 
+import { teacherCreatedAction } from '$modules/create-user-popover/create-user-popover.service'
+
+import { createSubject, getSubjects } from '$common/api/subjects/subjects.service'
 import {
-    createSubject,
-    getSubjects,
-} from '$common/api/subjects/subjects.service'
-import {
-    assignSubjectToTeacher, deleteTeacherSubject,
+    assignSubjectToTeacher,
+    deleteTeacherSubject,
     getTeacherSubjects,
 } from '$common/api/teacher-subjects/teacher-subjects.service'
 import { getTeacherTests } from '$common/api/teacher-tests/teacher-tests.service'
-import {
-    createTeacher,
-    getTeachers,
-} from '$common/api/teachers/teachers.service'
+import { getTeachers } from '$common/api/teachers/teachers.service'
+import { deleteTest } from '$common/api/tests/tests.service'
 
 import {
-    closeCreateTeacherAction,
-    createTeacherFormAtom,
     newSubjectNameAtom,
     selectedNewSubjectIdAtom,
     selectedSubjectAtom,
@@ -33,33 +29,17 @@ import {
 } from './teachers.state'
 
 export const teachersResource = reatomResource(async (ctx) => {
-    ctx.spy(createTeacherAsync.onFulfill)
+    ctx.spy(teacherCreatedAction)
 
     return await getTeachers()
 }, 'teachersResource').pipe(withDataAtom([]), withStatusesAtom())
-
-export const createTeacherAsync = reatomAsync(async (ctx) => {
-    const form = ctx.get(createTeacherFormAtom)
-
-    if (form.password !== form.repeatPassword) {
-        throw new Error('пароли не совпадают')
-    }
-
-    await createTeacher({
-        fullName: form.fullName,
-        email: form.email,
-        password: form.password,
-    })
-
-    closeCreateTeacherAction(ctx)
-}, 'createTeacherAsync')
 
 export const teacherSubjectsResource = reatomResource(async (ctx) => {
     ctx.spy(deleteTeacherSubjectAsync.onFulfill)
     ctx.spy(assignSubjectToTeacherAsync.onFulfill)
     ctx.spy(createSubjectAndAssignAsync.onFulfill)
 
-    const teacher = ctx.get(selectedTeacherAtom)
+    const teacher = ctx.spy(selectedTeacherAtom)
 
     if (!teacher) {
         return []
@@ -74,33 +54,39 @@ export const subjectsResource = reatomResource(async (ctx) => {
     return await getSubjects()
 }, 'subjectsResource').pipe(withDataAtom([]), withStatusesAtom())
 
-export const assignSubjectToTeacherAsync = reatomAsync(async (ctx) => {
-    const teacher = ctx.get(selectedTeacherAtom)
-    const subjectId = ctx.get(selectedNewSubjectIdAtom)
+export const assignSubjectToTeacherAsync = reatomAsync((ctx) => {
+    return ctx.schedule(async () => {
+        const teacher = ctx.get(selectedTeacherAtom)
+        const subjectId = ctx.get(selectedNewSubjectIdAtom)
 
-    if (!teacher || !subjectId) {
-        return
-    }
+        if (!teacher || !subjectId) {
+            return
+        }
 
-    await assignSubjectToTeacher(teacher.id, { subjectId })
+        await assignSubjectToTeacher(teacher.id, { subjectId })
+    })
 }, 'assignSubjectToTeacherAsync').pipe(withStatusesAtom(), withErrorAtom())
 
-export const createSubjectAndAssignAsync = reatomAsync(async (ctx) => {
-    const teacher = ctx.get(selectedTeacherAtom)
-    const name = ctx.get(newSubjectNameAtom)
+export const createSubjectAndAssignAsync = reatomAsync((ctx) => {
+    return ctx.schedule(async () => {
+        const teacher = ctx.get(selectedTeacherAtom)
+        const name = ctx.get(newSubjectNameAtom)
 
-    if (!teacher || !name.trim()) {
-        return
-    }
+        if (!teacher || !name.trim()) {
+            return
+        }
 
-    const subject = await createSubject({ name })
+        const subject = await createSubject({ name })
 
-    await assignSubjectToTeacher(teacher.id, {
-        subjectId: subject.id,
+        await assignSubjectToTeacher(teacher.id, {
+            subjectId: subject.id,
+        })
     })
 }, 'createSubjectAndAssignAsync').pipe(withStatusesAtom(), withErrorAtom())
 
 export const teacherTestsResource = reatomResource(async (ctx) => {
+    ctx.spy(deleteTeacherTestAsync.onFulfill)
+
     const teacher = ctx.spy(selectedTeacherAtom)
     const subject = ctx.spy(selectedSubjectAtom)
 
@@ -109,13 +95,20 @@ export const teacherTestsResource = reatomResource(async (ctx) => {
     }
 
     return await getTeacherTests(teacher.id, subject.id)
-}, 'teacherTestsResource').pipe(
-    withCache(),
-    withDataAtom([]),
-    withStatusesAtom(),
-)
+}, 'teacherTestsResource').pipe(withCache(), withDataAtom([]), withStatusesAtom())
 
-export const deleteTeacherSubjectAsync = reatomAsync((ctx, subjectId: string ) => {
+export const deleteTeacherTestAsync = reatomAsync(
+    (ctx, testId: string) => {
+        return ctx.schedule(async () => {
+            await deleteTest(testId)
+
+            return testId
+        })
+    },
+    'deleteTeacherTestAsync',
+).pipe(withStatusesAtom(), withErrorAtom())
+
+export const deleteTeacherSubjectAsync = reatomAsync((ctx, subjectId: string) => {
     return ctx.schedule(async () => {
         const teacher = ctx.get(selectedTeacherAtom)
 
@@ -131,5 +124,13 @@ deleteTeacherSubjectAsync.onReject.onCall((_ctx, error) => {
     notification.error({
         title: 'Ошибка удаления предмета',
         description: error instanceof Error ? error.message : 'Неизвестная ошибка',
+    })
+})
+
+deleteTeacherTestAsync.onReject.onCall((_ctx, error) => {
+    notification.error({
+        title: 'Ошибка удаления теста',
+        description:
+            error instanceof Error ? error.message : 'Неизвестная ошибка',
     })
 })
