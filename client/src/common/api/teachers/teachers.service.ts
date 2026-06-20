@@ -1,4 +1,4 @@
-import { API_URL } from '../api.constants'
+import { apiFetch } from '../api.client'
 
 import {
     mapCreateTeacherPayloadToDto,
@@ -11,9 +11,8 @@ import type {
 } from './teachers.types'
 
 export const getTeachers = async (): Promise<Teacher[]> => {
-    const response = await fetch(`${API_URL}/teachers`, {
+    const response = await apiFetch('/admin/teachers', {
         method: 'GET',
-        credentials: 'include',
     })
 
     if (!response.ok) {
@@ -28,9 +27,8 @@ export const getTeachers = async (): Promise<Teacher[]> => {
 export const createTeacher = async (
     payload: CreateTeacherPayload,
 ): Promise<void> => {
-    const response = await fetch(`${API_URL}/users`, {
+    const response = await apiFetch('/admin/users', {
         method: 'POST',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },

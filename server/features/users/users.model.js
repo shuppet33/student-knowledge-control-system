@@ -59,8 +59,12 @@ export const usersModel = {
             UPDATE users
             SET deleted_at = NOW()
             WHERE id = $1
+                AND deleted_at IS NULL
+            RETURNING id
         `
 
-        await db.query(query, [id])
+        const { rows } = await db.query(query, [id])
+
+        return rows[0]
     },
 }

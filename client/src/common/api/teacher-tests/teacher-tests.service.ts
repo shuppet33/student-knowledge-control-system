@@ -1,4 +1,4 @@
-import { API_URL } from '../api.constants'
+import { apiFetch } from '../api.client'
 
 import { teacherTestsMapper } from './teacher-tests.mapper'
 import type {
@@ -10,11 +10,10 @@ export const getTeacherTests = async (
     teacherId: string,
     subjectId: string,
 ): Promise<TeacherTest[]> => {
-    const response = await fetch(
-        `${API_URL}/teachers/${teacherId}/subjects/${subjectId}/tests`,
+    const response = await apiFetch(
+        `/admin/teachers/${teacherId}/subjects/${subjectId}/tests`,
         {
             method: 'GET',
-            credentials: 'include',
         },
     )
 

@@ -65,14 +65,29 @@ export const teachersController = {
                 })
             }
 
-            const existingRelation =
-                await teachersModel.getTeacherSubjectRelation({
+            const [teacher, subject, existingRelation] = await Promise.all([
+                teachersModel.getTeacherById(id),
+                teachersModel.getSubjectById(subject_id),
+                teachersModel.getTeacherSubjectRelation({
                     teacher_id: id,
                     subject_id,
+                }),
+            ])
+
+            if (!teacher) {
+                return res.status(404).json({
+                    message: 'Активный пользователь с ролью teacher не найден',
                 })
+            }
+
+            if (!subject) {
+                return res.status(404).json({
+                    message: 'Предмет не найден',
+                })
+            }
 
             if (existingRelation) {
-                return res.status(400).json({
+                return res.status(409).json({
                     message: 'Предмет уже назначен преподавателю',
                 })
             }
@@ -96,10 +111,16 @@ export const teachersController = {
         try {
             const { teacherId, subjectId } = req.params
 
-            await teachersModel.removeSubjectFromTeacher({
+            const relation = await teachersModel.removeSubjectFromTeacher({
                 teacher_id: teacherId,
                 subject_id: subjectId,
             })
+
+            if (!relation) {
+                return res.status(404).json({
+                    message: 'Предмет не назначен этому преподавателю',
+                })
+            }
 
             return res.json({
                 message: 'Предмет отвязан от преподавателя',

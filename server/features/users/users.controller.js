@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt'
 
 import { usersModel } from './users.model.js'
 
+const USER_ROLES = new Set(['admin', 'teacher', 'student'])
+
 export const usersController = {
     async getUsers(req, res) {
         try {
@@ -31,7 +33,23 @@ export const usersController = {
                 })
             }
 
-            const existingUser = await usersModel.getUserByEmail(email)
+            if (!USER_ROLES.has(role)) {
+                return res.status(400).json({
+                    message: 'Роль должна быть admin, teacher или student',
+                })
+            }
+
+            const normalizedEmail = email.trim().toLowerCase()
+            const normalizedFullName = full_name.trim()
+
+            if (!normalizedEmail || !normalizedFullName) {
+                return res.status(400).json({
+                    message: 'Email и ФИО не могут быть пустыми',
+                })
+            }
+
+            const existingUser =
+                await usersModel.getUserByEmail(normalizedEmail)
 
             if (existingUser) {
                 return res.status(400).json({
@@ -42,10 +60,10 @@ export const usersController = {
             const password_hash = await bcrypt.hash(password, 10)
 
             const user = await usersModel.createUser({
-                email,
+                email: normalizedEmail,
                 password_hash,
                 role,
-                full_name,
+                full_name: normalizedFullName,
             })
 
             return res.status(201).json(user)
@@ -61,7 +79,13 @@ export const usersController = {
         try {
             const { id } = req.params
 
-            await usersModel.deleteUser(id)
+            const user = await usersModel.deleteUser(id)
+
+            if (!user) {
+                return res.status(404).json({
+                    message: 'Пользователь не найден',
+                })
+            }
 
             return res.json({
                 message: 'Пользователь удален',

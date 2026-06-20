@@ -1,4 +1,4 @@
-import { API_URL } from '../api.constants'
+import { apiFetch } from '../api.client'
 
 import {
     mapCreateSubjectPayloadToDto,
@@ -12,9 +12,8 @@ import type {
 } from './subjects.types'
 
 export const getSubjects = async (): Promise<Subject[]> => {
-    const response = await fetch(`${API_URL}/subjects`, {
+    const response = await apiFetch('/admin/subjects', {
         method: 'GET',
-        credentials: 'include',
     })
 
     if (!response.ok) {
@@ -29,9 +28,8 @@ export const getSubjects = async (): Promise<Subject[]> => {
 export const createSubject = async (
     payload: CreateSubjectPayload,
 ): Promise<Subject> => {
-    const response = await fetch(`${API_URL}/subjects`, {
+    const response = await apiFetch('/admin/subjects', {
         method: 'POST',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },

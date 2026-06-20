@@ -29,13 +29,31 @@ export const subjectsModel = {
         return rows[0]
     },
 
+    async getSubjectByName(name) {
+        const query = `
+            SELECT id, name
+            FROM subjects
+            WHERE LOWER(name) = LOWER($1)
+                AND deleted_at IS NULL
+            LIMIT 1
+        `
+
+        const { rows } = await db.query(query, [name])
+
+        return rows[0]
+    },
+
     async deleteSubject(id) {
         const query = `
             UPDATE subjects
             SET deleted_at = NOW()
             WHERE id = $1
+                AND deleted_at IS NULL
+            RETURNING id
         `
 
-        await db.query(query, [id])
+        const { rows } = await db.query(query, [id])
+
+        return rows[0]
     },
 }

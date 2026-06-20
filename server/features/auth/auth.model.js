@@ -3,10 +3,31 @@ import {db} from "../../db/connect.js";
 export const authModel = {
     async getUserByEmail(email) {
         const { rows } = await db.query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]
+            `
+                SELECT *
+                FROM users
+                WHERE email = $1
+                    AND deleted_at IS NULL
+                LIMIT 1
+            `,
+            [email],
         );
         return rows[0];
+    },
+
+    async getUserById(id) {
+        const { rows } = await db.query(
+            `
+                SELECT id, email, role, full_name
+                FROM users
+                WHERE id = $1
+                    AND deleted_at IS NULL
+                LIMIT 1
+            `,
+            [id],
+        )
+
+        return rows[0]
     },
 
     async createRefreshToken({ userId, tokenHash, expiresAt }) {

@@ -14,7 +14,9 @@ export const authController = {
         }
 
         try {
-            const user = await authModel.getUserByEmail(email)
+            const user = await authModel.getUserByEmail(
+                email.trim().toLowerCase(),
+            )
 
             if (!user) {
                 return clientError(res, 'user not found')
@@ -77,6 +79,11 @@ export const authController = {
             const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
 
             const tokens = await authModel.getRefreshTokensByUser(payload.id)
+            const user = await authModel.getUserById(payload.id)
+
+            if (!user) {
+                return clientError(res, 'Пользователь не найден или удалён')
+            }
 
             let valid = false
 
@@ -93,15 +100,15 @@ export const authController = {
 
             const accessToken = jwt.sign(
                 {
-                    id: payload.id,
-                    role: payload.role,
-                    email: payload.email,
+                    id: user.id,
+                    role: user.role,
+                    email: user.email,
                 },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' },
             )
 
-            return res.json({ token: accessToken, role: payload.role })
+            return res.json({ token: accessToken, role: user.role })
         } catch {
             return clientError(res, 'Refresh токен невалиден')
         }

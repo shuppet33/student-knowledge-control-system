@@ -37,6 +37,33 @@ export const teachersModel = {
 
         return rows
     },
+    async getTeacherById(id) {
+        const query = `
+            SELECT id, email, full_name
+            FROM users
+            WHERE id = $1
+                AND role = 'teacher'
+                AND deleted_at IS NULL
+            LIMIT 1
+        `
+
+        const { rows } = await db.query(query, [id])
+
+        return rows[0]
+    },
+    async getSubjectById(id) {
+        const query = `
+            SELECT id, name
+            FROM subjects
+            WHERE id = $1
+                AND deleted_at IS NULL
+            LIMIT 1
+        `
+
+        const { rows } = await db.query(query, [id])
+
+        return rows[0]
+    },
     async getTeacherSubjectRelation({ teacher_id, subject_id }) {
         const query = `
         SELECT *
@@ -104,10 +131,13 @@ export const teachersModel = {
             DELETE FROM teacher_subjects
             WHERE teacher_id = $1
                 AND subject_id = $2
+            RETURNING id
         `
 
         const values = [teacher_id, subject_id]
 
-        await db.query(query, values)
+        const { rows } = await db.query(query, values)
+
+        return rows[0]
     },
 }

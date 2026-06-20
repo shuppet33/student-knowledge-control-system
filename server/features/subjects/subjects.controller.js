@@ -24,7 +24,25 @@ export const subjectsController = {
                 })
             }
 
-            const subject = await subjectsModel.createSubject(name)
+            const normalizedName = name.trim()
+
+            if (!normalizedName) {
+                return res.status(400).json({
+                    message: 'Название предмета не может быть пустым',
+                })
+            }
+
+            const existingSubject =
+                await subjectsModel.getSubjectByName(normalizedName)
+
+            if (existingSubject) {
+                return res.status(409).json({
+                    message: 'Предмет с таким названием уже существует',
+                })
+            }
+
+            const subject =
+                await subjectsModel.createSubject(normalizedName)
 
             return res.status(201).json(subject)
         } catch (error) {
@@ -39,7 +57,13 @@ export const subjectsController = {
         try {
             const { id } = req.params
 
-            await subjectsModel.deleteSubject(id)
+            const subject = await subjectsModel.deleteSubject(id)
+
+            if (!subject) {
+                return res.status(404).json({
+                    message: 'Предмет не найден',
+                })
+            }
 
             return res.json({
                 message: 'Предмет удален',
