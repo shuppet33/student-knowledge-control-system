@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router'
 
 import { AdminPage } from '$pages/admin/admin.view'
 import { AdminStudentsPage } from '$pages/admin/students/students.view'
+import { AdminSubjectDetailsPage } from '$pages/admin/subject-details/subject-details.view'
 import { AdminSubjectsPage } from '$pages/admin/subjects/subjects.view'
 import { AdminTeachersPage } from '$pages/admin/teachers/teachers.view'
 import { AdminTestsPage } from '$pages/admin/tests/tests.view'
@@ -30,6 +31,10 @@ export const AppRouter = () => {
                 <Route path="teachers" element={<AdminTeachersPage />} />
                 <Route path="students" element={<AdminStudentsPage />} />
                 <Route path="subjects" element={<AdminSubjectsPage />} />
+                <Route
+                    path="subjects/:subjectId"
+                    element={<AdminSubjectDetailsPage />}
+                />
                 <Route path="tests" element={<AdminTestsPage />} />
             </Route>
 

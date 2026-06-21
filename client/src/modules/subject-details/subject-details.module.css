@@ -1,0 +1,221 @@
+.layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+}
+
+.sidebar {
+    flex: 0 0 273px;
+    width: 273px;
+    min-height: 632px;
+    padding: 20px;
+
+    border: 2px solid #dee7f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.sectionTitle {
+    display: block;
+    margin-bottom: 10px;
+
+    color: #7c90a3;
+    font-size: 14px;
+}
+
+.nameInput {
+    width: 233px;
+    height: 153px !important;
+    padding: 15px;
+
+    border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+}
+
+.relationList {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    min-height: 66px;
+    max-height: 100px;
+    margin-bottom: 12px;
+    padding: 10px;
+
+    overflow-y: auto;
+
+    border: 2px solid #dee7f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.relationItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    max-width: 100%;
+    height: 24px;
+    padding: 0 6px;
+
+    border: 0;
+    border-radius: 6px;
+    background: #f0f0f0;
+
+    color: #25384a;
+    font-size: 14px;
+    line-height: 24px;
+    box-sizing: border-box;
+}
+
+.relationItem span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.relationDelete {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 14px;
+    height: 14px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #7c90a3;
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    min-height: 632px;
+}
+
+.overlay {
+    position: fixed;
+    z-index: 98;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.popoverWrapper {
+    position: relative;
+    z-index: 99;
+}
+
+.popoverCard {
+    position: absolute;
+    z-index: 1002;
+    top: 120%;
+    left: 0;
+
+    width: 360px;
+    height: 330px;
+    overflow: hidden;
+}
+
+.selectedItems {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    height: 76px;
+    padding: 10px;
+    overflow-y: auto;
+
+    border: 2px solid #dee7f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.selectedItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    max-width: 100%;
+    height: 24px;
+    padding: 0 6px;
+
+    border-radius: 6px;
+    background: #f0f0f0;
+
+    color: #25384a;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.selectedItem span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.selectedItem button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 14px;
+    height: 14px;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+    color: #7c90a3;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.optionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    height: 138px;
+    overflow-y: auto;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 30px;
+    padding: 6px 10px;
+
+    border: 1px solid #dee7f0;
+    border-radius: 8px;
+    background: #fff;
+
+    cursor: pointer;
+}
+
+.option span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.option:hover {
+    border-color: #1677ff;
+}

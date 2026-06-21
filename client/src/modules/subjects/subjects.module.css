@@ -2,10 +2,38 @@
     width: 260px;
 }
 
-.card {
-    width: 180px;
+.list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
 }
 
-.title {
-    margin: 0 !important;
+.activeButton,
+.activeButton:hover,
+.activeButton:active,
+.activeButton:focus {
+    pointer-events: none;
+}
+
+.overlay {
+    position: fixed;
+    z-index: 98;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.createWrapper {
+    position: relative;
+    z-index: 99;
+}
+
+.createCard {
+    position: absolute;
+    z-index: 1002;
+    top: 120%;
+    left: 0;
+
+    width: 420px;
 }

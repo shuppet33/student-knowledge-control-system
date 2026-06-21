@@ -370,13 +370,13 @@ paths:
       operationId: getStudents
       responses:
         '200':
-          description: Список студентов
+          description: Студенты, сгруппированные по учебным группам
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Student'
+                  $ref: '#/components/schemas/StudentsByGroup'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -433,6 +433,56 @@ paths:
           $ref: '#/components/responses/ServerError'
 
   /admin/subjects/{id}:
+    get:
+      tags: [Admin Subjects]
+      summary: Получить предмет
+      operationId: getSubject
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Данные предмета
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      tags: [Admin Subjects]
+      summary: Изменить название предмета
+      operationId: updateSubject
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NameRequest'
+      responses:
+        '200':
+          description: Предмет обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
     delete:
       tags: [Admin Subjects]
       summary: Выполнить soft delete предмета
@@ -442,6 +492,56 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SuccessMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/subjects/{id}/groups:
+    get:
+      tags: [Admin Subjects]
+      summary: Получить группы предмета
+      operationId: getSubjectGroups
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Группы, которым доступен предмет
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/subjects/{id}/teachers:
+    get:
+      tags: [Admin Subjects]
+      summary: Получить преподавателей предмета
+      operationId: getSubjectTeachers
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Преподаватели, назначенные на предмет
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Teacher'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -802,6 +902,22 @@ components:
         created_at:
           type: string
           format: date-time
+
+    StudentsByGroup:
+      type: object
+      required: [group_id, group_name, students]
+      properties:
+        group_id:
+          oneOf:
+            - $ref: '#/components/schemas/Id'
+            - type: 'null'
+        group_name:
+          type: string
+          example: Нет группы
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/Student'
 
     Group:
       type: object

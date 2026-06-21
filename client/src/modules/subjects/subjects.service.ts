@@ -8,6 +8,7 @@ import {
 
 import {
     createSubject,
+    deleteSubject,
     getSubjects,
 } from '$common/api/subjects/subjects.service'
 
@@ -34,6 +35,18 @@ export const createSubjectAsync = reatomAsync((ctx) => {
 
 export const subjectsResource = reatomResource(async (ctx) => {
     ctx.spy(createSubjectAsync.onFulfill)
+    ctx.spy(deleteSubjectAsync.onFulfill)
 
     return await getSubjects()
 }, 'adminSubjectsResource').pipe(withDataAtom([]), withStatusesAtom())
+
+export const deleteSubjectAsync = reatomAsync(
+    (ctx, subjectId: string) => {
+        return ctx.schedule(async () => {
+            await deleteSubject(subjectId)
+
+            return subjectId
+        })
+    },
+    'deleteAdminSubjectAsync',
+).pipe(withStatusesAtom(), withErrorAtom())

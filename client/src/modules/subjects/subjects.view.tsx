@@ -5,16 +5,19 @@ import {
     Empty,
     Flex,
     Input,
-    Modal,
     Spin,
-    Typography,
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
+import { useNavigate } from 'react-router'
+
+import { EntityCard } from '$common/ui/entity-card'
+
 import {
     createSubjectAsync,
+    deleteSubjectAsync,
     subjectsResource,
 } from './subjects.service'
 import {
@@ -28,9 +31,9 @@ import {
 import styles from './subjects.module.css'
 
 const { Search } = Input
-const { Title } = Typography
 
 export const SubjectsManagement = reatomComponent(({ ctx }) => {
+    const navigate = useNavigate()
     const subjects = ctx.spy(subjectsResource.dataAtom)
     const isCreateOpen = ctx.spy(isCreateSubjectOpenAtom)
     const newSubjectName = ctx.spy(newSubjectNameAtom)
@@ -46,13 +49,72 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
         <>
             <Flex vertical gap={24}>
                 <Flex gap={16} wrap>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={() => openCreateSubjectAction(ctx)}
-                    >
-                        добавить
-                    </Button>
+                    {isCreateOpen && (
+                        <div
+                            className={styles.overlay}
+                            onClick={() => closeCreateSubjectAction(ctx)}
+                        />
+                    )}
+
+                    <div className={styles.createWrapper}>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            className={
+                                isCreateOpen
+                                    ? styles.activeButton
+                                    : undefined
+                            }
+                            onClick={
+                                isCreateOpen
+                                    ? undefined
+                                    : () => openCreateSubjectAction(ctx)
+                            }
+                        >
+                            добавить
+                        </Button>
+
+                        {isCreateOpen && (
+                            <Card className={styles.createCard}>
+                                <Flex vertical gap={16}>
+                                    <Input
+                                        autoFocus
+                                        placeholder="название предмета"
+                                        value={newSubjectName}
+                                        disabled={isCreatingSubject}
+                                        onChange={(event) =>
+                                            changeNewSubjectNameAction(
+                                                ctx,
+                                                event.target.value,
+                                            )
+                                        }
+                                        onPressEnter={() =>
+                                            createSubjectAsync(ctx)
+                                        }
+                                    />
+
+                                    {createError && (
+                                        <Alert
+                                            type="error"
+                                            showIcon
+                                            title={createError.message}
+                                        />
+                                    )}
+
+                                    <Button
+                                        type="primary"
+                                        loading={isCreatingSubject}
+                                        disabled={!newSubjectName.trim()}
+                                        onClick={() =>
+                                            createSubjectAsync(ctx)
+                                        }
+                                    >
+                                        добавить
+                                    </Button>
+                                </Flex>
+                            </Card>
+                        )}
+                    </div>
 
                     <Search
                         allowClear
@@ -66,66 +128,22 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                 ) : subjects.length === 0 ? (
                     <Empty description="Предметы не найдены" />
                 ) : (
-                    <Flex wrap gap={16}>
+                    <div className={styles.list}>
                         {subjects.map((subject) => (
-                            <Card
+                            <EntityCard
                                 key={subject.id}
-                                hoverable
-                                size="small"
-                                className={styles.card}
-                            >
-                                <Title
-                                    level={5}
-                                    className={styles.title}
-                                >
-                                    {subject.name}
-                                </Title>
-                            </Card>
+                                title={subject.name}
+                                onClick={() =>
+                                    navigate(`/admin/subjects/${subject.id}`)
+                                }
+                                onDelete={() =>
+                                    deleteSubjectAsync(ctx, subject.id)
+                                }
+                            />
                         ))}
-                    </Flex>
+                    </div>
                 )}
             </Flex>
-
-            <Modal
-                title="Добавить предмет"
-                open={isCreateOpen}
-                onCancel={() => closeCreateSubjectAction(ctx)}
-                footer={null}
-                destroyOnHidden
-            >
-                <Flex vertical gap={16}>
-                    <Input
-                        autoFocus
-                        placeholder="название предмета"
-                        value={newSubjectName}
-                        disabled={isCreatingSubject}
-                        onChange={(event) =>
-                            changeNewSubjectNameAction(
-                                ctx,
-                                event.target.value,
-                            )
-                        }
-                        onPressEnter={() => createSubjectAsync(ctx)}
-                    />
-
-                    {createError && (
-                        <Alert
-                            type="error"
-                            showIcon
-                            title={createError.message}
-                        />
-                    )}
-
-                    <Button
-                        type="primary"
-                        loading={isCreatingSubject}
-                        disabled={!newSubjectName.trim()}
-                        onClick={() => createSubjectAsync(ctx)}
-                    >
-                        добавить
-                    </Button>
-                </Flex>
-            </Modal>
         </>
     )
 })
