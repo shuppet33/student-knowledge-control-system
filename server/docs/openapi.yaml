@@ -1039,10 +1039,18 @@ components:
       allOf:
         - $ref: '#/components/schemas/TestBase'
         - type: object
-          required: [teacher_test_id]
+          required: [teacher_test_id, created_by, created_by_name]
           properties:
             teacher_test_id:
               $ref: '#/components/schemas/Id'
+            created_by:
+              oneOf:
+                - $ref: '#/components/schemas/Id'
+                - type: 'null'
+            created_by_name:
+              type:
+                - string
+                - 'null'
 
     AdminTest:
       type: object

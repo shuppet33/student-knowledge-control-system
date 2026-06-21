@@ -11,6 +11,8 @@ export const teacherTestsMapper = (tests: TeacherTestDto[]): TeacherTest[] => {
         showScore: test.show_score,
         maxAttempts: test.max_attempts,
         teacherTestId: test.teacher_test_id,
+        createdBy: test.created_by,
+        createdByName: test.created_by_name,
         createdAt: test.created_at,
     }))
 }

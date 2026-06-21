@@ -110,16 +110,17 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                     /> */}
 
                     <Select
+                        suffixIcon={false}
                         mode="multiple"
                         className={styles.relationSelect}
                         virtual
+                        styles={{content: {
+                                maxHeight: '116px',
+                                overflowY: 'auto',
+                                boxSizing: 'border-box',
+                                width: '100%',
+                            }}}
                         showSearch={{ optionFilterProp: 'label' }}
-                        style={{
-                            maxHeight: '100px',
-                            overflowY: 'auto',
-                            boxSizing: 'border-box',
-                            width: '100%',
-                        }}
                         placeholder="Выберите группы"
                         value={selectedGroupIds}
                         loading={isSavingGroups}
@@ -167,8 +168,9 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                     /> */}
 
                     <Select
+                        suffixIcon={false}
                         styles={{content: {
-                                maxHeight: '118px',
+                                maxHeight: '116px',
                                 overflowY: 'auto',
                                 boxSizing: 'border-box',
                                 width: '100%',
@@ -177,11 +179,6 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                         className={styles.relationSelect}
                         showSearch={{ optionFilterProp: 'label' }}
                         virtual
-                        style={{
-                            maxHeight: '120px',
-                            boxSizing: 'border-box',
-                            width: '100%',
-                        }}
                         placeholder="Выберите преподавателей"
                         value={selectedTeacherIds}
                         loading={isSavingTeachers}

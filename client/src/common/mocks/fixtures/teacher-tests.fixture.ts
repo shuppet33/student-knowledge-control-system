@@ -11,6 +11,8 @@ export const teacherTestsFixture: TeacherTestDto[] = [
         show_score: true,
         max_attempts: 3,
         teacher_test_id: 'teacher-test-1',
+        created_by: 'teacher-1',
+        created_by_name: 'Карташова Кира Александровна',
         created_at: '2026-01-03T00:00:00.000Z',
     },
 ]

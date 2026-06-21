@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Popconfirm, Typography } from 'antd'
+import { Button, Card, Flex, Popconfirm, Tag, Typography } from 'antd'
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
@@ -18,7 +18,7 @@ import type { TeacherTestCardProps } from './teacher-test-card.types'
 
 import styles from './teacher-test-card.module.css'
 
-const { Title } = Typography
+const { Text, Title } = Typography
 
 export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx, test }) => {
     const expandedTestId = ctx.spy(expandedTestIdAtom)
@@ -43,12 +43,23 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx,
                 align="center"
                 className={styles.header}
             >
-                <Title
-                    level={4}
-                    className={styles.title}
-                >
-                    {test.title}
-                </Title>
+                <Flex vertical gap={6}>
+                    <Title
+                        level={4}
+                        className={styles.title}
+                    >
+                        {test.title}
+                    </Title>
+
+                    <Flex align="center" gap={6}>
+                        <Tag color="green" className={styles.usageTag}>
+                            используется
+                        </Tag>
+                        <Text type="secondary" className={styles.author}>
+                            Автор: {test.createdByName ?? 'не указан'}
+                        </Text>
+                    </Flex>
+                </Flex>
 
                 <Flex gap={8}>
                     <Button

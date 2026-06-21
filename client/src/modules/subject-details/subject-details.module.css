@@ -219,3 +219,10 @@
 .option:hover {
     border-color: #1677ff;
 }
+
+.relationSelect {
+    max-height: 120px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+}

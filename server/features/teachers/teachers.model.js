@@ -92,10 +92,14 @@ export const teachersModel = {
             tests.show_score,
             tests.max_attempts,
             tests.created_at,
-            teacher_tests.id AS teacher_test_id
+            teacher_tests.id AS teacher_test_id,
+            tests.created_by,
+            authors.full_name AS created_by_name
         FROM teacher_tests
         JOIN tests
             ON tests.id = teacher_tests.test_id
+        LEFT JOIN users AS authors
+            ON authors.id = tests.created_by
         WHERE teacher_tests.teacher_id = $1
             AND tests.subject_id = $2
             AND tests.deleted_at IS NULL

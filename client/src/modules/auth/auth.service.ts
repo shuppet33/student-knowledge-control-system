@@ -16,12 +16,14 @@ const guestAuth: GuestAuth = {
 }
 
 export const loginAsync = reatomAsync(
-    async (ctx, email: string, password: string) => {
-        const auth = await login({ email, password })
+    (ctx, email: string, password: string) => {
+        return ctx.schedule(async () => {
+            const auth = await login({ email, password })
 
-        authAtom(ctx, auth)
+            authAtom(ctx, auth)
 
-        return auth
+            return auth
+        })
     },
 ).pipe(withErrorAtom(), withStatusesAtom())
 
@@ -39,10 +41,12 @@ export const sessionResource = reatomResource(async (ctx) => {
     }
 }, 'sessionResource').pipe(withStatusesAtom())
 
-export const logoutAsync = reatomAsync(async (ctx) => {
-    try {
-        await logout()
-    } finally {
-        authAtom(ctx, guestAuth)
-    }
+export const logoutAsync = reatomAsync((ctx) => {
+    return ctx.schedule(async () => {
+        try {
+            await logout()
+        } finally {
+            authAtom(ctx, guestAuth)
+        }
+    })
 }).pipe(withStatusesAtom())

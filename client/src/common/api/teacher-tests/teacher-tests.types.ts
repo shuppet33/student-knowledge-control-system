@@ -8,6 +8,8 @@ export type TeacherTestDto = {
     show_score: boolean
     max_attempts: number
     teacher_test_id: string
+    created_by: string | null
+    created_by_name: string | null
     created_at: string
 }
 
@@ -21,5 +23,7 @@ export type TeacherTest = {
     showScore: boolean
     maxAttempts: number
     teacherTestId: string
+    createdBy: string | null
+    createdByName: string | null
     createdAt: string
 }
