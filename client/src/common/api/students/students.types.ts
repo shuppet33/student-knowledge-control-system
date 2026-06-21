@@ -11,3 +11,15 @@ export type Student = {
     email: string
     createdAt: string
 }
+
+export type StudentGroupDto = {
+    group_id: string | null
+    group_name: string
+    students: StudentDto[]
+}
+
+export type StudentGroup = {
+    groupId: string | null
+    groupName: string
+    students: Student[]
+}

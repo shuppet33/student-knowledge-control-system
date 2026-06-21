@@ -18,3 +18,13 @@ export const createUser = async (
         throw new Error('Ошибка создания пользователя')
     }
 }
+
+export const deleteUser = async (id: string): Promise<void> => {
+    const response = await apiFetch(`/admin/users/${id}`, {
+        method: 'DELETE',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка удаления пользователя')
+    }
+}

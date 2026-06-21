@@ -3,6 +3,8 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
+import clsx from 'clsx'
+
 import { createUserAsync } from './create-user-popover.service'
 import {
     changeCreateUserFieldAction,
@@ -30,7 +32,7 @@ export const CreateUserPopover = reatomComponent<CreateUserPopoverProps>(
                     />
                 )}
 
-                <div className={styles.wrapper}>
+                <div className={clsx(isOpen && styles.wrapper)}>
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"

@@ -1,9 +1,12 @@
 import { apiFetch } from '../api.client'
 
-import { studentsMapper } from './students.mapper'
-import type { Student, StudentDto } from './students.types'
+import { studentGroupsMapper } from './students.mapper'
+import type {
+    StudentGroup,
+    StudentGroupDto,
+} from './students.types'
 
-export const getStudents = async (): Promise<Student[]> => {
+export const getStudents = async (): Promise<StudentGroup[]> => {
     const response = await apiFetch('/admin/students', {
         method: 'GET',
     })
@@ -12,7 +15,7 @@ export const getStudents = async (): Promise<Student[]> => {
         throw new Error('Ошибка получения студентов')
     }
 
-    const data: StudentDto[] = await response.json()
+    const data: StudentGroupDto[] = await response.json()
 
-    return studentsMapper(data)
+    return studentGroupsMapper(data)
 }

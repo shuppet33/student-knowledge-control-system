@@ -1,32 +1,21 @@
-import { Card, Typography } from 'antd'
-
 import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
+import { EntityCard } from '$common/ui/entity-card'
+
+import { deleteTeacherAsync } from '../../../teachers.service'
 import { openTeacherModalAction } from '../../../teachers.state'
 import type { TeacherCardProps } from '../teacher-list.types'
-
-import styles from '../teacher-list.module.css'
-
-const { Title } = Typography
 
 export const TeacherCard: FC<TeacherCardProps> = reatomComponent(
     ({ ctx, teacher }) => {
         return (
-            <Card
-                hoverable
-                size="small"
-                className={styles.card}
+            <EntityCard
+                title={teacher.fullName}
                 onClick={() => openTeacherModalAction(ctx, teacher)}
-            >
-                <Title
-                    level={5}
-                    className={styles.title}
-                >
-                    {teacher.fullName}
-                </Title>
-            </Card>
+                onDelete={() => deleteTeacherAsync(ctx, teacher.id)}
+            />
         )
     },
 )

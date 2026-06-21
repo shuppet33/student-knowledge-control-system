@@ -20,6 +20,7 @@ import {
 import { getTeacherTests } from '$common/api/teacher-tests/teacher-tests.service'
 import { getTeachers } from '$common/api/teachers/teachers.service'
 import { deleteTest } from '$common/api/tests/tests.service'
+import { deleteUser } from '$common/api/users/users.service'
 
 import {
     newSubjectNameAtom,
@@ -30,9 +31,21 @@ import {
 
 export const teachersResource = reatomResource(async (ctx) => {
     ctx.spy(teacherCreatedAction)
+    ctx.spy(deleteTeacherAsync.onFulfill)
 
     return await getTeachers()
 }, 'teachersResource').pipe(withDataAtom([]), withStatusesAtom())
+
+export const deleteTeacherAsync = reatomAsync(
+    (ctx, teacherId: string) => {
+        return ctx.schedule(async () => {
+            await deleteUser(teacherId)
+
+            return teacherId
+        })
+    },
+    'deleteTeacherAsync',
+).pipe(withStatusesAtom(), withErrorAtom())
 
 export const teacherSubjectsResource = reatomResource(async (ctx) => {
     ctx.spy(deleteTeacherSubjectAsync.onFulfill)
@@ -130,6 +143,14 @@ deleteTeacherSubjectAsync.onReject.onCall((_ctx, error) => {
 deleteTeacherTestAsync.onReject.onCall((_ctx, error) => {
     notification.error({
         title: 'Ошибка удаления теста',
+        description:
+            error instanceof Error ? error.message : 'Неизвестная ошибка',
+    })
+})
+
+deleteTeacherAsync.onReject.onCall((_ctx, error) => {
+    notification.error({
+        title: 'Ошибка удаления преподавателя',
         description:
             error instanceof Error ? error.message : 'Неизвестная ошибка',
     })
