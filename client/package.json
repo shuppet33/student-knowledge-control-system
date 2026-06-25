@@ -15,6 +15,7 @@
     "@reatom/effects": "^3.11.3",
     "@reatom/framework": "3.4.68",
     "@reatom/npm-react": "3.10.6",
+    "@reatom/utils": "3.11.3",
     "antd": "6.3.7",
     "clsx": "^2.1.1",
     "react": "19.2.5",

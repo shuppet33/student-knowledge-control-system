@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { groupsController } from '../features/groups/groups.controller.js'
+import { groupsController } from '../../features/admin/groups/groups.controller.js'
 
 export const groupsRouter = Router()
 

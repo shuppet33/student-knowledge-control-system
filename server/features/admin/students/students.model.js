@@ -1,6 +1,43 @@
-import { db } from '../../db/connect.js'
+import { db } from '../../../db/connect.js'
 
 export const studentsModel = {
+    async searchStudents({ search = '', excludedGroupId = null, limit = 50 }) {
+        const query = `
+            SELECT
+                users.id,
+                users.email,
+                users.full_name,
+                users.created_at
+            FROM users
+            WHERE users.role = 'student'
+                AND users.deleted_at IS NULL
+                AND (
+                    $1 = ''
+                    OR users.full_name ILIKE '%' || $1 || '%'
+                    OR users.email ILIKE '%' || $1 || '%'
+                )
+                AND (
+                    $2::BIGINT IS NULL
+                    OR NOT EXISTS (
+                        SELECT 1
+                        FROM student_groups
+                        WHERE student_groups.student_id = users.id
+                            AND student_groups.group_id = $2
+                    )
+                )
+            ORDER BY users.full_name ASC
+            LIMIT $3
+        `
+
+        const { rows } = await db.query(query, [
+            search.trim(),
+            excludedGroupId,
+            limit,
+        ])
+
+        return rows
+    },
+
     async getStudents() {
         const query = `
             WITH active_students AS (

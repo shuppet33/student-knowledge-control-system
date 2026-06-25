@@ -253,7 +253,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StudentGroup'
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGroup'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -262,8 +264,6 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/ServerError'
 
@@ -377,6 +377,50 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/StudentsByGroup'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /admin/students/search:
+    get:
+      tags: [Admin Students]
+      summary: Найти студентов для привязки к группе
+      operationId: searchStudents
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+          description: Поиск по ФИО или email
+        - name: excluded_group_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Id'
+          description: Исключить студентов, уже состоящих в этой группе
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 50
+          description: Максимум 50 студентов
+      responses:
+        '200':
+          description: Список студентов, ограниченный по limit
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -952,10 +996,13 @@ components:
     AddStudentRequest:
       type: object
       additionalProperties: false
-      required: [student_id]
+      required: [student_ids]
       properties:
-        student_id:
-          $ref: '#/components/schemas/Id'
+        student_ids:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Id'
 
     AddSubjectRequest:
       type: object
