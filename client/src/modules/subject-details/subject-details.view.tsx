@@ -38,8 +38,7 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
     const subjectName = ctx.spy(subjectNameAtom)
     ctx.spy(subjectGroupsResource.dataAtom)
     ctx.spy(subjectTeachersResource.dataAtom)
-    // const groups = ctx.spy(subjectGroupsResource.dataAtom)
-    // const teachers = ctx.spy(subjectTeachersResource.dataAtom)
+    
     const allGroups = ctx.spy(allGroupsResource.dataAtom)
     const allTeachers = ctx.spy(allTeachersResource.dataAtom)
 
@@ -87,28 +86,6 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                         Доступность групп
                     </Text>
 
-                    {/* <div className={styles.relationList}>
-                        {groups.map((group) => (
-                            <div
-                                key={group.id}
-                                className={styles.relationItem}
-                            >
-                                <span>{group.name}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <RelationPopover
-                        items={allGroups}
-                        selectedIds={selectedGroupIds}
-                        isOpen={isGroupsOpen}
-                        isSaving={isSavingGroups}
-                        onOpen={() => openGroupsPopoverAction(ctx, groups)}
-                        onClose={() => closeGroupsPopoverAction(ctx)}
-                        onToggle={(id) => toggleGroupAction(ctx, id)}
-                        onSave={() => saveSubjectGroupsAsync(ctx)}
-                    /> */}
-
                     <Select
                         suffixIcon={false}
                         mode="multiple"
@@ -139,33 +116,6 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                     <Text className={styles.sectionTitle}>
                         Преподаватели
                     </Text>
-
-                    {/* <div className={styles.relationList}>
-                        {teachers.map((teacher) => (
-                            <div
-                                key={teacher.id}
-                                className={styles.relationItem}
-                            >
-                                <span>{teacher.fullName}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <RelationPopover
-                        items={allTeachers.map((teacher) => ({
-                            id: teacher.id,
-                            name: teacher.fullName,
-                        }))}
-                        selectedIds={selectedTeacherIds}
-                        isOpen={isTeachersOpen}
-                        isSaving={isSavingTeachers}
-                        onOpen={() =>
-                            openTeachersPopoverAction(ctx, teachers)
-                        }
-                        onClose={() => closeTeachersPopoverAction(ctx)}
-                        onToggle={(id) => toggleTeacherAction(ctx, id)}
-                        onSave={() => saveSubjectTeachersAsync(ctx)}
-                    /> */}
 
                     <Select
                         suffixIcon={false}
