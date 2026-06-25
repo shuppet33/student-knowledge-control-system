@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { testsController } from '../features/tests/tests.controller.js'
+import { testsController } from '../../features/admin/tests/tests.controller.js'
 
 export const testsRouter = Router()
 

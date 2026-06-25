@@ -3,7 +3,7 @@ import { action, atom } from '@reatom/framework'
 import {
     assignSubjectToTeacherAsync,
     createSubjectAndAssignAsync,
-} from '$modules/teachers/teachers.service.ts'
+} from '$modules/admin/teachers/teachers.service.ts'
 
 import type { Teacher } from '$common/api/teachers/teachers.types'
 

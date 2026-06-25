@@ -1,4 +1,4 @@
-import { TeachersManagement } from '$modules/teachers'
+import { TeachersManagement } from '$modules/admin/teachers'
 
 export const AdminTeachersPage = () => {
     return <TeachersManagement />

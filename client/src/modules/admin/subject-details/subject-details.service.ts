@@ -8,7 +8,7 @@ import {
     withStatusesAtom,
 } from '@reatom/framework'
 
-import { createGroupAsync } from '$modules/students/ui/create-group-popover/create-group-popover.service.ts'
+import { createGroupAsync } from '$modules/admin/students/ui/create-group-popover/create-group-popover.service.ts'
 
 import {
     addSubjectToGroup,

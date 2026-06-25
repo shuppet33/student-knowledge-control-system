@@ -3,7 +3,7 @@ import { Router } from 'express'
 import {
     authMiddleware,
     requireRole,
-} from '../middleware/auth.middleware.js'
+} from '../../middleware/auth.middleware.js'
 
 import { groupsRouter } from './groups.routes.js'
 import { studentsRouter } from './students.routes.js'

@@ -27,13 +27,6 @@ export const selectedTeacherIdsAtom = atom<string[]>(
     'selectedSubjectTeacherIdsAtom',
 )
 
-export const initializeSubjectDetailsAction = action(
-    (ctx, subjectId: string) => {
-        subjectIdAtom(ctx, subjectId)
-    },
-    'initializeSubjectDetailsAction',
-)
-
 export const openGroupsPopoverAction = action(
     (ctx, groups: Group[]) => {
         selectedGroupIdsAtom(

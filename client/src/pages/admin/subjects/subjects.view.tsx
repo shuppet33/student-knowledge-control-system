@@ -1,4 +1,4 @@
-import { SubjectsManagement } from '$modules/subjects'
+import { SubjectsManagement } from '$modules/admin/subjects'
 
 export const AdminSubjectsPage = () => {
     return <SubjectsManagement />

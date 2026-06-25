@@ -7,7 +7,7 @@ import {
     assignSubjectToTeacherAsync,
     createSubjectAndAssignAsync,
     subjectsResource,
-} from '$modules/teachers/teachers.service'
+} from '$modules/admin/teachers/teachers.service'
 import {
     changeNewSubjectNameAction,
     changeSelectedSubjectAction,
@@ -16,7 +16,7 @@ import {
     newSubjectNameAtom,
     openAddSubjectAction,
     selectedNewSubjectIdAtom,
-} from '$modules/teachers/teachers.state'
+} from '$modules/admin/teachers/teachers.state'
 
 import { QuestionPreviewModal } from '../question-preview'
 

@@ -7,8 +7,9 @@ import express from 'express'
 import swaggerUi from 'swagger-ui-express'
 import YAML from 'yaml'
 
-import { adminRouter } from './routes/admin.routes.js'
+import { adminRouter } from './routes/admin/admin.routes.js'
 import { authRouter } from './routes/auth.routes.js'
+import { studentRouter } from './routes/student/student.routes.js'
 
 const app = express()
 const PORT = 3000
@@ -42,6 +43,7 @@ app.use(
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)
+app.use('/student', studentRouter)
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)

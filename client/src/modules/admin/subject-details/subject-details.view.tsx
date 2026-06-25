@@ -18,11 +18,10 @@ import {
     subjectTeachersResource,
 } from './subject-details.service'
 import {
-    initializeSubjectDetailsAction,
     selectedGroupIdsAtom,
     selectedTeacherIdsAtom,
     setSelectedGroupIdsAction,
-    setSelectedTeacherIdsAction,
+    setSelectedTeacherIdsAction, subjectIdAtom,
     subjectNameAtom,
 } from './subject-details.state'
 
@@ -36,28 +35,23 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
 
     const subject = ctx.spy(subjectResource.dataAtom)
     const subjectName = ctx.spy(subjectNameAtom)
+
     ctx.spy(subjectGroupsResource.dataAtom)
     ctx.spy(subjectTeachersResource.dataAtom)
-    
+
     const allGroups = ctx.spy(allGroupsResource.dataAtom)
     const allTeachers = ctx.spy(allTeachersResource.dataAtom)
 
     const selectedGroupIds = ctx.spy(selectedGroupIdsAtom)
     const selectedTeacherIds = ctx.spy(selectedTeacherIdsAtom)
 
-    const { isPending: isLoadingSubject } = ctx.spy(
-        subjectResource.statusesAtom,
-    )
-    const { isPending: isSavingGroups } = ctx.spy(
-        saveSubjectGroupsAsync.statusesAtom,
-    )
-    const { isPending: isSavingTeachers } = ctx.spy(
-        saveSubjectTeachersAsync.statusesAtom,
-    )
+    const { isPending: isLoadingSubject } = ctx.spy(subjectResource.statusesAtom)
+    const { isPending: isSavingGroups } = ctx.spy(saveSubjectGroupsAsync.statusesAtom)
+    const { isPending: isSavingTeachers } = ctx.spy(saveSubjectTeachersAsync.statusesAtom)
 
     useEffect(() => {
         if (subjectId) {
-            initializeSubjectDetailsAction(ctx, subjectId)
+            subjectIdAtom(ctx, subjectId)
         }
     }, [ctx, subjectId])
 
@@ -69,34 +63,30 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
         <div className={styles.layout}>
             <aside className={styles.sidebar}>
                 <section>
-                    <Text className={styles.sectionTitle}>
-                        Название предмета
-                    </Text>
+                    <Text className={styles.sectionTitle}>Название предмета</Text>
                     <TextArea
                         className={styles.nameInput}
                         value={subjectName}
-                        onChange={(event) =>
-                            changeSubjectNameAction(ctx, event.target.value)
-                        }
+                        onChange={(event) => changeSubjectNameAction(ctx, event.target.value)}
                     />
                 </section>
 
                 <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>
-                        Доступность групп
-                    </Text>
+                    <Text className={styles.sectionTitle}>Доступность групп</Text>
 
                     <Select
                         suffixIcon={false}
                         mode="multiple"
                         className={styles.relationSelect}
                         virtual
-                        styles={{content: {
+                        styles={{
+                            content: {
                                 maxHeight: '116px',
                                 overflowY: 'auto',
                                 boxSizing: 'border-box',
                                 width: '100%',
-                            }}}
+                            },
+                        }}
                         showSearch={{ optionFilterProp: 'label' }}
                         placeholder="Выберите группы"
                         value={selectedGroupIds}
@@ -113,18 +103,18 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
                 </section>
 
                 <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>
-                        Преподаватели
-                    </Text>
+                    <Text className={styles.sectionTitle}>Преподаватели</Text>
 
                     <Select
                         suffixIcon={false}
-                        styles={{content: {
+                        styles={{
+                            content: {
                                 maxHeight: '116px',
                                 overflowY: 'auto',
                                 boxSizing: 'border-box',
                                 width: '100%',
-                            }}}
+                            },
+                        }}
                         mode="multiple"
                         className={styles.relationSelect}
                         showSearch={{ optionFilterProp: 'label' }}

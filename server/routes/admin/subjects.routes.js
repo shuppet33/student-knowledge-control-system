@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { subjectsController } from '../features/subjects/subjects.controller.js'
+import { subjectsController } from '../../features/admin/subjects/subjects.controller.js'
 
 export const subjectsRouter = Router()
 

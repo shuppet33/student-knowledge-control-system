@@ -1,12 +1,4 @@
-import {
-    Alert,
-    Button,
-    Card,
-    Empty,
-    Flex,
-    Input,
-    Spin,
-} from 'antd'
+import { Alert, Button, Card, Empty, Flex, Input, Spin } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
@@ -15,11 +7,7 @@ import { useNavigate } from 'react-router'
 
 import { EntityCard } from '$common/ui/entity-card'
 
-import {
-    createSubjectAsync,
-    deleteSubjectAsync,
-    subjectsResource,
-} from './subjects.service'
+import { createSubjectAsync, deleteSubjectAsync, subjectsResource } from './subjects.service'
 import {
     changeNewSubjectNameAction,
     closeCreateSubjectAction,
@@ -37,12 +25,8 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
     const subjects = ctx.spy(subjectsResource.dataAtom)
     const isCreateOpen = ctx.spy(isCreateSubjectOpenAtom)
     const newSubjectName = ctx.spy(newSubjectNameAtom)
-    const { isPending: isLoadingSubjects } = ctx.spy(
-        subjectsResource.statusesAtom,
-    )
-    const { isPending: isCreatingSubject } = ctx.spy(
-        createSubjectAsync.statusesAtom,
-    )
+    const { isPending: isLoadingSubjects } = ctx.spy(subjectsResource.statusesAtom)
+    const { isPending: isCreatingSubject } = ctx.spy(createSubjectAsync.statusesAtom)
     const createError = ctx.spy(createSubjectAsync.errorAtom)
 
     return (
@@ -60,16 +44,8 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
-                            className={
-                                isCreateOpen
-                                    ? styles.activeButton
-                                    : undefined
-                            }
-                            onClick={
-                                isCreateOpen
-                                    ? undefined
-                                    : () => openCreateSubjectAction(ctx)
-                            }
+                            className={isCreateOpen && styles.activeButton}
+                            onClick={isCreateOpen && (() => openCreateSubjectAction(ctx))}
                         >
                             добавить
                         </Button>
@@ -83,31 +59,20 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                                         value={newSubjectName}
                                         disabled={isCreatingSubject}
                                         onChange={(event) =>
-                                            changeNewSubjectNameAction(
-                                                ctx,
-                                                event.target.value,
-                                            )
+                                            changeNewSubjectNameAction(ctx, event.target.value)
                                         }
-                                        onPressEnter={() =>
-                                            createSubjectAsync(ctx)
-                                        }
+                                        onPressEnter={() => createSubjectAsync(ctx)}
                                     />
 
                                     {createError && (
-                                        <Alert
-                                            type="error"
-                                            showIcon
-                                            title={createError.message}
-                                        />
+                                        <Alert type="error" showIcon title={createError.message} />
                                     )}
 
                                     <Button
                                         type="primary"
                                         loading={isCreatingSubject}
                                         disabled={!newSubjectName.trim()}
-                                        onClick={() =>
-                                            createSubjectAsync(ctx)
-                                        }
+                                        onClick={() => createSubjectAsync(ctx)}
                                     >
                                         добавить
                                     </Button>
@@ -116,11 +81,7 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                         )}
                     </div>
 
-                    <Search
-                        allowClear
-                        className={styles.search}
-                        placeholder="искать по названию"
-                    />
+                    <Search allowClear className={styles.search} placeholder="искать по названию" />
                 </Flex>
 
                 {isLoadingSubjects ? (
@@ -133,12 +94,8 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                             <EntityCard
                                 key={subject.id}
                                 title={subject.name}
-                                onClick={() =>
-                                    navigate(`/admin/subjects/${subject.id}`)
-                                }
-                                onDelete={() =>
-                                    deleteSubjectAsync(ctx, subject.id)
-                                }
+                                onClick={() => navigate(`/admin/subjects/${subject.id}`)}
+                                onDelete={() => deleteSubjectAsync(ctx, subject.id)}
                             />
                         ))}
                     </div>
