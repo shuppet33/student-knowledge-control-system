@@ -14,6 +14,5 @@ export const NAV_CONFIG: NavConfig = {
     ],
     student: [
         { label: 'главная', to: '/student' },
-        { label: 'тесты', to: '/student/tests' },
     ],
 }

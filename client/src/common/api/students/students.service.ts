@@ -1,9 +1,16 @@
 import { apiFetch } from '../api.client'
 
-import { studentGroupsMapper } from './students.mapper'
+import {
+    mapSearchStudentsPayloadToDto,
+    studentGroupsMapper,
+    studentsOptionsMapper, studentSubjectsMapper, studentSubjectTestsMapper,
+} from './students.mapper'
 import type {
+    SearchStudentsPayload,
+    Student,
+    StudentDto,
     StudentGroup,
-    StudentGroupDto,
+    StudentGroupDto, StudentSubjectDto, StudentSubjectTestsDto,
 } from './students.types'
 
 export const getStudents = async (): Promise<StudentGroup[]> => {
@@ -18,4 +25,53 @@ export const getStudents = async (): Promise<StudentGroup[]> => {
     const data: StudentGroupDto[] = await response.json()
 
     return studentGroupsMapper(data)
+}
+
+export const searchStudents = async (payload: SearchStudentsPayload): Promise<Student[]> => {
+    const query = new URLSearchParams()
+    const dto = mapSearchStudentsPayloadToDto(payload)
+
+    query.set('search', dto.search)
+    query.set('excluded_group_id', dto.excluded_group_id)
+    query.set('limit', String(dto.limit))
+
+    const response = await apiFetch(`/admin/students/search?${query}`, {
+        method: 'GET',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка поиска студентов')
+    }
+
+    const data: StudentDto[] = await response.json()
+
+    return studentsOptionsMapper(data)
+}
+
+export const getMySubjects = async () => {
+    const response = await apiFetch('/student/subjects', {
+        method: 'GET',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения предметов')
+    }
+
+    const data: StudentSubjectDto[] = await response.json()
+
+    return studentSubjectsMapper(data)
+}
+
+export const getSubjectTests = async (subjectId: string) => {
+    const response = await apiFetch(`/student/subjects/${subjectId}/tests`, {
+        method: 'GET',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения тестов')
+    }
+
+    const data: StudentSubjectTestsDto = await response.json()
+
+    return studentSubjectTestsMapper(data)
 }

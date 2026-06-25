@@ -1,0 +1,105 @@
+.page {
+    height: 100%;
+    flex: 1;
+}
+.content {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+.title {
+    font-size: 24px;
+    color: #E9844A;
+    font-weight: bold;
+    padding: 20px;
+
+    background-color: #FFF;
+    border-radius: 10px;
+}
+
+.testList {
+    flex-shrink: 0;
+    width: 333px;
+
+    overflow-y: auto;
+}
+
+.testView {
+    padding: 20px;
+    background-color: #FFF;
+
+    border-radius: 10px;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+}
+
+.emptyText,
+.selectedTestEmpty {
+    color: #3782F2;
+    font-size: 18px;
+    text-align: center;
+}
+
+.selectedTestEmpty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selectedTestTitle {
+    color: #E9844A;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.testCard {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+
+    min-height: 120px;
+    cursor: pointer;
+}
+
+.testCard:hover .title {
+    color: #E9844A;
+}
+
+.metrics {
+    flex-shrink: 0;
+}
+
+.testTitle {
+    max-width: 240px;
+}
+
+.countQuestions {
+    padding: 5px;
+    border-radius: 4px;
+
+    color: #3782F2;
+
+    background-color: #DEE7F0;
+
+    min-height: 30px;
+    min-width: 64px;
+}
+
+.count {
+    min-width: 20px;
+    text-align: center;
+}
+
+.score {
+    padding: 5px;
+    border-radius: 4px;
+
+    min-height: 30px;
+}
+
+.dateOfAppointment {
+    font-size: 12px;
+    color: #7C90A3;
+}

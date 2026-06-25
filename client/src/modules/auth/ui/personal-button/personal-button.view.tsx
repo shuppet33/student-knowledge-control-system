@@ -4,8 +4,8 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import { useNavigate } from 'react-router'
 
-import { logoutAsync } from '../../auth.service'
-import { authAtom } from '../../auth.state'
+import { logoutAsync } from '$modules/auth'
+import { authAtom } from '$modules/auth'
 
 import styles from './personal-button.module.css'
 
