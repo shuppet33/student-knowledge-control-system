@@ -1,61 +1,122 @@
-import { Collapse, Empty, Flex, Input, Select, Space, Tag, Typography } from 'antd'
+import { useState } from 'react'
+
+import { Empty, Input, Typography } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
 import { CreateUserPopover } from '$modules/create-user-popover'
 import { CreateGroupPopover } from '$modules/students/ui/create-group-popover'
 
+import type { StudentGroup } from '$common/api/students/students.types'
+
+import { ButtonUI } from '$common/ui/button'
 import { EntityCard } from '$common/ui/entity-card'
 
-import { deleteStudentAsync, studentsResource } from './students.service'
+import { studentsResource } from './students.service'
 
 import styles from './students.module.css'
 
-const { Search } = Input
 const { Text } = Typography
+
+const getGroupKey = (group: StudentGroup) => group.groupId ?? 'without-group'
 
 export const StudentsManagement = reatomComponent(({ ctx }) => {
     const studentGroups = ctx.spy(studentsResource.dataAtom)
+    const [selectedGroupKey, setSelectedGroupKey] = useState<string | null>(
+        null,
+    )
 
-    const collapseItems = studentGroups.map((group) => ({
-        key: group.groupId ?? 'without-group',
-        label: (
-            <Flex align="center" gap={8}>
-                <Text strong>{group.groupName}</Text>
-                <Tag>{group.students.length}</Tag>
-            </Flex>
-        ),
-        children:
-            group.students.length === 0 ? (
-                <Empty description="Студентов нет" />
-            ) : (
-                <div className={styles.list}>
-                    {group.students.map((student) => (
-                        <EntityCard
-                            key={student.id}
-                            title={student.fullName}
-                            onDelete={() => deleteStudentAsync(ctx, student.id)}
-                        />
-                    ))}
-                </div>
-            ),
-    }))
+    const selectedGroup =
+        studentGroups.find((group) => getGroupKey(group) === selectedGroupKey) ??
+        null
 
     return (
-        <>
-            <Flex vertical gap={24}>
-                <Space size={16} wrap>
+        <div className={styles.layout}>
+            <aside className={styles.sidebar}>
+                <Input
+                    placeholder="поиск"
+                    prefix={<SearchOutlined />}
+                    size="large"
+                    className={styles.groupSearch}
+                />
+
+                <div className={styles.actions}>
                     <CreateUserPopover role="student" />
-
                     <CreateGroupPopover />
+                </div>
 
-                    <Search placeholder="поиск студента" allowClear className={styles.filter} />
+                <section className={styles.section}>
+                    <Text className={styles.sectionTitle}>Группы:</Text>
 
-                    <Select placeholder="сортировка по группам" className={styles.filter} />
-                </Space>
+                    <div className={styles.groupList}>
+                        {studentGroups.length === 0 ? (
+                            <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description="Группы не найдены"
+                            />
+                        ) : (
+                            studentGroups.map((group) => {
+                                const groupKey = getGroupKey(group)
+                                const isSelected = selectedGroupKey === groupKey
 
-                <Collapse items={collapseItems} />
-            </Flex>
-        </>
+                                return (
+                                    <ButtonUI
+                                        key={groupKey}
+                                        active={isSelected}
+                                        className={styles.groupCard}
+                                        onClick={() =>
+                                            setSelectedGroupKey(groupKey)
+                                        }
+                                        onDelete={() => undefined}
+                                    >
+                                        {group.groupName}
+                                    </ButtonUI>
+                                )
+                            })
+                        )}
+                    </div>
+                </section>
+            </aside>
+
+            <main className={styles.content}>
+                {!selectedGroup ? (
+                    <div className={styles.placeholder}>Выберите группу</div>
+                ) : (
+                    <div className={styles.details}>
+                        <label className={styles.nameField}>
+                            <Text className={styles.sectionTitle}>Название:</Text>
+                            <Input
+                                key={getGroupKey(selectedGroup)}
+                                className={styles.nameInput}
+                                defaultValue={selectedGroup.groupName}
+                                size="large"
+                            />
+                        </label>
+
+                        <Input
+                            placeholder="поиск"
+                            prefix={<SearchOutlined />}
+                            size="large"
+                            className={styles.studentSearch}
+                        />
+
+                        <div className={styles.studentList}>
+                            {selectedGroup.students.length === 0 ? (
+                                <Empty description="Студенты не найдены" />
+                            ) : (
+                                selectedGroup.students.map((student) => (
+                                    <EntityCard
+                                        key={student.id}
+                                        title={student.fullName}
+                                        onDelete={() => undefined}
+                                    />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+            </main>
+        </div>
     )
 })

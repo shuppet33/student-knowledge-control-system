@@ -1,10 +1,115 @@
-.filter {
-    width: 260px;
-}
-
-.list {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+.layout {
+    display: flex;
+    align-items: stretch;
     gap: 20px;
     width: 100%;
+    min-height: calc(100vh - 114px);
+}
+
+.sidebar {
+    flex: 0 0 273px;
+    display: flex;
+    flex-direction: column;
+    width: 273px;
+    min-height: 632px;
+    height: calc(100vh - 114px);
+    padding: 20px;
+
+    border: 2px solid #dee7f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.section {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    margin-top: 20px;
+}
+
+.sectionTitle {
+    display: block;
+    margin-bottom: 10px;
+
+    color: #7c90a3;
+    font-size: 14px;
+}
+
+.groupSearch {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.groupList {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.groupCard {
+    flex-shrink: 0;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    min-height: 632px;
+    height: calc(100vh - 114px);
+}
+
+.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 632px;
+
+    color: #7c90a3;
+    font-size: 18px;
+}
+
+.details {
+    width: 100%;
+}
+
+.nameField {
+    display: block;
+    width: 315px;
+}
+
+.nameInput {
+    width: 315px;
+}
+
+.studentSearch {
+    width: 315px;
+    margin-top: 29px;
+}
+
+.studentList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+
+    max-height: 460px;
+    margin-top: 37px;
+    overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+    .studentList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
