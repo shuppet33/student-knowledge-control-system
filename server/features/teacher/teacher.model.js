@@ -368,8 +368,12 @@ export const teacherModel = {
 
         const { rows: versions } = await db.query(
             `
-                INSERT INTO test_versions (test_id, is_active)
-                VALUES ($1, TRUE)
+                INSERT INTO test_versions (
+                    test_id,
+                    version_number,
+                    is_active
+                )
+                VALUES ($1, 1, TRUE)
                 RETURNING id
             `,
             [testId],
@@ -468,8 +472,17 @@ export const teacherModel = {
         if (!testVersionId) {
             const { rows: versions } = await db.query(
                 `
-                    INSERT INTO test_versions (test_id, is_active)
-                    VALUES ($1, TRUE)
+                    INSERT INTO test_versions (
+                        test_id,
+                        version_number,
+                        is_active
+                    )
+                    SELECT
+                        $1,
+                        COALESCE(MAX(version_number), 0) + 1,
+                        TRUE
+                    FROM test_versions
+                    WHERE test_id = $1
                     RETURNING id
                 `,
                 [test.test_id],
