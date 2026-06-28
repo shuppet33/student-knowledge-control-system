@@ -1,6 +1,10 @@
 import {
+    type SaveStudentAnswerDto,
+    type SaveStudentAnswerPayload,
     type SearchStudentsDto,
     type SearchStudentsPayload,
+    type StartedStudentTest,
+    type StartedStudentTestDto,
     type Student,
     type StudentDto,
     type StudentGroup,
@@ -45,14 +49,24 @@ export const studentsOptionsMapper = (students: StudentDto[]): Student[] => {
 }
 
 export const studentSubjectsMapper = (subjects: StudentSubjectDto[]): StudentSubject[] => {
-    return subjects.map(({ id, name }) => ({
+    return subjects.map(({
         id,
         name,
+        average_score,
+        passed_tests_count,
+        total_tests_count,
+    }) => ({
+        id,
+        name,
+        averageScore: average_score,
+        passedTestsCount: passed_tests_count,
+        totalTestsCount: total_tests_count,
     }))
 }
 
 export const studentTestMapper = (test: StudentTestDto): StudentTest => ({
     id: test.id,
+    teacherTestId: test.teacher_test_id,
     title: test.title,
     metrics: {
         from: test.answers_count,
@@ -65,6 +79,41 @@ export const studentTestMapper = (test: StudentTestDto): StudentTest => ({
 export const studentSubjectTestsMapper = (
     data: StudentSubjectTestsDto,
 ): StudentSubjectTests => ({
-    subject: data.subject,
+    subject: {
+        id: data.subject.id,
+        name: data.subject.name,
+        averageScore: data.subject.average_score ?? null,
+        passedTestsCount: data.subject.passed_tests_count ?? 0,
+        totalTestsCount: data.subject.total_tests_count ?? 0,
+    },
     tests: data.tests.map(studentTestMapper),
+})
+
+export const startedStudentTestMapper = (
+    data: StartedStudentTestDto,
+): StartedStudentTest => ({
+    attemptId: data.attempt_id,
+    test: {
+        id: data.test.id,
+        teacherTestId: data.test.teacher_test_id,
+        title: data.test.title,
+    },
+    questions: data.questions.map((question) => ({
+        id: question.id,
+        text: question.text,
+        type: question.type,
+        position: question.position,
+        answers: question.answers.map((answer) => ({
+            id: answer.id,
+            text: answer.text,
+            isSelected: answer.is_selected,
+        })),
+    })),
+})
+
+export const mapSaveStudentAnswerPayloadToDto = (
+    payload: SaveStudentAnswerPayload,
+): SaveStudentAnswerDto => ({
+    question_id: payload.questionId,
+    answer_id: payload.answerId,
 })

@@ -63,6 +63,10 @@
     cursor: pointer;
 }
 
+.selectedTestCard {
+    border: 2px solid #3782F2;
+}
+
 .testCard:hover .title {
     color: #E9844A;
 }
@@ -102,4 +106,70 @@
 .dateOfAppointment {
     font-size: 12px;
     color: #7C90A3;
+}
+
+.startTest {
+    height: 100%;
+}
+
+.questionView {
+    height: 100%;
+}
+
+.questionText {
+    flex: 1;
+    height: 260px;
+    padding: 20px;
+
+    border: 1px solid #DEE7F0;
+    border-radius: 8px;
+
+    font-size: 16px;
+    text-align: center;
+    white-space: pre-wrap;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    gap: 42px 80px;
+}
+
+.answer {
+    min-height: 44px;
+    margin: 0;
+
+    font-size: 16px;
+    white-space: pre-wrap;
+}
+
+.answer :global(.ant-radio) {
+    margin-right: 10px;
+}
+
+.questions {
+    margin-top: auto;
+    padding: 10px;
+
+    border: 1px solid #DEE7F0;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.questionButton {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+
+    color: #3782F2;
+    background-color: #DEE7F0;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.selectedQuestionButton {
+    outline: 2px solid #3782F2;
+    outline-offset: 0;
 }

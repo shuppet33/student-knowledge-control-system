@@ -13,3 +13,6 @@ studentRouter.get(
     '/subjects/:subjectId/tests',
     studentController.getSubjectTests,
 )
+
+studentRouter.post('/tests/:testId/start', studentController.startTest)
+studentRouter.post('/attempts/:attemptId/answers', studentController.saveAnswer)

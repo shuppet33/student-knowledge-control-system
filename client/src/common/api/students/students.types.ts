@@ -39,15 +39,22 @@ export type SearchStudentsPayload = {
 export type StudentSubjectDto = {
     id: string,
     name: string
+    average_score: number | null
+    passed_tests_count: number
+    total_tests_count: number
 }
 
 export type StudentSubject = {
     id: string,
     name: string
+    averageScore: number | null
+    passedTestsCount: number
+    totalTestsCount: number
 }
 
 export type StudentTestDto = {
     id: string
+    teacher_test_id: string
     title: string
     questions_count: number
     answers_count: number
@@ -57,6 +64,7 @@ export type StudentTestDto = {
 
 export type StudentTest = {
     id: string
+    teacherTestId: string
     title: string
     metrics: {
         from: number
@@ -74,4 +82,62 @@ export type StudentSubjectTestsDto = {
 export type StudentSubjectTests = {
     subject: StudentSubject
     tests: StudentTest[]
+}
+
+export type StudentAnswerDto = {
+    id: string
+    text: string
+    is_selected: boolean
+}
+
+export type StudentAnswer = {
+    id: string
+    text: string
+    isSelected: boolean
+}
+
+export type StudentQuestionDto = {
+    id: string
+    text: string
+    type: string
+    position: number
+    answers: StudentAnswerDto[]
+}
+
+export type StudentQuestion = {
+    id: string
+    text: string
+    type: string
+    position: number
+    answers: StudentAnswer[]
+}
+
+export type StartedStudentTestDto = {
+    attempt_id: string
+    test: {
+        id: string
+        teacher_test_id: string
+        title: string
+    }
+    questions: StudentQuestionDto[]
+}
+
+export type StartedStudentTest = {
+    attemptId: string
+    test: {
+        id: string
+        teacherTestId: string
+        title: string
+    }
+    questions: StudentQuestion[]
+}
+
+export type SaveStudentAnswerPayload = {
+    questionId: string
+    answerId: string
+}
+
+export type SaveStudentAnswerDto = {
+    question_id: string
+    answer_id: string
 }

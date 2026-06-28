@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router'
 
 import { getMySubjectsResource } from '$pages/student/model/student.service.ts'
 
-import { EntityCard } from '$common/ui/entity-card'
+import { SubjectCard } from './subject-card.view'
 
 import styles from './subjects.module.css'
 
@@ -18,9 +18,9 @@ export const StudentPage = reatomComponent(({ ctx }) => {
         <Flex vertical gap={24}>
             <div className={styles.list}>
                 {subjects?.map((subject) => (
-                    <EntityCard
+                    <SubjectCard
                         key={subject.id}
-                        title={subject.name}
+                        subject={subject}
                         onClick={() => navigate(`/student/${subject.id}`)}
                     />
                 ))}

@@ -9,6 +9,7 @@ type TestCardProps = {
     metrics: { to: number; from: number }
     score: number | null
     dateOfAppointment: string
+    isSelected: boolean
     onClick: () => void
 }
 
@@ -17,16 +18,17 @@ export const TestCard = ({
     metrics,
     score,
     dateOfAppointment,
+    isSelected,
     onClick,
 }: TestCardProps) => {
     return (
         <Flex
             vertical
             justify={'space-between'}
-            className={styles.testCard}
+            className={`${styles.testCard} ${isSelected ? styles.selectedTestCard : ''}`}
             onClick={onClick}
         >
-            <Flex align={'center'} gap={8}>
+            <Flex align={'center'} gap={16}>
                 <div className={styles.testTitle}>{title}</div>
 
                 <Flex gap={10} className={styles.metrics}>

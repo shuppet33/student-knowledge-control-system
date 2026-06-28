@@ -1,16 +1,24 @@
 import { apiFetch } from '../api.client'
 
 import {
+    mapSaveStudentAnswerPayloadToDto,
     mapSearchStudentsPayloadToDto,
+    startedStudentTestMapper,
     studentGroupsMapper,
-    studentsOptionsMapper, studentSubjectsMapper, studentSubjectTestsMapper,
+    studentsOptionsMapper,
+    studentSubjectsMapper,
+    studentSubjectTestsMapper,
 } from './students.mapper'
 import type {
+    SaveStudentAnswerPayload,
     SearchStudentsPayload,
+    StartedStudentTestDto,
     Student,
     StudentDto,
     StudentGroup,
-    StudentGroupDto, StudentSubjectDto, StudentSubjectTestsDto,
+    StudentGroupDto,
+    StudentSubjectDto,
+    StudentSubjectTestsDto,
 } from './students.types'
 
 export const getStudents = async (): Promise<StudentGroup[]> => {
@@ -74,4 +82,37 @@ export const getSubjectTests = async (subjectId: string) => {
     const data: StudentSubjectTestsDto = await response.json()
 
     return studentSubjectTestsMapper(data)
+}
+
+export const startStudentTest = async (testId: string) => {
+    const response = await apiFetch(`/student/tests/${testId}/start`, {
+        method: 'POST',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка запуска теста')
+    }
+
+    const data: StartedStudentTestDto = await response.json()
+
+    return startedStudentTestMapper(data)
+}
+
+export const saveStudentAnswer = async (
+    attemptId: string,
+    payload: SaveStudentAnswerPayload,
+) => {
+    const response = await apiFetch(`/student/attempts/${attemptId}/answers`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            mapSaveStudentAnswerPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка сохранения ответа')
+    }
 }
