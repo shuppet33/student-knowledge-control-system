@@ -7,7 +7,7 @@ import { useLoaderData } from 'react-router'
 import type { SubjectLoaderData } from '$app/router/router.view'
 
 import {
-    changeSubjectNameAction,
+    changeSubjectNameAction, deleteTeacherTestAsync,
     saveTeacherSubjectGroupsAsync,
     saveTeacherTestAsync,
     teacherGroupsResource,
@@ -156,6 +156,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                         <TeacherTestCard
                             key={test.teacherTestId}
                             test={test}
+                            onDelete={() => deleteTeacherTestAsync(ctx, test.id)}
                             onEdit={() => openEditTestModalAction(ctx, test)}
                             onToggleActive={() =>
                                 toggleTeacherTestActiveAsync(ctx, test)

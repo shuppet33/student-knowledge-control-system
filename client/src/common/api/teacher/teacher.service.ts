@@ -184,6 +184,18 @@ export const getMyTeacherTestDetails = async (
     return teacherTestDetailsMapper(data)
 }
 
+export const deleteMyTeacherTest = async (testId: string) => {
+    const response = await apiFetch(`/teacher/tests/${testId}`, {
+        method: 'DELETE',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка удаления теста')
+    }
+
+    return response.json()
+}
+
 export const createMyTeacherTest = async (
     subjectId: string,
     payload: CreateTeacherTestPayload,

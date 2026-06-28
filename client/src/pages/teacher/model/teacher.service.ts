@@ -13,6 +13,7 @@ import {
     assignSubjectToMe,
     createMyTeacherTest,
     createSubjectAndAssignToMe,
+    deleteMyTeacherTest,
     getMyTeacherSubject,
     getMyTeacherSubjectGroups,
     getMyTeacherSubjects,
@@ -83,7 +84,7 @@ export const teacherSubjectGroupsResource = reatomResource(async (ctx) => {
 
     selectedGroupIdsAtom(
         ctx,
-        groups.map((group) => group.id),
+        groups.map((group) => group.id)
     )
 
     return groups
@@ -93,6 +94,7 @@ export const teacherSubjectTestsResource = reatomResource(async (ctx) => {
     ctx.spy(toggleTeacherTestActiveAsync.onFulfill)
     ctx.spy(saveTeacherTestAsync.onFulfill)
     ctx.spy(createTeacherTestAsync.onFulfill)
+    ctx.spy(deleteTeacherTestAsync.onFulfill)
 
     const subjectId = ctx.spy(subjectIdAtom)
 
@@ -120,38 +122,31 @@ export const teacherTestDetailsResource = reatomResource(async (ctx) => {
     return details
 }, 'teacherTestDetailsResource').pipe(withDataAtom(null), withStatusesAtom())
 
-export const changeSubjectNameAction = action(
-    async (ctx, name: string) => {
-        subjectNameAtom(ctx, name)
+export const changeSubjectNameAction = action(async (ctx, name: string) => {
+    subjectNameAtom(ctx, name)
 
-        const subjectId = ctx.get(subjectIdAtom)
-        const normalizedName = name.trim()
+    const subjectId = ctx.get(subjectIdAtom)
+    const normalizedName = name.trim()
 
-        if (!subjectId || !normalizedName) {
-            return
-        }
+    if (!subjectId || !normalizedName) {
+        return
+    }
 
-        await ctx.schedule(
-            () =>
-                new Promise<void>((resolve) => {
-                    window.setTimeout(resolve, 600)
-                }),
-        )
+    await ctx.schedule(
+        () =>
+            new Promise<void>((resolve) => {
+                window.setTimeout(resolve, 600)
+            })
+    )
 
-        await ctx.schedule(() =>
-            updateMyTeacherSubjectName(subjectId, normalizedName),
-        )
-    },
-    'changeTeacherSubjectNameAction',
-).pipe(withConcurrency())
+    await ctx.schedule(() => updateMyTeacherSubjectName(subjectId, normalizedName))
+}, 'changeTeacherSubjectNameAction').pipe(withConcurrency())
 
 export const saveTeacherSubjectGroupsAsync = reatomAsync((ctx) => {
     return ctx.schedule(async () => {
         const subjectId = ctx.get(subjectIdAtom)
         const selectedIds = ctx.get(selectedGroupIdsAtom)
-        const currentIds = ctx
-            .get(teacherSubjectGroupsResource.dataAtom)
-            .map((group) => group.id)
+        const currentIds = ctx.get(teacherSubjectGroupsResource.dataAtom).map((group) => group.id)
 
         if (!subjectId) {
             return
@@ -168,16 +163,19 @@ export const saveTeacherSubjectGroupsAsync = reatomAsync((ctx) => {
     })
 }, 'saveTeacherSubjectGroupsAsync').pipe(withStatusesAtom(), withErrorAtom())
 
-export const toggleTeacherTestActiveAsync = reatomAsync((
-    ctx,
-    test: TeacherSubjectTest,
-) => {
+export const toggleTeacherTestActiveAsync = reatomAsync((ctx, test: TeacherSubjectTest) => {
     return ctx.schedule(() => {
         return updateMyTeacherTest(test.teacherTestId, {
             isActive: !test.isActive,
         })
     })
 }, 'toggleTeacherTestActiveAsync').pipe(withStatusesAtom(), withErrorAtom())
+
+export const deleteTeacherTestAsync = reatomAsync((ctx, teacherTestId: string) => {
+    return ctx.schedule(async () => {
+        return await deleteMyTeacherTest(teacherTestId)
+    })
+}, 'deleteTeacherTestAsync').pipe(withStatusesAtom(), withErrorAtom())
 
 export const saveTeacherTestAsync = reatomAsync((ctx) => {
     return ctx.schedule(async () => {
@@ -224,9 +222,7 @@ export const createTeacherTestAsync = reatomAsync((ctx) => {
                         isCorrect: answer.isCorrect,
                     })),
             }))
-            .filter((question) =>
-                question.text.trim() || question.answers.length > 0,
-            )
+            .filter((question) => question.text.trim() || question.answers.length > 0)
 
         await createMyTeacherTest(subjectId, {
             title,
@@ -254,19 +250,18 @@ export const saveTeacherTestQuestionsAsync = reatomAsync((ctx) => {
                 text: question.text,
                 type: 'single',
                 answers: question.answers
-                    .filter((answer) =>
-                        isPersistedId(answer.id) || answer.text.trim(),
-                    )
+                    .filter((answer) => isPersistedId(answer.id) || answer.text.trim())
                     .map((answer) => ({
                         id: answer.id,
                         text: answer.text,
                         isCorrect: answer.isCorrect,
                     })),
             }))
-            .filter((question) =>
-                isPersistedId(question.id) ||
-                question.text.trim() ||
-                question.answers.length > 0,
+            .filter(
+                (question) =>
+                    isPersistedId(question.id) ||
+                    question.text.trim() ||
+                    question.answers.length > 0
             )
 
         await saveMyTeacherTestQuestions(test.teacherTestId, {
@@ -299,7 +294,4 @@ export const createSubjectAndAssignToMeAsync = reatomAsync((ctx) => {
 
         await createSubjectAndAssignToMe({ name })
     })
-}, 'createSubjectAndAssignToMeAsync').pipe(
-    withStatusesAtom(),
-    withErrorAtom(),
-)
+}, 'createSubjectAndAssignToMeAsync').pipe(withStatusesAtom(), withErrorAtom())

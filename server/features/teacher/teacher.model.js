@@ -717,4 +717,20 @@ export const teacherModel = {
 
         return rows[0]
     },
+
+    async deleteTeacherTest(testId, teacherId) {
+        const result = await db.query(
+            `
+        UPDATE tests
+        SET deleted_at = now()
+        WHERE id = $1
+          AND created_by = $2
+          AND deleted_at IS NULL
+        RETURNING id
+        `,
+            [testId, teacherId],
+        )
+
+        return result.rows[0]
+    }
 }

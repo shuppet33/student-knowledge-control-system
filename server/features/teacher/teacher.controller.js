@@ -504,4 +504,29 @@ export const teacherController = {
             })
         }
     },
+
+    async deleteTeacherTest(req, res) {
+        try {
+            const { testId } = req.params
+            const teacherId = req.user.id
+
+            const deletedTest = await teacherModel.deleteTeacherTest(testId, teacherId)
+
+            if (!deletedTest) {
+                return res.status(404).json({
+                    message: 'Тест не найден или вы не являетесь автором этого теста',
+                })
+            }
+
+            return res.json({
+                message: 'Тест удалён',
+            })
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка удаления теста',
+            })
+        }
+    }
 }

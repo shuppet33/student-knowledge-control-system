@@ -1,5 +1,5 @@
 import { Button, Card, Flex, Switch, Tag, Typography } from 'antd'
-import { EditOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 
 import type { FC } from 'react'
 
@@ -12,12 +12,14 @@ const { Text, Title } = Typography
 type TeacherTestCardProps = {
     test: TeacherSubjectTest
     onEdit: () => void
+    onDelete: () => void
     onToggleActive: () => void
 }
 
 export const TeacherTestCard: FC<TeacherTestCardProps> = ({
     test,
     onEdit,
+    onDelete,
     onToggleActive,
 }) => {
     return (
@@ -38,10 +40,7 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = ({
                     </Title>
 
                     <Flex align="center" gap={8}>
-                        <Tag
-                            color={test.isActive ? 'green' : 'red'}
-                            className={styles.usageTag}
-                        >
+                        <Tag color={test.isActive ? 'green' : 'red'} className={styles.usageTag}>
                             {test.isActive ? 'используется' : 'не используется'}
                         </Tag>
                         <Text type="secondary" className={styles.author}>
@@ -51,6 +50,14 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = ({
                 </Flex>
 
                 <Flex align="center" gap={16}>
+                    <Button
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={(event) => {
+                            event.stopPropagation()
+                            onDelete()
+                        }}
+                    />
                     <Button
                         type="primary"
                         icon={<EditOutlined />}

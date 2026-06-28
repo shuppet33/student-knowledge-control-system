@@ -34,3 +34,5 @@ teacherRouter.put(
     '/tests/:teacherTestId/groups',
     teacherController.updateTeacherTestGroups,
 )
+
+teacherRouter.delete('/tests/:testId', teacherController.deleteTeacherTest)
