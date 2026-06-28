@@ -5,10 +5,6 @@ import { reatomComponent } from '@reatom/npm-react'
 import { useLoaderData } from 'react-router'
 
 import type { SubjectLoaderData } from '$app/router/router.view'
-import {
-    openQuestionPreviewAction,
-    QuestionPreviewModal,
-} from '$modules/admin/teachers/ui/question-preview'
 
 import {
     changeSubjectNameAction,
@@ -39,6 +35,11 @@ import {
     subjectNameAtom,
     teacherTestTitleAtom,
 } from '$pages/teacher/model/teacher.state'
+
+import {
+    openQuestionPreviewAction,
+    QuestionPreviewModal,
+} from '$modules/admin/teachers/ui/question-preview'
 
 import { AddQuestionModal } from './add-question-modal.view'
 import { TeacherTestCard } from './teacher-test-card.view'

@@ -1,10 +1,11 @@
 import { action, atom } from '@reatom/framework'
 
+import { closeQuestionPreviewAction } from '$modules/admin/teachers/ui/question-preview/question-preview.state'
+
 import type {
     TeacherSubjectTest,
     TeacherTestQuestion,
 } from '$common/api/teacher/teacher.types'
-import { closeQuestionPreviewAction } from '$modules/admin/teachers/ui/question-preview/question-preview.state'
 
 import {
     assignSubjectToMeAsync,
