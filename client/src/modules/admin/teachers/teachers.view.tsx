@@ -2,9 +2,9 @@ import { Flex, Input, Select, Space } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
+import { CreateUserPopover } from '$modules/admin/create-user-popover'
 import { TeacherList } from '$modules/admin/teachers/ui/teacher-list'
 import { TeacherModal } from '$modules/admin/teachers/ui/teacher-modal'
-import { CreateUserPopover } from '$modules/create-user-popover'
 
 import { teachersResource } from './teachers.service'
 

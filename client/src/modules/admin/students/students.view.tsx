@@ -4,13 +4,17 @@ import { Alert, Button, Card, Empty, Flex, Input, Select, Typography } from 'ant
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
+
 import clsx from 'clsx'
 
-import { CreateUserPopover } from '$modules/create-user-popover'
+import { CreateUserPopover } from '$modules/admin/create-user-popover'
 import { CreateGroupPopover } from '$modules/admin/students/ui/create-group-popover'
+import {
+    RolePageLayout,
+    SidebarSection,
+} from '$modules/role-page-layout'
 
 import type { StudentGroup } from '$common/api/students/students.types'
-
 import { ButtonUI } from '$common/ui/button'
 import { EntityCard } from '$common/ui/entity-card'
 
@@ -58,8 +62,10 @@ export const StudentsManagement = reatomComponent(({ ctx }) => {
     const isWithoutGroupSelected = selectedGroup?.groupId === null
 
     return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
+        <RolePageLayout
+            stretch
+            sidebar={(
+                <>
                 <Input
                     placeholder="поиск"
                     prefix={<SearchOutlined />}
@@ -72,9 +78,7 @@ export const StudentsManagement = reatomComponent(({ ctx }) => {
                     <CreateGroupPopover />
                 </div>
 
-                <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>Группы:</Text>
-
+                <SidebarSection title="Группы:" grow>
                     <div className={styles.groupList}>
                         {visibleStudentGroups.length === 0 ? (
                             <Empty
@@ -126,10 +130,11 @@ export const StudentsManagement = reatomComponent(({ ctx }) => {
                             })
                         )}
                     </div>
-                </section>
-            </aside>
+                </SidebarSection>
+                </>
+            )}
+        >
 
-            <main className={styles.content}>
                 {!selectedGroup ? (
                     <div className={styles.placeholder}>Выберите группу</div>
                 ) : (
@@ -281,7 +286,6 @@ export const StudentsManagement = reatomComponent(({ ctx }) => {
                         </div>
                     </div>
                 )}
-            </main>
-        </div>
+        </RolePageLayout>
     )
 })

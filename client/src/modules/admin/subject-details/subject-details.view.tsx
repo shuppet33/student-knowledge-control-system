@@ -1,8 +1,13 @@
-import { Input, Select, Spin, Typography } from 'antd'
+import { Spin } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-// import { RelationPopover } from './relation-popover.view'
+import {
+    RelationSelect,
+    RolePageLayout,
+    SubjectNameEditor,
+} from '$modules/role-page-layout'
+
 import {
     allGroupsResource,
     allTeachersResource,
@@ -17,14 +22,10 @@ import {
     selectedGroupIdsAtom,
     selectedTeacherIdsAtom,
     setSelectedGroupIdsAction,
-    setSelectedTeacherIdsAction, subjectIdAtom,
+    setSelectedTeacherIdsAction,
+    subjectIdAtom,
     subjectNameAtom,
 } from './subject-details.state'
-
-import styles from './subject-details.module.css'
-
-const { Text } = Typography
-const { TextArea } = Input
 
 type SubjectDetailsProps = {
     subjectId: string
@@ -47,8 +48,12 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
     const selectedTeacherIds = ctx.spy(selectedTeacherIdsAtom)
 
     const { isPending: isLoadingSubject } = ctx.spy(subjectResource.statusesAtom)
-    const { isPending: isSavingGroups } = ctx.spy(saveSubjectGroupsAsync.statusesAtom)
-    const { isPending: isSavingTeachers } = ctx.spy(saveSubjectTeachersAsync.statusesAtom)
+    const { isPending: isSavingGroups } = ctx.spy(
+        saveSubjectGroupsAsync.statusesAtom,
+    )
+    const { isPending: isSavingTeachers } = ctx.spy(
+        saveSubjectTeachersAsync.statusesAtom,
+    )
 
     if (ctx.get(subjectIdAtom) !== subjectId) {
         subjectIdAtom(ctx, subjectId)
@@ -59,34 +64,17 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
     }
 
     return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <section>
-                    <Text className={styles.sectionTitle}>Название предмета</Text>
-                    <TextArea
-                        className={styles.nameInput}
+        <RolePageLayout
+            sidebar={(
+                <>
+                    <SubjectNameEditor
+                        title="Название предмета"
                         value={subjectName}
-                        onChange={(event) => changeSubjectNameAction(ctx, event.target.value)}
+                        onChange={(value) => changeSubjectNameAction(ctx, value)}
                     />
-                </section>
 
-                <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>Доступность групп</Text>
-
-                    <Select
-                        suffixIcon={false}
-                        mode="multiple"
-                        className={styles.relationSelect}
-                        virtual
-                        styles={{
-                            content: {
-                                maxHeight: '116px',
-                                overflowY: 'auto',
-                                boxSizing: 'border-box',
-                                width: '100%',
-                            },
-                        }}
-                        showSearch={{ optionFilterProp: 'label' }}
+                    <RelationSelect
+                        title="Доступность групп"
                         placeholder="Выберите группы"
                         value={selectedGroupIds}
                         loading={isSavingGroups}
@@ -99,25 +87,9 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
                             label: group.name,
                         }))}
                     />
-                </section>
 
-                <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>Преподаватели</Text>
-
-                    <Select
-                        suffixIcon={false}
-                        styles={{
-                            content: {
-                                maxHeight: '116px',
-                                overflowY: 'auto',
-                                boxSizing: 'border-box',
-                                width: '100%',
-                            },
-                        }}
-                        mode="multiple"
-                        className={styles.relationSelect}
-                        showSearch={{ optionFilterProp: 'label' }}
-                        virtual
+                    <RelationSelect
+                        title="Преподаватели"
                         placeholder="Выберите преподавателей"
                         value={selectedTeacherIds}
                         loading={isSavingTeachers}
@@ -130,10 +102,10 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
                             label: teacher.fullName,
                         }))}
                     />
-                </section>
-            </aside>
-
-            <main className={styles.content} />
-        </div>
+                </>
+            )}
+        >
+            {null}
+        </RolePageLayout>
     )
 })

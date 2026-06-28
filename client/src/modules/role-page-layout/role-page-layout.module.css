@@ -1,0 +1,78 @@
+.layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+}
+
+.layoutStretch {
+    align-items: stretch;
+    min-height: calc(100vh - 114px);
+}
+
+.sidebar {
+    flex: 0 0 273px;
+    width: 273px;
+    min-height: 632px;
+    padding: 20px;
+
+    border: 2px solid var(--app-border);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.sidebarStretch {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 114px);
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    min-height: 632px;
+}
+
+.contentStretch {
+    height: calc(100vh - 114px);
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.section:first-child {
+    margin-top: 0;
+}
+
+.sectionGrow {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.sectionTitle {
+    display: block;
+    margin-bottom: 10px;
+
+    color: var(--app-text-muted);
+    font-size: 14px;
+}
+
+.nameInput {
+    width: 233px;
+    height: 153px !important;
+    padding: 15px;
+
+    border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+}
+
+.relationSelect {
+    max-height: 120px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+}

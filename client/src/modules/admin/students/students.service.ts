@@ -9,7 +9,7 @@ import {
     withStatusesAtom,
 } from '@reatom/framework'
 
-import { studentCreatedAction } from '$modules/create-user-popover/create-user-popover.service'
+import { studentCreatedAction } from '$modules/admin/create-user-popover/create-user-popover.service'
 import { createGroupAsync } from '$modules/admin/students/ui/create-group-popover/create-group-popover.service.ts'
 
 import {

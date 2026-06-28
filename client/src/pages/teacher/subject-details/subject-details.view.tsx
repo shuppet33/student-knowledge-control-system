@@ -7,7 +7,8 @@ import { useLoaderData } from 'react-router'
 import type { SubjectLoaderData } from '$app/router/router.view'
 
 import {
-    changeSubjectNameAction, deleteTeacherTestAsync,
+    changeSubjectNameAction,
+    deleteTeacherTestAsync,
     saveTeacherSubjectGroupsAsync,
     saveTeacherTestAsync,
     teacherGroupsResource,
@@ -37,7 +38,13 @@ import {
 import {
     openQuestionPreviewAction,
     QuestionPreviewModal,
-} from '$modules/admin/teachers/ui/question-preview'
+} from '$modules/question-preview'
+import {
+    RelationSelect,
+    RolePageLayout,
+    SidebarSection,
+    SubjectNameEditor,
+} from '$modules/role-page-layout'
 
 import { AddQuestionModal } from './add-question-modal.view'
 import { CreateTestModal } from './create-test-modal.view'
@@ -46,7 +53,6 @@ import { TeacherTestCard } from './teacher-test-card.view'
 import styles from './subject-details.module.css'
 
 const { Text } = Typography
-const { TextArea } = Input
 
 type TeacherSubjectDetailsProps = {
     subjectId: string
@@ -94,63 +100,46 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
     }
 
     return (
-        <div className={styles.layout}>
-            <aside className={styles.sidebar}>
-                <section>
-                    <Text className={styles.sectionTitle}>Название предмета</Text>
-                    <TextArea
-                        className={styles.nameInput}
-                        value={subjectName}
-                        onChange={(event) =>
-                            changeSubjectNameAction(ctx, event.target.value)
-                        }
-                    />
-                </section>
+        <>
+            <RolePageLayout
+                sidebar={(
+                    <>
+                        <SubjectNameEditor
+                            title="Название предмета"
+                            value={subjectName}
+                            onChange={(value) =>
+                                changeSubjectNameAction(ctx, value)
+                            }
+                        />
 
-                <section className={styles.section}>
-                    <Button
-                        type="primary"
-                        size="large"
-                        block
-                        onClick={() => openCreateTestModalAction(ctx)}
-                    >
-                        Добавить тест
-                    </Button>
-                </section>
+                        <SidebarSection>
+                            <Button
+                                type="primary"
+                                size="large"
+                                block
+                                onClick={() => openCreateTestModalAction(ctx)}
+                            >
+                                Добавить тест
+                            </Button>
+                        </SidebarSection>
 
-                <section className={styles.section}>
-                    <Text className={styles.sectionTitle}>Доступность группы</Text>
-
-                    <Select
-                        suffixIcon={false}
-                        mode="multiple"
-                        className={styles.relationSelect}
-                        virtual
-                        styles={{
-                            content: {
-                                maxHeight: '116px',
-                                overflowY: 'auto',
-                                boxSizing: 'border-box',
-                                width: '100%',
-                            },
-                        }}
-                        showSearch={{ optionFilterProp: 'label' }}
-                        placeholder="Выберите группы"
-                        value={selectedGroupIds}
-                        loading={isSavingGroups}
-                        onChange={(groupIds) => {
-                            setSelectedGroupIdsAction(ctx, groupIds)
-                            saveTeacherSubjectGroupsAsync(ctx)
-                        }}
-                        options={allGroups.map((group) => ({
-                            value: group.id,
-                            label: group.name,
-                        }))}
-                    />
-                </section>
-            </aside>
-
-            <main className={styles.content}>
+                        <RelationSelect
+                            title="Доступность группы"
+                            placeholder="Выберите группы"
+                            value={selectedGroupIds}
+                            loading={isSavingGroups}
+                            onChange={(groupIds) => {
+                                setSelectedGroupIdsAction(ctx, groupIds)
+                                saveTeacherSubjectGroupsAsync(ctx)
+                            }}
+                            options={allGroups.map((group) => ({
+                                value: group.id,
+                                label: group.name,
+                            }))}
+                        />
+                    </>
+                )}
+            >
                 <Flex vertical gap={16}>
                     {tests.map((test) => (
                         <TeacherTestCard
@@ -164,7 +153,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                         />
                     ))}
                 </Flex>
-            </main>
+            </RolePageLayout>
 
             <CreateTestModal />
 
@@ -266,9 +255,10 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                     </Flex>
 
                     <Flex vertical>
-                        <Text className={styles.sectionTitle}>Выгрузка результатов:</Text>
+                        <Text className={styles.sectionTitle}>
+                            Выгрузка результатов:
+                        </Text>
                     </Flex>
-
                 </Flex>
             </Modal>
 
@@ -277,7 +267,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
             <QuestionPreviewModal
                 questions={testDetails?.questions ?? []}
             />
-        </div>
+        </>
     )
 })
 

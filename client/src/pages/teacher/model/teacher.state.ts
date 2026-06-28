@@ -1,6 +1,6 @@
 import { action, atom } from '@reatom/framework'
 
-import { closeQuestionPreviewAction } from '$modules/admin/teachers/ui/question-preview/question-preview.state'
+import { closeQuestionPreviewAction } from '$modules/question-preview/question-preview.state'
 
 import type {
     TeacherSubjectTest,

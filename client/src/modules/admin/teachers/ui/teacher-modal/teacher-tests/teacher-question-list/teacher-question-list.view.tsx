@@ -4,7 +4,7 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
-import { openQuestionPreviewAction } from '../../../question-preview'
+import { openQuestionPreviewAction } from '$modules/question-preview'
 
 import type {
     TeacherQuestionListProps

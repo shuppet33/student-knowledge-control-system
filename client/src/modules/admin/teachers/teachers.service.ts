@@ -9,7 +9,7 @@ import {
     withStatusesAtom,
 } from '@reatom/framework'
 
-import { teacherCreatedAction } from '$modules/create-user-popover/create-user-popover.service'
+import { teacherCreatedAction } from '$modules/admin/create-user-popover/create-user-popover.service'
 
 import { createSubject, getSubjects } from '$common/api/subjects/subjects.service'
 import {
