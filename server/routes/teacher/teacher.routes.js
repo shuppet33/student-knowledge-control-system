@@ -20,6 +20,7 @@ teacherRouter.get('/subjects/:subjectId', teacherController.getSubject)
 teacherRouter.patch('/subjects/:subjectId', teacherController.updateSubject)
 teacherRouter.get('/subjects/:subjectId/groups', teacherController.getSubjectGroups)
 teacherRouter.get('/subjects/:subjectId/tests', teacherController.getSubjectTests)
+teacherRouter.post('/subjects/:subjectId/tests', teacherController.createTeacherTest)
 teacherRouter.post('/subjects', teacherController.addSubject)
 teacherRouter.post('/subjects/create', teacherController.createSubject)
 

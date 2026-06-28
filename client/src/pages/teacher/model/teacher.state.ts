@@ -31,6 +31,10 @@ export const isAddQuestionModalOpenAtom = atom(
     false,
     'isAddTeacherQuestionModalOpenAtom',
 )
+export const isCreateTestQuestionModalOpenAtom = atom(
+    false,
+    'isCreateTeacherTestQuestionModalOpenAtom',
+)
 export const selectedTeacherTestAtom = atom(
     null as TeacherSubjectTest | null,
     'selectedTeacherTestAtom',
@@ -60,6 +64,10 @@ export type TeacherQuestionDraft = {
 export const teacherQuestionDraftsAtom = atom<TeacherQuestionDraft[]>(
     [],
     'teacherQuestionDraftsAtom',
+)
+export const createTeacherTestQuestionDraftsAtom = atom<TeacherQuestionDraft[]>(
+    [],
+    'createTeacherTestQuestionDraftsAtom',
 )
 export const selectedTeacherQuestionDraftIndexAtom = atom(
     0,
@@ -133,11 +141,20 @@ export const setSelectedGroupIdsAction = action(
 )
 
 export const openCreateTestModalAction = action((ctx) => {
+    teacherTestTitleAtom(ctx, '')
+    selectedTeacherTestGroupIdsAtom(ctx, [])
+    createTeacherTestQuestionDraftsAtom(ctx, [])
     isCreateTestModalOpenAtom(ctx, true)
 }, 'openCreateTeacherTestModalAction')
 
 export const closeCreateTestModalAction = action((ctx) => {
     isCreateTestModalOpenAtom(ctx, false)
+    isCreateTestQuestionModalOpenAtom(ctx, false)
+    teacherTestTitleAtom(ctx, '')
+    selectedTeacherTestGroupIdsAtom(ctx, [])
+    createTeacherTestQuestionDraftsAtom(ctx, [])
+    teacherQuestionDraftsAtom(ctx, [])
+    selectedTeacherQuestionDraftIndexAtom(ctx, 0)
 }, 'closeCreateTeacherTestModalAction')
 
 export const openEditTestModalAction = action((
@@ -156,6 +173,7 @@ export const closeEditTestModalAction = action((ctx) => {
     teacherTestTitleAtom(ctx, '')
     selectedTeacherTestGroupIdsAtom(ctx, [])
     isAddQuestionModalOpenAtom(ctx, false)
+    isCreateTestQuestionModalOpenAtom(ctx, false)
     teacherQuestionDraftsAtom(ctx, [])
     selectedTeacherQuestionDraftIndexAtom(ctx, 0)
     closeQuestionPreviewAction(ctx)
@@ -181,6 +199,47 @@ export const closeAddQuestionModalAction = action((ctx) => {
     teacherQuestionDraftsAtom(ctx, [])
     selectedTeacherQuestionDraftIndexAtom(ctx, 0)
 }, 'closeAddTeacherQuestionModalAction')
+
+export const openCreateTestQuestionModalAction = action((
+    ctx,
+    index?: number,
+) => {
+    const savedDrafts = ctx.get(createTeacherTestQuestionDraftsAtom)
+    const drafts =
+        typeof index === 'number'
+            ? savedDrafts
+            : [...savedDrafts, createQuestionDraft()]
+
+    teacherQuestionDraftsAtom(ctx, drafts.length ? drafts : [createQuestionDraft()])
+    selectedTeacherQuestionDraftIndexAtom(
+        ctx,
+        typeof index === 'number'
+            ? index
+            : Math.max(drafts.length - 1, 0),
+    )
+    isCreateTestQuestionModalOpenAtom(ctx, true)
+}, 'openCreateTestQuestionModalAction')
+
+export const closeCreateTestQuestionModalAction = action((ctx) => {
+    isCreateTestQuestionModalOpenAtom(ctx, false)
+    teacherQuestionDraftsAtom(ctx, [])
+    selectedTeacherQuestionDraftIndexAtom(ctx, 0)
+}, 'closeCreateTestQuestionModalAction')
+
+export const saveCreateTestQuestionDraftsAction = action((ctx) => {
+    const drafts = ctx.get(teacherQuestionDraftsAtom)
+    const normalizedDrafts = drafts
+        .map((question) => ({
+            ...question,
+            answers: question.answers.filter((answer) => answer.text.trim()),
+        }))
+        .filter((question) =>
+            question.text.trim() || question.answers.length > 0,
+        )
+
+    createTeacherTestQuestionDraftsAtom(ctx, normalizedDrafts)
+    closeCreateTestQuestionModalAction(ctx)
+}, 'saveCreateTestQuestionDraftsAction')
 
 export const changeTeacherQuestionTextAction = action((ctx, text: string) => {
     const currentIndex = ctx.get(selectedTeacherQuestionDraftIndexAtom)

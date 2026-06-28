@@ -26,6 +26,18 @@ export type CreateTeacherSubjectDto = {
     name: string
 }
 
+export type CreateTeacherTestPayload = {
+    title: string
+    groupIds: string[]
+    questions: SaveTeacherTestQuestionPayload[]
+}
+
+export type CreateTeacherTestDto = {
+    title: string
+    group_ids: string[]
+    questions: SaveTeacherTestQuestionDto[]
+}
+
 export type TeacherSubjectTestDto = {
     id: string
     title: string

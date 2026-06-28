@@ -322,182 +322,282 @@ export const teacherModel = {
         return rows[0]
     },
 
+    async createTeacherTest({ teacherId, subjectId, title, groupIds, questions }) {
+        const { rows: subjectRelations } = await db.query(
+            `
+                SELECT id
+                FROM teacher_subjects
+                WHERE teacher_id = $1
+                    AND subject_id = $2
+                LIMIT 1
+            `,
+            [teacherId, subjectId],
+        )
+
+        if (!subjectRelations[0]) {
+            return null
+        }
+
+        const { rows: tests } = await db.query(
+            `
+                INSERT INTO tests (
+                    title,
+                    subject_id,
+                    created_by,
+                    is_active
+                )
+                VALUES ($1, $2, $3, TRUE)
+                RETURNING id
+            `,
+            [title, subjectId, teacherId],
+        )
+        const testId = tests[0].id
+
+        const { rows: teacherTests } = await db.query(
+            `
+                INSERT INTO teacher_tests (
+                    teacher_id,
+                    test_id
+                )
+                VALUES ($1, $2)
+                RETURNING id
+            `,
+            [teacherId, testId],
+        )
+        const teacherTestId = teacherTests[0].id
+
+        const { rows: versions } = await db.query(
+            `
+                INSERT INTO test_versions (test_id, is_active)
+                VALUES ($1, TRUE)
+                RETURNING id
+            `,
+            [testId],
+        )
+        const testVersionId = versions[0].id
+
+        if (groupIds.length) {
+            await db.query(
+                `
+                    INSERT INTO teacher_test_groups (
+                        teacher_tests,
+                        group_id
+                    )
+                    SELECT $1, subject_groups.group_id
+                    FROM subject_groups
+                    WHERE subject_groups.subject_id = $2
+                        AND subject_groups.group_id = ANY($3::BIGINT[])
+                `,
+                [teacherTestId, subjectId, groupIds],
+            )
+        }
+
+        for (const [index, question] of questions.entries()) {
+            const { rows: insertedQuestions } = await db.query(
+                `
+                    INSERT INTO questions (
+                        test_version_id,
+                        text,
+                        type,
+                        position
+                    )
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING id
+                `,
+                [
+                    testVersionId,
+                    question.text ?? '',
+                    question.type ?? 'single',
+                    index + 1,
+                ],
+            )
+            const questionId = insertedQuestions[0].id
+
+            for (const answer of question.answers ?? []) {
+                await db.query(
+                    `
+                        INSERT INTO answers (
+                            question_id,
+                            text,
+                            is_correct
+                        )
+                        VALUES ($1, $2, $3)
+                    `,
+                    [
+                        questionId,
+                        answer.text,
+                        answer.is_correct,
+                    ],
+                )
+            }
+        }
+
+        return { id: teacherTestId }
+    },
+
     async updateTeacherTestQuestions({ teacherId, teacherTestId, questions }) {
-        const client = await db.connect()
         const isExistingId = (id) => /^\d+$/.test(String(id))
 
-        try {
-            await client.query('BEGIN')
+        const { rows: tests } = await db.query(
+            `
+                SELECT
+                    tests.id AS test_id,
+                    active_versions.id AS test_version_id
+                FROM teacher_tests
+                JOIN tests
+                    ON tests.id = teacher_tests.test_id
+                LEFT JOIN test_versions AS active_versions
+                    ON active_versions.test_id = tests.id
+                    AND active_versions.is_active = TRUE
+                WHERE teacher_tests.id = $2
+                    AND teacher_tests.teacher_id = $1
+                    AND tests.deleted_at IS NULL
+                LIMIT 1
+            `,
+            [teacherId, teacherTestId],
+        )
 
-            const { rows: tests } = await client.query(
+        const test = tests[0]
+
+        if (!test) {
+            return null
+        }
+
+        let testVersionId = test.test_version_id
+
+        if (!testVersionId) {
+            const { rows: versions } = await db.query(
                 `
-                    SELECT
-                        tests.id AS test_id,
-                        active_versions.id AS test_version_id
-                    FROM teacher_tests
-                    JOIN tests
-                        ON tests.id = teacher_tests.test_id
-                    LEFT JOIN test_versions AS active_versions
-                        ON active_versions.test_id = tests.id
-                        AND active_versions.is_active = TRUE
-                    WHERE teacher_tests.id = $2
-                        AND teacher_tests.teacher_id = $1
-                        AND tests.deleted_at IS NULL
-                    LIMIT 1
+                    INSERT INTO test_versions (test_id, is_active)
+                    VALUES ($1, TRUE)
+                    RETURNING id
                 `,
-                [teacherId, teacherTestId],
+                [test.test_id],
             )
 
-            const test = tests[0]
+            testVersionId = versions[0].id
+        }
 
-            if (!test) {
-                await client.query('ROLLBACK')
-                return null
-            }
+        const existingQuestionIds = questions
+            .map((question) => question.id)
+            .filter(isExistingId)
 
-            let testVersionId = test.test_version_id
+        await db.query(
+            `
+                UPDATE questions
+                SET deleted_at = NOW()
+                WHERE test_version_id = $1
+                    AND deleted_at IS NULL
+                    AND NOT (id = ANY($2::BIGINT[]))
+            `,
+            [testVersionId, existingQuestionIds],
+        )
 
-            if (!testVersionId) {
-                const { rows: versions } = await client.query(
+        for (const [index, question] of questions.entries()) {
+            const position = index + 1
+            let questionId = question.id
+            const answers = question.answers ?? []
+
+            if (isExistingId(question.id)) {
+                const { rows } = await db.query(
                     `
-                        INSERT INTO test_versions (test_id, is_active)
-                        VALUES ($1, TRUE)
+                        UPDATE questions
+                        SET
+                            text = $3,
+                            type = COALESCE($4, questions.type),
+                            position = $5
+                        WHERE id = $1
+                            AND test_version_id = $2
+                            AND deleted_at IS NULL
                         RETURNING id
                     `,
-                    [test.test_id],
+                    [
+                        question.id,
+                        testVersionId,
+                        question.text ?? '',
+                        question.type ?? 'single',
+                        position,
+                    ],
                 )
 
-                testVersionId = versions[0].id
+                if (!rows[0]) {
+                    continue
+                }
+            } else {
+                const { rows } = await db.query(
+                    `
+                        INSERT INTO questions (
+                            test_version_id,
+                            text,
+                            type,
+                            position
+                        )
+                        VALUES ($1, $2, $3, $4)
+                        RETURNING id
+                    `,
+                    [
+                        testVersionId,
+                        question.text ?? '',
+                        question.type ?? 'single',
+                        position,
+                    ],
+                )
+
+                questionId = rows[0].id
             }
 
-            const existingQuestionIds = questions
-                .map((question) => question.id)
+            const existingAnswerIds = answers
+                .map((answer) => answer.id)
                 .filter(isExistingId)
 
-            await client.query(
+            await db.query(
                 `
-                    UPDATE questions
-                    SET deleted_at = NOW()
-                    WHERE test_version_id = $1
-                        AND deleted_at IS NULL
+                    DELETE FROM answers
+                    WHERE question_id = $1
                         AND NOT (id = ANY($2::BIGINT[]))
                 `,
-                [testVersionId, existingQuestionIds],
+                [questionId, existingAnswerIds],
             )
 
-            for (const [index, question] of questions.entries()) {
-                const position = index + 1
-                let questionId = question.id
-                const answers = question.answers ?? []
-
-                if (isExistingId(question.id)) {
-                    const { rows } = await client.query(
+            for (const answer of answers) {
+                if (isExistingId(answer.id)) {
+                    await db.query(
                         `
-                            UPDATE questions
+                            UPDATE answers
                             SET
                                 text = $3,
-                                type = COALESCE($4, questions.type),
-                                position = $5
+                                is_correct = $4
                             WHERE id = $1
-                                AND test_version_id = $2
-                                AND deleted_at IS NULL
-                            RETURNING id
+                                AND question_id = $2
                         `,
                         [
-                            question.id,
-                            testVersionId,
-                            question.text ?? '',
-                            question.type ?? 'single',
-                            position,
+                            answer.id,
+                            questionId,
+                            answer.text,
+                            answer.is_correct,
                         ],
                     )
-
-                    if (!rows[0]) {
-                        continue
-                    }
                 } else {
-                    const { rows } = await client.query(
+                    await db.query(
                         `
-                            INSERT INTO questions (
-                                test_version_id,
+                            INSERT INTO answers (
+                                question_id,
                                 text,
-                                type,
-                                position
+                                is_correct
                             )
-                            VALUES ($1, $2, $3, $4)
-                            RETURNING id
+                            VALUES ($1, $2, $3)
                         `,
                         [
-                            testVersionId,
-                            question.text ?? '',
-                            question.type ?? 'single',
-                            position,
+                            questionId,
+                            answer.text,
+                            answer.is_correct,
                         ],
                     )
-
-                    questionId = rows[0].id
-                }
-
-                const existingAnswerIds = answers
-                    .map((answer) => answer.id)
-                    .filter(isExistingId)
-
-                await client.query(
-                    `
-                        DELETE FROM answers
-                        WHERE question_id = $1
-                            AND NOT (id = ANY($2::BIGINT[]))
-                    `,
-                    [questionId, existingAnswerIds],
-                )
-
-                for (const answer of answers) {
-                    if (isExistingId(answer.id)) {
-                        await client.query(
-                            `
-                                UPDATE answers
-                                SET
-                                    text = $3,
-                                    is_correct = $4
-                                WHERE id = $1
-                                    AND question_id = $2
-                            `,
-                            [
-                                answer.id,
-                                questionId,
-                                answer.text,
-                                answer.is_correct,
-                            ],
-                        )
-                    } else {
-                        await client.query(
-                            `
-                                INSERT INTO answers (
-                                    question_id,
-                                    text,
-                                    is_correct
-                                )
-                                VALUES ($1, $2, $3)
-                            `,
-                            [
-                                questionId,
-                                answer.text,
-                                answer.is_correct,
-                            ],
-                        )
-                    }
                 }
             }
-
-            await client.query('COMMIT')
-
-            return { id: teacherTestId }
-        } catch (error) {
-            await client.query('ROLLBACK')
-            throw error
-        } finally {
-            client.release()
         }
+
+        return { id: teacherTestId }
     },
 
     async updateTeacherTest({ teacherId, teacherTestId, title, isActive }) {
@@ -528,64 +628,50 @@ export const teacherModel = {
     },
 
     async updateTeacherTestGroups({ teacherId, teacherTestId, groupIds }) {
-        const client = await db.connect()
+        const { rows: teacherTests } = await db.query(
+            `
+                SELECT id
+                FROM teacher_tests
+                WHERE id = $1
+                    AND teacher_id = $2
+                LIMIT 1
+            `,
+            [teacherTestId, teacherId],
+        )
 
-        try {
-            await client.query('BEGIN')
-
-            const { rows: teacherTests } = await client.query(
-                `
-                    SELECT id
-                    FROM teacher_tests
-                    WHERE id = $1
-                        AND teacher_id = $2
-                    LIMIT 1
-                `,
-                [teacherTestId, teacherId],
-            )
-
-            if (!teacherTests[0]) {
-                await client.query('ROLLBACK')
-                return null
-            }
-
-            await client.query(
-                `
-                    DELETE FROM teacher_test_groups
-                    WHERE teacher_tests = $1
-                `,
-                [teacherTestId],
-            )
-
-            if (groupIds.length) {
-                await client.query(
-                    `
-                        INSERT INTO teacher_test_groups (
-                            teacher_tests,
-                            group_id
-                        )
-                        SELECT $1, subject_groups.group_id
-                        FROM subject_groups
-                        JOIN teacher_tests
-                            ON teacher_tests.id = $1
-                        JOIN tests
-                            ON tests.id = teacher_tests.test_id
-                        WHERE subject_groups.subject_id = tests.subject_id
-                            AND subject_groups.group_id = ANY($2::BIGINT[])
-                    `,
-                    [teacherTestId, groupIds],
-                )
-            }
-
-            await client.query('COMMIT')
-
-            return { id: teacherTestId }
-        } catch (error) {
-            await client.query('ROLLBACK')
-            throw error
-        } finally {
-            client.release()
+        if (!teacherTests[0]) {
+            return null
         }
+
+        await db.query(
+            `
+                DELETE FROM teacher_test_groups
+                WHERE teacher_tests = $1
+            `,
+            [teacherTestId],
+        )
+
+        if (groupIds.length) {
+            await db.query(
+                `
+                    INSERT INTO teacher_test_groups (
+                        teacher_tests,
+                        group_id
+                    )
+                    SELECT $1, subject_groups.group_id
+                    FROM subject_groups
+                    JOIN teacher_tests
+                        ON teacher_tests.id = $1
+                    JOIN tests
+                        ON tests.id = teacher_tests.test_id
+                    WHERE subject_groups.subject_id = tests.subject_id
+                        AND subject_groups.group_id = ANY($2::BIGINT[])
+                `,
+                [teacherTestId, groupIds],
+            )
+        }
+
+        return { id: teacherTestId }
     },
 
     async getTeacherSubjectRelation({ teacher_id, subject_id }) {

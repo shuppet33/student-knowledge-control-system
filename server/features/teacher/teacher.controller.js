@@ -185,6 +185,46 @@ export const teacherController = {
         }
     },
 
+    async createTeacherTest(req, res) {
+        try {
+            const { subjectId } = req.params
+            const {
+                title,
+                group_ids,
+                questions,
+            } = req.body
+            const normalizedTitle = title?.trim()
+
+            if (!normalizedTitle) {
+                return res.status(400).json({
+                    message: 'Название теста обязательно',
+                })
+            }
+
+            const test = await teacherModel.createTeacherTest({
+                teacherId: req.user.id,
+                subjectId,
+                title: normalizedTitle,
+                groupIds: group_ids ?? [],
+                questions: Array.isArray(questions) ? questions : [],
+            })
+
+            if (!test) {
+                return res.status(404).json({
+                    message: 'Предмет не найден или не назначен преподавателю',
+                })
+            }
+
+            return res.status(201).json(test)
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка создания теста',
+            })
+        }
+    },
+
     async updateTeacherTestQuestions(req, res) {
         try {
             const { teacherTestId } = req.params

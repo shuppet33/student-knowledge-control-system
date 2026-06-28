@@ -19,10 +19,8 @@ import {
 } from '$pages/teacher/model/teacher.service'
 import {
     changeTeacherTestTitleAction,
-    closeCreateTestModalAction,
     closeEditTestModalAction,
     isAddQuestionModalOpenAtom,
-    isCreateTestModalOpenAtom,
     isEditTestModalOpenAtom,
     openAddQuestionModalAction,
     openCreateTestModalAction,
@@ -42,6 +40,7 @@ import {
 } from '$modules/admin/teachers/ui/question-preview'
 
 import { AddQuestionModal } from './add-question-modal.view'
+import { CreateTestModal } from './create-test-modal.view'
 import { TeacherTestCard } from './teacher-test-card.view'
 
 import styles from './subject-details.module.css'
@@ -69,7 +68,6 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
 
     const allGroups = ctx.spy(teacherGroupsResource.dataAtom)
     const selectedGroupIds = ctx.spy(selectedGroupIdsAtom)
-    const isCreateTestModalOpen = ctx.spy(isCreateTestModalOpenAtom)
     const isEditTestModalOpen = ctx.spy(isEditTestModalOpenAtom)
     const isAddQuestionModalOpen = ctx.spy(isAddQuestionModalOpenAtom)
     const teacherTestTitle = ctx.spy(teacherTestTitleAtom)
@@ -167,12 +165,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                 </Flex>
             </main>
 
-            <Modal
-                open={isCreateTestModalOpen}
-                title="Добавить тест"
-                footer={null}
-                onCancel={() => closeCreateTestModalAction(ctx)}
-            />
+            <CreateTestModal />
 
             <Modal
                 open={isEditTestModalOpen}

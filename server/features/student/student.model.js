@@ -262,75 +262,60 @@ export const studentModel = {
     },
 
     async saveAnswer({ userId, attemptId, questionId, answerId }) {
-        const client = await db.connect()
+        const { rows: attempts } = await db.query(
+            `
+                SELECT id
+                FROM test_attempts
+                WHERE id = $1
+                    AND student_id = $2
+                    AND status = 'in_progress'
+                LIMIT 1
+            `,
+            [attemptId, userId],
+        )
 
-        try {
-            await client.query('BEGIN')
-
-            const { rows: attempts } = await client.query(
-                `
-                    SELECT id
-                    FROM test_attempts
-                    WHERE id = $1
-                        AND student_id = $2
-                        AND status = 'in_progress'
-                    LIMIT 1
-                `,
-                [attemptId, userId],
-            )
-
-            if (!attempts[0]) {
-                await client.query('ROLLBACK')
-                return null
-            }
-
-            const { rows: answers } = await client.query(
-                `
-                    SELECT is_correct
-                    FROM answers
-                    WHERE id = $1
-                        AND question_id = $2
-                    LIMIT 1
-                `,
-                [answerId, questionId],
-            )
-
-            if (!answers[0]) {
-                await client.query('ROLLBACK')
-                return null
-            }
-
-            await client.query(
-                `
-                    DELETE FROM student_answers
-                    WHERE attempt_id = $1
-                        AND question_id = $2
-                `,
-                [attemptId, questionId],
-            )
-
-            const { rows } = await client.query(
-                `
-                    INSERT INTO student_answers (
-                        attempt_id,
-                        question_id,
-                        answer_id,
-                        is_correct
-                    )
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING id
-                `,
-                [attemptId, questionId, answerId, answers[0].is_correct],
-            )
-
-            await client.query('COMMIT')
-
-            return rows[0]
-        } catch (error) {
-            await client.query('ROLLBACK')
-            throw error
-        } finally {
-            client.release()
+        if (!attempts[0]) {
+            return null
         }
+
+        const { rows: answers } = await db.query(
+            `
+                SELECT is_correct
+                FROM answers
+                WHERE id = $1
+                    AND question_id = $2
+                LIMIT 1
+            `,
+            [answerId, questionId],
+        )
+
+        if (!answers[0]) {
+            return null
+        }
+
+        await db.query(
+            `
+                DELETE FROM student_answers
+                WHERE attempt_id = $1
+                    AND question_id = $2
+            `,
+            [attemptId, questionId],
+        )
+
+        const { rows } = await db.query(
+            `
+                INSERT INTO student_answers (
+                    attempt_id,
+                    question_id,
+                    answer_id,
+                    is_correct
+                )
+                VALUES ($1, $2, $3, $4)
+                RETURNING id
+            `,
+            [attemptId, questionId, answerId, answers[0].is_correct],
+        )
+
+        return rows[0]
     },
 }

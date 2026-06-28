@@ -11,6 +11,7 @@ import {
 import {
     addMyTeacherSubjectToGroup,
     assignSubjectToMe,
+    createMyTeacherTest,
     createSubjectAndAssignToMe,
     getMyTeacherSubject,
     getMyTeacherSubjectGroups,
@@ -29,7 +30,9 @@ import type { TeacherSubjectTest } from '$common/api/teacher/teacher.types'
 
 import {
     closeAddQuestionModalAction,
+    closeCreateTestModalAction,
     closeEditTestModalAction,
+    createTeacherTestQuestionDraftsAtom,
     newSubjectNameAtom,
     selectedGroupIdsAtom,
     selectedNewSubjectIdAtom,
@@ -89,6 +92,7 @@ export const teacherSubjectGroupsResource = reatomResource(async (ctx) => {
 export const teacherSubjectTestsResource = reatomResource(async (ctx) => {
     ctx.spy(toggleTeacherTestActiveAsync.onFulfill)
     ctx.spy(saveTeacherTestAsync.onFulfill)
+    ctx.spy(createTeacherTestAsync.onFulfill)
 
     const subjectId = ctx.spy(subjectIdAtom)
 
@@ -195,6 +199,44 @@ export const saveTeacherTestAsync = reatomAsync((ctx) => {
         closeEditTestModalAction(ctx)
     })
 }, 'saveTeacherTestAsync').pipe(withStatusesAtom(), withErrorAtom())
+
+export const createTeacherTestAsync = reatomAsync((ctx) => {
+    return ctx.schedule(async () => {
+        const subjectId = ctx.get(subjectIdAtom)
+        const title = ctx.get(teacherTestTitleAtom).trim()
+        const groupIds = ctx.get(selectedTeacherTestGroupIdsAtom)
+        const drafts = ctx.get(createTeacherTestQuestionDraftsAtom)
+
+        if (!subjectId || !title) {
+            return
+        }
+
+        const questions = drafts
+            .map((question) => ({
+                id: question.id,
+                text: question.text,
+                type: 'single',
+                answers: question.answers
+                    .filter((answer) => answer.text.trim())
+                    .map((answer) => ({
+                        id: answer.id,
+                        text: answer.text,
+                        isCorrect: answer.isCorrect,
+                    })),
+            }))
+            .filter((question) =>
+                question.text.trim() || question.answers.length > 0,
+            )
+
+        await createMyTeacherTest(subjectId, {
+            title,
+            groupIds,
+            questions,
+        })
+
+        closeCreateTestModalAction(ctx)
+    })
+}, 'createTeacherTestAsync').pipe(withStatusesAtom(), withErrorAtom())
 
 export const saveTeacherTestQuestionsAsync = reatomAsync((ctx) => {
     return ctx.schedule(async () => {

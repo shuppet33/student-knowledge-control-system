@@ -4,6 +4,7 @@ import type { Group } from '../groups/groups.types'
 import {
     mapAssignTeacherSubjectPayloadToDto,
     mapCreateTeacherSubjectPayloadToDto,
+    mapCreateTeacherTestPayloadToDto,
     mapSaveTeacherTestQuestionsPayloadToDto,
     mapUpdateTeacherTestGroupsPayloadToDto,
     mapUpdateTeacherTestPayloadToDto,
@@ -15,6 +16,7 @@ import {
 import type {
     AssignTeacherSubjectPayload,
     CreateTeacherSubjectPayload,
+    CreateTeacherTestPayload,
     SaveTeacherTestQuestionsPayload,
     TeacherSubject,
     TeacherSubjectDto,
@@ -180,6 +182,25 @@ export const getMyTeacherTestDetails = async (
     const data: TeacherTestDetailsDto = await response.json()
 
     return teacherTestDetailsMapper(data)
+}
+
+export const createMyTeacherTest = async (
+    subjectId: string,
+    payload: CreateTeacherTestPayload,
+): Promise<void> => {
+    const response = await apiFetch(`/teacher/subjects/${subjectId}/tests`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            mapCreateTeacherTestPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка создания теста')
+    }
 }
 
 export const saveMyTeacherTestQuestions = async (

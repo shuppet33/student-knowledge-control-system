@@ -3,6 +3,8 @@ import {
     type AssignTeacherSubjectPayload,
     type CreateTeacherSubjectDto,
     type CreateTeacherSubjectPayload,
+    type CreateTeacherTestDto,
+    type CreateTeacherTestPayload,
     type SaveTeacherTestQuestionsDto,
     type SaveTeacherTestQuestionsPayload,
     type TeacherSubject,
@@ -48,6 +50,25 @@ export const mapCreateTeacherSubjectPayloadToDto = (
 ): CreateTeacherSubjectDto => {
     return {
         name: payload.name,
+    }
+}
+
+export const mapCreateTeacherTestPayloadToDto = (
+    payload: CreateTeacherTestPayload,
+): CreateTeacherTestDto => {
+    return {
+        title: payload.title,
+        group_ids: payload.groupIds,
+        questions: payload.questions.map((question) => ({
+            id: question.id,
+            text: question.text,
+            type: question.type,
+            answers: question.answers.map((answer) => ({
+                id: answer.id,
+                text: answer.text,
+                is_correct: answer.isCorrect,
+            })),
+        })),
     }
 }
 
