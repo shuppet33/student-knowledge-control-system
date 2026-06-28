@@ -141,6 +141,142 @@ export const teacherController = {
         }
     },
 
+    async getSubjectTests(req, res) {
+        try {
+            const { subjectId } = req.params
+
+            const tests = await teacherModel.getSubjectTests({
+                teacherId: req.user.id,
+                subjectId,
+            })
+
+            return res.status(200).json(tests)
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка получения тестов предмета',
+            })
+        }
+    },
+
+    async getTeacherTest(req, res) {
+        try {
+            const { teacherTestId } = req.params
+
+            const test = await teacherModel.getTeacherTestDetails({
+                teacherId: req.user.id,
+                teacherTestId,
+            })
+
+            if (!test) {
+                return res.status(404).json({
+                message: 'Тест не найден',
+                })
+            }
+
+            return res.status(200).json(test)
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка получения теста',
+            })
+        }
+    },
+
+    async updateTeacherTestQuestions(req, res) {
+        try {
+            const { teacherTestId } = req.params
+            const { questions } = req.body
+
+            if (!Array.isArray(questions)) {
+                return res.status(400).json({
+                    message: 'questions должен быть массивом',
+                })
+            }
+
+            const relation = await teacherModel.updateTeacherTestQuestions({
+                teacherId: req.user.id,
+                teacherTestId,
+                questions,
+            })
+
+            if (!relation) {
+                return res.status(404).json({
+                    message: 'Тест не найден',
+                })
+            }
+
+            return res.status(200).json({
+                message: 'Вопросы теста обновлены',
+            })
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка обновления вопросов теста',
+            })
+        }
+    },
+
+    async updateTeacherTest(req, res) {
+        try {
+            const { teacherTestId } = req.params
+            const { title, is_active } = req.body
+
+            const test = await teacherModel.updateTeacherTest({
+                teacherId: req.user.id,
+                teacherTestId,
+                title: title?.trim(),
+                isActive: is_active,
+            })
+
+            if (!test) {
+                return res.status(404).json({
+                    message: 'Тест не найден',
+                })
+            }
+
+            return res.status(200).json(test)
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка обновления теста',
+            })
+        }
+    },
+
+    async updateTeacherTestGroups(req, res) {
+        try {
+            const { teacherTestId } = req.params
+            const { group_ids } = req.body
+
+            const relation = await teacherModel.updateTeacherTestGroups({
+                teacherId: req.user.id,
+                teacherTestId,
+                groupIds: group_ids ?? [],
+            })
+
+            if (!relation) {
+                return res.status(404).json({
+                    message: 'Тест не найден',
+                })
+            }
+
+            return res.status(200).json({
+                message: 'Группы теста обновлены',
+            })
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка обновления групп теста',
+            })
+        }
+    },
+
     async addSubjectToGroup(req, res) {
         try {
             const { groupId } = req.params

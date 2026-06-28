@@ -19,5 +19,17 @@ teacherRouter.get('/subjects/all', teacherController.getSubjects)
 teacherRouter.get('/subjects/:subjectId', teacherController.getSubject)
 teacherRouter.patch('/subjects/:subjectId', teacherController.updateSubject)
 teacherRouter.get('/subjects/:subjectId/groups', teacherController.getSubjectGroups)
+teacherRouter.get('/subjects/:subjectId/tests', teacherController.getSubjectTests)
 teacherRouter.post('/subjects', teacherController.addSubject)
 teacherRouter.post('/subjects/create', teacherController.createSubject)
+
+teacherRouter.get('/tests/:teacherTestId', teacherController.getTeacherTest)
+teacherRouter.put(
+    '/tests/:teacherTestId/questions',
+    teacherController.updateTeacherTestQuestions,
+)
+teacherRouter.patch('/tests/:teacherTestId', teacherController.updateTeacherTest)
+teacherRouter.put(
+    '/tests/:teacherTestId/groups',
+    teacherController.updateTeacherTestGroups,
+)

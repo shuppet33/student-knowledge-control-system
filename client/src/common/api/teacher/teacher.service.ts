@@ -4,14 +4,26 @@ import type { Group } from '../groups/groups.types'
 import {
     mapAssignTeacherSubjectPayloadToDto,
     mapCreateTeacherSubjectPayloadToDto,
+    mapSaveTeacherTestQuestionsPayloadToDto,
+    mapUpdateTeacherTestGroupsPayloadToDto,
+    mapUpdateTeacherTestPayloadToDto,
     teacherSubjectMapper,
     teacherSubjectsMapper,
+    teacherSubjectTestsMapper,
+    teacherTestDetailsMapper,
 } from './teacher.mapper'
 import type {
     AssignTeacherSubjectPayload,
     CreateTeacherSubjectPayload,
+    SaveTeacherTestQuestionsPayload,
     TeacherSubject,
     TeacherSubjectDto,
+    TeacherSubjectTest,
+    TeacherSubjectTestDto,
+    TeacherTestDetails,
+    TeacherTestDetailsDto,
+    UpdateTeacherTestGroupsPayload,
+    UpdateTeacherTestPayload,
 } from './teacher.types'
 
 export const getMyTeacherSubjects = async (): Promise<TeacherSubject[]> => {
@@ -135,6 +147,95 @@ export const removeMyTeacherSubjectFromGroup = async (
 
     if (!response.ok) {
         throw new Error('Ошибка удаления группы из предмета')
+    }
+}
+
+export const getMyTeacherSubjectTests = async (
+    subjectId: string,
+): Promise<TeacherSubjectTest[]> => {
+    const response = await apiFetch(`/teacher/subjects/${subjectId}/tests`, {
+        method: 'GET',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения тестов предмета')
+    }
+
+    const data: TeacherSubjectTestDto[] = await response.json()
+
+    return teacherSubjectTestsMapper(data)
+}
+
+export const getMyTeacherTestDetails = async (
+    teacherTestId: string,
+): Promise<TeacherTestDetails> => {
+    const response = await apiFetch(`/teacher/tests/${teacherTestId}`, {
+        method: 'GET',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка получения теста')
+    }
+
+    const data: TeacherTestDetailsDto = await response.json()
+
+    return teacherTestDetailsMapper(data)
+}
+
+export const saveMyTeacherTestQuestions = async (
+    teacherTestId: string,
+    payload: SaveTeacherTestQuestionsPayload,
+): Promise<void> => {
+    const response = await apiFetch(`/teacher/tests/${teacherTestId}/questions`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            mapSaveTeacherTestQuestionsPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка сохранения вопросов теста')
+    }
+}
+
+export const updateMyTeacherTest = async (
+    teacherTestId: string,
+    payload: UpdateTeacherTestPayload,
+): Promise<void> => {
+    const response = await apiFetch(`/teacher/tests/${teacherTestId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            mapUpdateTeacherTestPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка обновления теста')
+    }
+}
+
+export const updateMyTeacherTestGroups = async (
+    teacherTestId: string,
+    payload: UpdateTeacherTestGroupsPayload,
+): Promise<void> => {
+    const response = await apiFetch(`/teacher/tests/${teacherTestId}/groups`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            mapUpdateTeacherTestGroupsPayloadToDto(payload),
+        ),
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка обновления групп теста')
     }
 }
 
