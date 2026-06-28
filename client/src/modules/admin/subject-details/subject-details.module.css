@@ -11,7 +11,7 @@
     min-height: 632px;
     padding: 20px;
 
-    border: 2px solid #dee7f0;
+    border: 2px solid var(--app-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -24,7 +24,7 @@
     display: block;
     margin-bottom: 10px;
 
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 14px;
 }
 
@@ -51,7 +51,7 @@
 
     overflow-y: auto;
 
-    border: 2px solid #dee7f0;
+    border: 2px solid var(--app-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -67,9 +67,9 @@
 
     border: 0;
     border-radius: 6px;
-    background: #f0f0f0;
+    background: var(--app-surface-soft);
 
-    color: #25384a;
+    color: var(--app-text);
     font-size: 14px;
     line-height: 24px;
     box-sizing: border-box;
@@ -94,7 +94,7 @@
 
     border: 0;
     background: transparent;
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 10px;
 
     cursor: pointer;
@@ -111,7 +111,7 @@
     z-index: 98;
     inset: 0;
 
-    background: rgba(0, 0, 0, 0.65);
+    background: var(--app-overlay);
 }
 
 .popoverWrapper {
@@ -140,7 +140,7 @@
     padding: 10px;
     overflow-y: auto;
 
-    border: 2px solid #dee7f0;
+    border: 2px solid var(--app-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -155,9 +155,9 @@
     padding: 0 6px;
 
     border-radius: 6px;
-    background: #f0f0f0;
+    background: var(--app-surface-soft);
 
-    color: #25384a;
+    color: var(--app-text);
     font-size: 14px;
     line-height: 24px;
 }
@@ -179,7 +179,7 @@
 
     border: 0;
     background: transparent;
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 10px;
     cursor: pointer;
 }
@@ -203,9 +203,9 @@
     min-height: 30px;
     padding: 6px 10px;
 
-    border: 1px solid #dee7f0;
+    border: 1px solid var(--app-border);
     border-radius: 8px;
-    background: #fff;
+    background: var(--app-surface);
 
     cursor: pointer;
 }
@@ -217,7 +217,7 @@
 }
 
 .option:hover {
-    border-color: #1677ff;
+    border-color: var(--app-primary-strong);
 }
 
 .relationSelect {

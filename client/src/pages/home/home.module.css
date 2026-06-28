@@ -1,6 +1,6 @@
 .layout {
     min-height: 100vh;
-    background: #f5f5f5;
+    background: var(--app-bg);
 }
 
 .header {
@@ -10,9 +10,9 @@
 
     height: 64px;
     padding: 10px 10px;
-    background: #ffffff;
+    background: var(--app-surface);
 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px var(--app-shadow);
 }
 
 .signInWrapper {
@@ -57,7 +57,7 @@
     font-weight: 700;
     line-height: 1;
     letter-spacing: -2px;
-    color: #2C82E7;
+    color: var(--app-primary);
 }
 
 .subtitle {
@@ -65,7 +65,7 @@
     font-weight: 500;
     line-height: 1;
 
-    color: #000;
+    color: var(--app-text-strong);
 }
 
 .homeButton {
@@ -76,8 +76,8 @@
     height: 32px;
     padding: 0 15px;
 
-    color: #fff;
-    background-color: #1677ff;
+    color: var(--app-on-primary);
+    background-color: var(--app-primary-strong);
     border-radius: 6px;
 
     font-weight: 400;

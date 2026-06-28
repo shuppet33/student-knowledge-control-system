@@ -12,6 +12,7 @@ export const ThemeSwitcher = reatomComponent(({ ctx }) => {
 
     useEffect(() => {
         localStorage.setItem('theme', theme)
+        document.documentElement.dataset.theme = theme
     }, [theme])
 
     return (

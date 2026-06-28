@@ -11,7 +11,7 @@
     min-height: 632px;
     padding: 20px;
 
-    border: 2px solid #dee7f0;
+    border: 2px solid var(--app-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -22,7 +22,7 @@
 
 .sectionTitle {
     display: block;
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 14px;
 }
 
@@ -54,7 +54,7 @@
     grid-template-columns: repeat(10, 28px);
     gap: 8px;
     padding: 10px;
-    border: 1px solid #dee7f0;
+    border: 1px solid var(--app-border);
     border-radius: 8px;
 }
 
@@ -67,8 +67,8 @@
 
     border-radius: 4px;
 
-    color: #3782F2;
-    background-color: #DEE7F0;
+    color: var(--app-primary);
+    background-color: var(--app-surface-soft);
 
     min-height: 28px;
 }

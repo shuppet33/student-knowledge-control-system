@@ -1,6 +1,6 @@
 .header {
     padding: 0 10px;
-    background-color: #fff;
+    background-color: var(--app-surface);
 }
 
 .container {

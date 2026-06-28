@@ -23,7 +23,9 @@ export const App = reatomComponent(({ ctx }) => {
                         : antdTheme.defaultAlgorithm,
             }}
         >
-            {!isEverSettled || isPending ? <div>loading...</div> : <AppRouter />}
+            <div data-theme={theme}>
+                {!isEverSettled || isPending ? <div>loading...</div> : <AppRouter />}
+            </div>
         </ConfigProvider>
     )
 })

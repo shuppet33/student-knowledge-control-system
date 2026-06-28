@@ -2,23 +2,23 @@ import { Flex } from 'antd'
 
 const scoreColors = {
     undefined: {
-        background: '#DEE7F0',
+        background: 'var(--app-surface-soft)',
     },
     2: {
-        color: '#932020',
-        background: '#DA8181',
+        color: 'var(--app-score-bad-text)',
+        background: 'var(--app-score-bad-bg)',
     },
     3: {
-        color: '#934E20',
-        background: '#E5BA86',
+        color: 'var(--app-score-mid-text)',
+        background: 'var(--app-score-mid-bg)',
     },
     4: {
-        color: '#934E20',
-        background: '#E5BA86',
+        color: 'var(--app-score-mid-text)',
+        background: 'var(--app-score-mid-bg)',
     },
     5: {
-        color: '#4B875B',
-        background: '#B9E49C',
+        color: 'var(--app-score-good-text)',
+        background: 'var(--app-score-good-bg)',
     },
 }
 

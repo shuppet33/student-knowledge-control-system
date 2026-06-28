@@ -5,11 +5,11 @@
     align-items: center;
     gap: 8px;
 
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--app-border);
     border-radius: 8px;
 
-    background: #fff;
-    color: rgba(0, 0, 0, 0.88);
+    background: var(--app-surface);
+    color: var(--app-text);
 
     transition: border-color 0.2s,
     color 0.2s,
@@ -53,8 +53,8 @@
 }
 
 .subject:hover {
-    border-color: #4096ff;
-    color: #4096ff;
+    border-color: var(--app-primary);
+    color: var(--app-primary);
 }
 
 .subject:hover .deleteButton {
@@ -67,15 +67,15 @@
 }
 
 .subjectActive {
-    background: #1677ff;
-    border-color: #1677ff;
-    color: #fff;
+    background: var(--app-primary-strong);
+    border-color: var(--app-primary-strong);
+    color: var(--app-on-primary);
 }
 
 .subjectActive:hover {
-    background: #1677ff;
-    border-color: #1677ff;
-    color: #fff;
+    background: var(--app-primary-strong);
+    border-color: var(--app-primary-strong);
+    color: var(--app-on-primary);
 }
 
 .subject:focus-within .deleteButton {

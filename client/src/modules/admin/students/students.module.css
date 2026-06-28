@@ -15,7 +15,7 @@
     height: calc(100vh - 114px);
     padding: 20px;
 
-    border: 2px solid #dee7f0;
+    border: 2px solid var(--app-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -32,7 +32,7 @@
     display: block;
     margin-bottom: 10px;
 
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 14px;
 }
 
@@ -63,20 +63,20 @@
 }
 
 .withoutGroupCard {
-    border-color: #ff4d4f !important;
-    color: #ff4d4f !important;
+    border-color: var(--app-danger) !important;
+    color: var(--app-danger) !important;
 }
 
 .withoutGroupCard:hover {
-    border-color: #ff4d4f !important;
-    color: #ff4d4f !important;
+    border-color: var(--app-danger) !important;
+    color: var(--app-danger) !important;
 }
 
 .withoutGroupCardActive,
 .withoutGroupCardActive:hover {
-    border-color: #ff4d4f !important;
-    background: #ff4d4f !important;
-    color: #fff !important;
+    border-color: var(--app-danger) !important;
+    background: var(--app-danger) !important;
+    color: var(--app-on-primary) !important;
 }
 
 .content {
@@ -93,7 +93,7 @@
 
     min-height: 632px;
 
-    color: #7c90a3;
+    color: var(--app-text-muted);
     font-size: 18px;
 }
 
@@ -133,7 +133,7 @@
     z-index: 1000;
     inset: 0;
 
-    background: rgba(0, 0, 0, 0.65);
+    background: var(--app-overlay);
 }
 
 .addStudentCard {

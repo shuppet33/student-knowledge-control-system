@@ -3,7 +3,7 @@
 }
 
 .correct {
-    border: 1px solid #52c41a;
+    border: 1px solid var(--app-success);
 }
 
 .text {
