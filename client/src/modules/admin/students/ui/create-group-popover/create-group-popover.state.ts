@@ -10,10 +10,6 @@ export const isCreateGroupOpenAtom = atom(false, 'isCreateUserOpenAtom')
 
 export const createGroupFormAtom = atom<CreateGroupForm>(initialForm, 'createUserFormAtom')
 
-export const openCreateGroupAction = action((ctx) => {
-    isCreateGroupOpenAtom(ctx, true)
-}, 'openCreateUserAction')
-
 export const closeCreateGroupAction = action((ctx) => {
     isCreateGroupOpenAtom(ctx, false)
     createGroupFormAtom(ctx, initialForm)

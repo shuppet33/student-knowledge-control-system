@@ -2,10 +2,7 @@ import { Modal } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import {
-    closeSubjectInfoAction,
-    isSubjectInfoOpenAtom,
-} from '../../../teachers.state'
+import { isSubjectInfoOpenAtom } from '../../../teachers.state'
 
 export const SubjectInfoModal = reatomComponent(({ ctx }) => {
     const isOpen = ctx.spy(isSubjectInfoOpenAtom)
@@ -15,7 +12,7 @@ export const SubjectInfoModal = reatomComponent(({ ctx }) => {
             open={isOpen}
             footer={null}
             centered
-            onCancel={() => closeSubjectInfoAction(ctx)}
+            onCancel={() => isSubjectInfoOpenAtom(ctx, false)}
         />
     )
 })

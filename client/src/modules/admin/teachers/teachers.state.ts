@@ -29,14 +29,6 @@ export const selectedNewSubjectIdAtom = atom(
 export const newSubjectNameAtom = atom('', 'newSubjectNameAtom')
 export const subjectSearchAtom = atom('', 'subjectSearchAtom')
 
-export const changeSubjectSearchAction = action((ctx, value: string) => {
-    subjectSearchAtom(ctx, value)
-}, 'changeSubjectSearchAction')
-
-export const openTeacherModalAction = action((ctx, teacher: Teacher) => {
-    selectedTeacherAtom(ctx, teacher)
-}, 'openTeacherModalAction')
-
 export const closeTeacherModalAction = action((ctx) => {
     selectedTeacherAtom(ctx, null)
     selectedSubjectAtom(ctx, { id: null, name: null })
@@ -45,38 +37,11 @@ export const closeTeacherModalAction = action((ctx) => {
     isTestInfoOpenAtom(ctx, false)
 }, 'closeTeacherModalAction')
 
-export const selectSubjectAction = action(
-    (ctx, subject: { id: string; name: string }) => {
-        selectedSubjectAtom(ctx, subject)
-    },
-    'selectSubjectAction',
-)
-
 export const toggleTestAction = action((ctx, testId: string) => {
     const current = ctx.get(expandedTestIdAtom)
 
     expandedTestIdAtom(ctx, current === testId ? null : testId)
 }, 'toggleTestAction')
-
-export const openSubjectInfoAction = action((ctx) => {
-    isSubjectInfoOpenAtom(ctx, true)
-}, 'openSubjectInfoAction')
-
-export const closeSubjectInfoAction = action((ctx) => {
-    isSubjectInfoOpenAtom(ctx, false)
-}, 'closeSubjectInfoAction')
-
-export const openTestInfoAction = action((ctx) => {
-    isTestInfoOpenAtom(ctx, true)
-}, 'openTestInfoAction')
-
-export const closeTestInfoAction = action((ctx) => {
-    isTestInfoOpenAtom(ctx, false)
-}, 'closeTestInfoAction')
-
-export const openAddSubjectAction = action((ctx) => {
-    isAddSubjectOpenAtom(ctx, true)
-}, 'openAddSubjectAction')
 
 export const closeAddSubjectAction = action((ctx) => {
     isAddSubjectOpenAtom(ctx, false)

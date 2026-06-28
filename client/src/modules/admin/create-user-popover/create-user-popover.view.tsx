@@ -11,7 +11,6 @@ import {
     closeCreateUserAction,
     createUserFormAtom,
     isCreateUserOpenAtom,
-    openCreateUserAction,
 } from './create-user-popover.state'
 import type { CreateUserPopoverProps } from './create-user-popover.types'
 
@@ -40,7 +39,7 @@ export const CreateUserPopover = reatomComponent<CreateUserPopoverProps>(
                         onClick={
                             isOpen
                                 ? undefined
-                                : () => openCreateUserAction(ctx)
+                                : () => isCreateUserOpenAtom(ctx, true)
                         }
                         block
                     >

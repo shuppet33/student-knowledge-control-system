@@ -19,7 +19,7 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import {
     closeTeacherModalAction,
-    openSubjectInfoAction,
+    isSubjectInfoOpenAtom,
     selectedSubjectAtom,
     selectedTeacherAtom,
 } from '../../teachers.state'
@@ -101,7 +101,7 @@ export const TeacherModal = reatomComponent(({ ctx }) => {
                                         <Button
                                             icon={<InfoCircleOutlined />}
                                             onClick={() =>
-                                                openSubjectInfoAction(ctx)
+                                                isSubjectInfoOpenAtom(ctx, true)
                                             }
                                         />
 

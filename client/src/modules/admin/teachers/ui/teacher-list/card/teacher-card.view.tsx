@@ -5,7 +5,7 @@ import type { FC } from 'react'
 import { EntityCard } from '$common/ui/entity-card'
 
 import { deleteTeacherAsync } from '../../../teachers.service'
-import { openTeacherModalAction } from '../../../teachers.state'
+import { selectedTeacherAtom } from '../../../teachers.state'
 import type { TeacherCardProps } from '../teacher-list.types'
 
 export const TeacherCard: FC<TeacherCardProps> = reatomComponent(
@@ -13,7 +13,7 @@ export const TeacherCard: FC<TeacherCardProps> = reatomComponent(
         return (
             <EntityCard
                 title={teacher.fullName}
-                onClick={() => openTeacherModalAction(ctx, teacher)}
+                onClick={() => selectedTeacherAtom(ctx, teacher)}
                 onDelete={() => deleteTeacherAsync(ctx, teacher.id)}
             />
         )

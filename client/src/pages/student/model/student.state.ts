@@ -39,10 +39,6 @@ export const selectStudentTestAction = action((ctx, test: StudentTest) => {
     currentQuestionIndexAtom(ctx, 0)
 }, 'selectStudentTestAction')
 
-export const setCurrentQuestionIndexAction = action((ctx, index: number) => {
-    currentQuestionIndexAtom(ctx, index)
-}, 'setCurrentStudentQuestionIndexAction')
-
 export const nextQuestionAction = action((ctx) => {
     const test = ctx.get(activeStudentTestAtom)
     const currentIndex = ctx.get(currentQuestionIndexAtom)

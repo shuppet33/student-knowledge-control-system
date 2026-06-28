@@ -108,10 +108,6 @@ const createQuestionDrafts = (
     return [...existingQuestions, createQuestionDraft()]
 }
 
-export const openAddSubjectAction = action((ctx) => {
-    isAddSubjectOpenAtom(ctx, true)
-}, 'openTeacherAddSubjectAction')
-
 export const closeAddSubjectAction = action((ctx) => {
     isAddSubjectOpenAtom(ctx, false)
     selectedNewSubjectIdAtom(ctx, undefined)
@@ -132,13 +128,6 @@ export const changeNewSubjectNameAction = action((ctx, value: string) => {
     newSubjectNameAtom(ctx, value)
     selectedNewSubjectIdAtom(ctx, undefined)
 }, 'changeTeacherNewSubjectNameAction')
-
-export const setSelectedGroupIdsAction = action(
-    (ctx, groupIds: string[]) => {
-        selectedGroupIdsAtom(ctx, groupIds)
-    },
-    'setSelectedTeacherSubjectGroupIdsAction',
-)
 
 export const openCreateTestModalAction = action((ctx) => {
     teacherTestTitleAtom(ctx, '')
@@ -178,10 +167,6 @@ export const closeEditTestModalAction = action((ctx) => {
     selectedTeacherQuestionDraftIndexAtom(ctx, 0)
     closeQuestionPreviewAction(ctx)
 }, 'closeEditTeacherTestModalAction')
-
-export const changeTeacherTestTitleAction = action((ctx, value: string) => {
-    teacherTestTitleAtom(ctx, value)
-}, 'changeTeacherTestTitleAction')
 
 export const openAddQuestionModalAction = action((
     ctx,
@@ -374,10 +359,3 @@ export const nextTeacherQuestionDraftAction = action((ctx) => {
         ctx.get(selectedTeacherQuestionDraftIndexAtom) + 1,
     )
 }, 'nextTeacherQuestionDraftAction')
-
-export const setSelectedTeacherTestGroupIdsAction = action(
-    (ctx, groupIds: string[]) => {
-        selectedTeacherTestGroupIdsAtom(ctx, groupIds)
-    },
-    'setSelectedTeacherTestGroupIdsAction',
-)

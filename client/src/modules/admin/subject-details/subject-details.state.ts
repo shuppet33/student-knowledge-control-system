@@ -80,17 +80,3 @@ export const toggleTeacherAction = action((ctx, teacherId: string) => {
         toggleId(ctx.get(selectedTeacherIdsAtom), teacherId),
     )
 }, 'toggleSubjectTeacherAction')
-
-export const setSelectedGroupIdsAction = action(
-    (ctx, groupIds: string[]) => {
-        selectedGroupIdsAtom(ctx, groupIds)
-    },
-    'setSelectedSubjectGroupIdsAction',
-)
-
-export const setSelectedTeacherIdsAction = action(
-    (ctx, teacherIds: string[]) => {
-        selectedTeacherIdsAtom(ctx, teacherIds)
-    },
-    'setSelectedSubjectTeacherIdsAction',
-)

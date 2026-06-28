@@ -9,11 +9,9 @@ import { EntityCard } from '$common/ui/entity-card'
 
 import { createSubjectAsync, deleteSubjectAsync, subjectsResource } from './subjects.service'
 import {
-    changeNewSubjectNameAction,
     closeCreateSubjectAction,
     isCreateSubjectOpenAtom,
     newSubjectNameAtom,
-    openCreateSubjectAction,
 } from './subjects.state'
 
 import styles from './subjects.module.css'
@@ -28,6 +26,8 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
     const { isPending: isLoadingSubjects } = ctx.spy(subjectsResource.statusesAtom)
     const { isPending: isCreatingSubject } = ctx.spy(createSubjectAsync.statusesAtom)
     const createError = ctx.spy(createSubjectAsync.errorAtom)
+    
+    console.log('LOOOG', isCreateOpen)
 
     return (
         <>
@@ -45,7 +45,7 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                             type="primary"
                             icon={<PlusOutlined />}
                             className={isCreateOpen && styles.activeButton}
-                            onClick={isCreateOpen && (() => openCreateSubjectAction(ctx))}
+                            onClick={() => isCreateSubjectOpenAtom(ctx, true)}
                         >
                             добавить
                         </Button>
@@ -59,7 +59,7 @@ export const SubjectsManagement = reatomComponent(({ ctx }) => {
                                         value={newSubjectName}
                                         disabled={isCreatingSubject}
                                         onChange={(event) =>
-                                            changeNewSubjectNameAction(ctx, event.target.value)
+                                            newSubjectNameAtom(ctx, event.target.value)
                                         }
                                         onPressEnter={() => createSubjectAsync(ctx)}
                                     />

@@ -19,7 +19,6 @@ import {
     toggleTeacherTestActiveAsync,
 } from '$pages/teacher/model/teacher.service'
 import {
-    changeTeacherTestTitleAction,
     closeEditTestModalAction,
     isAddQuestionModalOpenAtom,
     isEditTestModalOpenAtom,
@@ -28,8 +27,6 @@ import {
     openEditTestModalAction,
     selectedGroupIdsAtom,
     selectedTeacherTestGroupIdsAtom,
-    setSelectedGroupIdsAction,
-    setSelectedTeacherTestGroupIdsAction,
     subjectIdAtom,
     subjectNameAtom,
     teacherTestTitleAtom,
@@ -129,7 +126,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                             value={selectedGroupIds}
                             loading={isSavingGroups}
                             onChange={(groupIds) => {
-                                setSelectedGroupIdsAction(ctx, groupIds)
+                                selectedGroupIdsAtom(ctx, groupIds)
                                 saveTeacherSubjectGroupsAsync(ctx)
                             }}
                             options={allGroups.map((group) => ({
@@ -175,7 +172,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                             value={teacherTestTitle}
                             placeholder="Название теста"
                             onChange={(event) =>
-                                changeTeacherTestTitleAction(ctx, event.target.value)
+                                teacherTestTitleAtom(ctx, event.target.value)
                             }
                         />
                     </Flex>
@@ -190,7 +187,7 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                             placeholder="Выберите группы"
                             value={selectedTeacherTestGroupIds}
                             onChange={(groupIds) => {
-                                setSelectedTeacherTestGroupIdsAction(
+                                selectedTeacherTestGroupIdsAtom(
                                     ctx,
                                     groupIds.includes('all')
                                         ? subjectGroupIds

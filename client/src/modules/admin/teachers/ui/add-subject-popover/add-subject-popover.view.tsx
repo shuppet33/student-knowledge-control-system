@@ -14,7 +14,6 @@ import {
     closeAddSubjectAction,
     isAddSubjectOpenAtom,
     newSubjectNameAtom,
-    openAddSubjectAction,
     selectedNewSubjectIdAtom,
 } from '$modules/admin/teachers/teachers.state'
 
@@ -52,7 +51,7 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                     size="large"
                     type="primary"
                     className={isOpen ? styles.activeButton : undefined}
-                    onClick={isOpen ? undefined : () => openAddSubjectAction(ctx)}
+                    onClick={isOpen ? undefined : () => isAddSubjectOpenAtom(ctx, true)}
                     block
                 >
                     предмет

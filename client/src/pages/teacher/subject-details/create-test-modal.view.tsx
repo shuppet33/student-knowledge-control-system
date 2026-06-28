@@ -7,13 +7,11 @@ import {
     teacherSubjectGroupsResource,
 } from '$pages/teacher/model/teacher.service'
 import {
-    changeTeacherTestTitleAction,
     closeCreateTestModalAction,
     createTeacherTestQuestionDraftsAtom,
     isCreateTestModalOpenAtom,
     openCreateTestQuestionModalAction,
     selectedTeacherTestGroupIdsAtom,
-    setSelectedTeacherTestGroupIdsAction,
     teacherTestTitleAtom,
 } from '$pages/teacher/model/teacher.state'
 
@@ -60,7 +58,7 @@ export const CreateTestModal = reatomComponent(({ ctx }) => {
                             value={title}
                             placeholder="Название теста"
                             onChange={(event) =>
-                                changeTeacherTestTitleAction(
+                                teacherTestTitleAtom(
                                     ctx,
                                     event.target.value,
                                 )
@@ -81,7 +79,7 @@ export const CreateTestModal = reatomComponent(({ ctx }) => {
                             placeholder="Выберите группы"
                             value={selectedGroupIds}
                             onChange={(groupIds) => {
-                                setSelectedTeacherTestGroupIdsAction(
+                                selectedTeacherTestGroupIdsAtom(
                                     ctx,
                                     groupIds.includes('all')
                                         ? subjectGroupIds

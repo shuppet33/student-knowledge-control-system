@@ -21,7 +21,6 @@ import {
     openStudentSubjectAction,
     prevQuestionAction,
     selectedTestAtom,
-    setCurrentQuestionIndexAction,
 } from '$pages/student/model/student.state.ts'
 
 import { TestCard } from './test-card.view'
@@ -200,10 +199,7 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                                                 : ''
                                         }`}
                                         onClick={() =>
-                                            setCurrentQuestionIndexAction(
-                                                ctx,
-                                                index,
-                                            )
+                                            currentQuestionIndexAtom(ctx, index)
                                         }
                                     >
                                         {index + 1}

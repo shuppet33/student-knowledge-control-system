@@ -21,8 +21,6 @@ import {
 import {
     selectedGroupIdsAtom,
     selectedTeacherIdsAtom,
-    setSelectedGroupIdsAction,
-    setSelectedTeacherIdsAction,
     subjectIdAtom,
     subjectNameAtom,
 } from './subject-details.state'
@@ -79,7 +77,7 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
                         value={selectedGroupIds}
                         loading={isSavingGroups}
                         onChange={(groupIds) => {
-                            setSelectedGroupIdsAction(ctx, groupIds)
+                            selectedGroupIdsAtom(ctx, groupIds)
                             saveSubjectGroupsAsync(ctx, false)
                         }}
                         options={allGroups.map((group) => ({
@@ -94,7 +92,7 @@ export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
                         value={selectedTeacherIds}
                         loading={isSavingTeachers}
                         onChange={(teacherIds) => {
-                            setSelectedTeacherIdsAction(ctx, teacherIds)
+                            selectedTeacherIdsAtom(ctx, teacherIds)
                             saveSubjectTeachersAsync(ctx, false)
                         }}
                         options={allTeachers.map((teacher) => ({

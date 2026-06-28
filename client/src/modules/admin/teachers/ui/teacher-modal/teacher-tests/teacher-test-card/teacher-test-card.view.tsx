@@ -8,7 +8,7 @@ import type { FC } from 'react'
 import { deleteTeacherTestAsync } from '../../../../teachers.service'
 import {
     expandedTestIdAtom,
-    openTestInfoAction,
+    isTestInfoOpenAtom,
     toggleTestAction,
 } from '../../../../teachers.state'
 
@@ -62,7 +62,7 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx,
                         icon={<InfoCircleOutlined />}
                         onClick={(event) => {
                             event.stopPropagation()
-                            openTestInfoAction(ctx)
+                            isTestInfoOpenAtom(ctx, true)
                         }}
                     />
 

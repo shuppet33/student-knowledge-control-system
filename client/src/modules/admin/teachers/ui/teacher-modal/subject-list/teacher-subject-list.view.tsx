@@ -6,10 +6,7 @@ import { ButtonUI } from '$common/ui/button'
 import { LoaderUI } from '$common/ui/loader'
 
 import { deleteTeacherSubjectAsync, teacherSubjectsResource } from '../../../teachers.service'
-import {
-    selectedSubjectAtom,
-    selectSubjectAction,
-} from '../../../teachers.state'
+import { selectedSubjectAtom } from '../../../teachers.state'
 
 import styles from './subject-list.module.css'
 
@@ -34,7 +31,7 @@ export const TeacherSubjectList = reatomComponent(({ ctx }) => {
                     key={subject.id}
                     title={subject.name}
                     active={selectedSubject.id === subject.id}
-                    onClick={() => selectSubjectAction(ctx, subject)}
+                    onClick={() => selectedSubjectAtom(ctx, subject)}
                     onDelete={() => deleteTeacherSubjectAsync(ctx, subject.id)}
                 >
                     {subject.name}

@@ -19,10 +19,6 @@ export const createUserFormAtom = atom<CreateUserForm>(
     'createUserFormAtom',
 )
 
-export const openCreateUserAction = action((ctx) => {
-    isCreateUserOpenAtom(ctx, true)
-}, 'openCreateUserAction')
-
 export const closeCreateUserAction = action((ctx) => {
     isCreateUserOpenAtom(ctx, false)
     createUserFormAtom(ctx, initialForm)
