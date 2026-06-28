@@ -1,4 +1,5 @@
-import { apiFetch } from '../api.client'
+import { apiFetch, getAccessToken } from '../api.client'
+import { API_URL } from '../api.constants'
 
 import {
     mapSaveStudentAnswerPayloadToDto,
@@ -10,6 +11,8 @@ import {
     studentSubjectTestsMapper,
 } from './students.mapper'
 import type {
+    FinishStudentAttempt,
+    FinishStudentAttemptDto,
     SaveStudentAnswerPayload,
     SearchStudentsPayload,
     StartedStudentTestDto,
@@ -35,6 +38,40 @@ export const getStudents = async (): Promise<StudentGroup[]> => {
     return studentGroupsMapper(data)
 }
 
+export const finishStudentAttempt = async (
+    attemptId: string,
+): Promise<FinishStudentAttempt> => {
+    const response = await apiFetch(`/student/attempts/${attemptId}/finish`, {
+        method: 'POST',
+    })
+
+    if (!response.ok) {
+        throw new Error('Ошибка завершения теста')
+    }
+
+    const data: FinishStudentAttemptDto = await response.json()
+
+    return {
+        id: data.id,
+        score: data.score,
+    }
+}
+
+export const finishStudentAttemptKeepalive = (attemptId: string): void => {
+    const headers = new Headers()
+    const accessToken = getAccessToken()
+
+    if (accessToken) {
+        headers.set('Authorization', `Bearer ${accessToken}`)
+    }
+
+    fetch(`${API_URL}/student/attempts/${attemptId}/finish`, {
+        method: 'POST',
+        keepalive: true,
+        credentials: 'include',
+        headers,
+    })
+}
 export const searchStudents = async (payload: SearchStudentsPayload): Promise<Student[]> => {
     const query = new URLSearchParams()
     const dto = mapSearchStudentsPayloadToDto(payload)

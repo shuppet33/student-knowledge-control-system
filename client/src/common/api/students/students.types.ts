@@ -59,6 +59,7 @@ export type StudentTestDto = {
     questions_count: number
     answers_count: number
     score: number | null
+    attempt_status: string | null
     date_of_appointment: string
 }
 
@@ -71,6 +72,7 @@ export type StudentTest = {
         to: number
     }
     score: number | null
+    attemptStatus: string | null
     dateOfAppointment: string
 }
 
@@ -135,9 +137,21 @@ export type StartedStudentTest = {
 export type SaveStudentAnswerPayload = {
     questionId: string
     answerId: string
+    isSelected: boolean
 }
 
 export type SaveStudentAnswerDto = {
     question_id: string
     answer_id: string
+    is_selected: boolean
+}
+
+export type FinishStudentAttemptDto = {
+    id: string
+    score: number
+}
+
+export type FinishStudentAttempt = {
+    id: string
+    score: number
 }

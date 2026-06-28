@@ -6,6 +6,8 @@ export const setAccessToken = (token: string | null): void => {
     accessToken = token
 }
 
+export const getAccessToken = (): string | null => accessToken
+
 export const apiFetch = (
     path: string,
     options: RequestInit = {},

@@ -74,6 +74,32 @@ export const studentController = {
                 })
             }
 
+            const completedAttempt = await studentModel.getCompletedAttempt({
+                userId: req.user.id,
+                teacherTestId: test.teacher_test_id,
+            })
+
+            if (completedAttempt) {
+                return res.status(409).json({
+                    message: 'Тест уже пройден',
+                })
+            }
+
+            await studentModel.finishActiveAttempts({
+                userId: req.user.id,
+            })
+
+            const finishedAttempt = await studentModel.getCompletedAttempt({
+                userId: req.user.id,
+                teacherTestId: test.teacher_test_id,
+            })
+
+            if (finishedAttempt) {
+                return res.status(409).json({
+                    message: 'Тест уже пройден',
+                })
+            }
+
             const activeAttempt = await studentModel.getActiveAttempt({
                 userId: req.user.id,
                 teacherTestId: test.teacher_test_id,
@@ -109,13 +135,14 @@ export const studentController = {
     async saveAnswer(req, res) {
         try {
             const { attemptId } = req.params
-            const { question_id, answer_id } = req.body
+            const { question_id, answer_id, is_selected } = req.body
 
             const answer = await studentModel.saveAnswer({
                 userId: req.user.id,
                 attemptId,
                 questionId: question_id,
                 answerId: answer_id,
+                isSelected: is_selected ?? true,
             })
 
             if (!answer) {
@@ -132,6 +159,31 @@ export const studentController = {
 
             return res.status(500).json({
                 message: 'Ошибка сохранения ответа',
+            })
+        }
+    },
+
+    async finishAttempt(req, res) {
+        try {
+            const { attemptId } = req.params
+
+            const attempt = await studentModel.finishAttempt({
+                userId: req.user.id,
+                attemptId,
+            })
+
+            if (!attempt) {
+                return res.status(404).json({
+                    message: 'Попытка не найдена или уже завершена',
+                })
+            }
+
+            return res.status(200).json(attempt)
+        } catch (error) {
+            console.error(error)
+
+            return res.status(500).json({
+                message: 'Ошибка завершения теста',
             })
         }
     },

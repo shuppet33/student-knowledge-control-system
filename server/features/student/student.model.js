@@ -107,6 +107,7 @@ export const studentModel = {
                         id,
                         teacher_test_id,
                         score,
+                        status,
                         finished_at,
                         test_version_id
                     FROM test_attempts
@@ -141,6 +142,7 @@ export const studentModel = {
                     COALESCE(qc.questions_count, 0) AS questions_count,
                     COALESCE(cac.answers_count, 0) AS answers_count,
                     ba.score,
+                    ba.status AS attempt_status,
                     at.test_created_at AS date_of_appointment
                 FROM available_tests at
                 LEFT JOIN best_attempts ba
@@ -192,6 +194,23 @@ export const studentModel = {
         return rows[0]
     },
 
+    async getCompletedAttempt({ userId, teacherTestId }) {
+        const { rows } = await db.query(
+            `
+                SELECT id
+                FROM test_attempts
+                WHERE student_id = $1
+                    AND teacher_test_id = $2
+                    AND status = 'completed'
+                ORDER BY finished_at DESC
+                LIMIT 1
+            `,
+            [userId, teacherTestId],
+        )
+
+        return rows[0]
+    },
+
     async getActiveAttempt({ userId, teacherTestId }) {
         const { rows } = await db.query(
             `
@@ -207,6 +226,26 @@ export const studentModel = {
         )
 
         return rows[0]
+    },
+
+    async finishActiveAttempts({ userId, exceptAttemptId = null }) {
+        const { rows } = await db.query(
+            `
+                SELECT id
+                FROM test_attempts
+                WHERE student_id = $1
+                    AND status = 'in_progress'
+                    AND ($2::BIGINT IS NULL OR id <> $2)
+            `,
+            [userId, exceptAttemptId],
+        )
+
+        for (const attempt of rows) {
+            await this.finishAttempt({
+                userId,
+                attemptId: attempt.id,
+            })
+        }
     },
 
     async createAttempt({ userId, teacherTestId, testVersionId }) {
@@ -261,7 +300,7 @@ export const studentModel = {
         return rows
     },
 
-    async saveAnswer({ userId, attemptId, questionId, answerId }) {
+    async saveAnswer({ userId, attemptId, questionId, answerId, isSelected }) {
         const { rows: attempts } = await db.query(
             `
                 SELECT id
@@ -280,10 +319,15 @@ export const studentModel = {
 
         const { rows: answers } = await db.query(
             `
-                SELECT is_correct
+                SELECT
+                    answers.is_correct,
+                    questions.type
                 FROM answers
-                WHERE id = $1
-                    AND question_id = $2
+                JOIN questions
+                    ON questions.id = answers.question_id
+                WHERE answers.id = $1
+                    AND answers.question_id = $2
+                    AND questions.deleted_at IS NULL
                 LIMIT 1
             `,
             [answerId, questionId],
@@ -293,14 +337,26 @@ export const studentModel = {
             return null
         }
 
-        await db.query(
-            `
-                DELETE FROM student_answers
-                WHERE attempt_id = $1
-                    AND question_id = $2
-            `,
-            [attemptId, questionId],
-        )
+        if (answers[0].type !== 'multiple' || isSelected) {
+            await db.query(
+                `
+                    DELETE FROM student_answers
+                    WHERE attempt_id = $1
+                        AND question_id = $2
+                        AND (
+                            $4::TEXT <> 'multiple'
+                            OR answer_id = $3
+                        )
+                `,
+                [attemptId, questionId, answerId, answers[0].type],
+            )
+        }
+
+        if (!isSelected) {
+            return {
+                id: answerId,
+            }
+        }
 
         const { rows } = await db.query(
             `
@@ -314,6 +370,90 @@ export const studentModel = {
                 RETURNING id
             `,
             [attemptId, questionId, answerId, answers[0].is_correct],
+        )
+
+        return rows[0]
+    },
+
+    async finishAttempt({ userId, attemptId }) {
+        const { rows } = await db.query(
+            `
+                WITH attempt_data AS (
+                    SELECT
+                        test_attempts.id,
+                        test_attempts.test_version_id
+                    FROM test_attempts
+                    WHERE test_attempts.id = $1
+                        AND test_attempts.student_id = $2
+                        AND test_attempts.status = 'in_progress'
+                    LIMIT 1
+                ),
+                question_counts AS (
+                    SELECT COUNT(questions.id)::INT AS total
+                    FROM questions
+                    JOIN attempt_data
+                        ON attempt_data.test_version_id = questions.test_version_id
+                    WHERE questions.deleted_at IS NULL
+                ),
+                correct_question_counts AS (
+                    SELECT COUNT(*)::INT AS total
+                    FROM (
+                        SELECT
+                            questions.id
+                        FROM questions
+                        JOIN attempt_data
+                            ON attempt_data.test_version_id = questions.test_version_id
+                        LEFT JOIN answers
+                            ON answers.question_id = questions.id
+                        LEFT JOIN student_answers
+                            ON student_answers.question_id = questions.id
+                            AND student_answers.answer_id = answers.id
+                            AND student_answers.attempt_id = attempt_data.id
+                        WHERE questions.deleted_at IS NULL
+                        GROUP BY questions.id
+                        HAVING
+                            COUNT(answers.id) FILTER (WHERE answers.is_correct = TRUE)
+                                = COUNT(student_answers.id) FILTER (
+                                    WHERE student_answers.is_correct = TRUE
+                                )
+                            AND COUNT(student_answers.id) FILTER (
+                                    WHERE COALESCE(student_answers.is_correct, FALSE) = FALSE
+                                ) = 0
+                            AND COUNT(student_answers.id) > 0
+                    ) AS correct_questions
+                ),
+                score_data AS (
+                    SELECT
+                        CASE
+                            WHEN question_counts.total = 0 THEN 2
+                            WHEN (
+                                correct_question_counts.total::FLOAT
+                                / question_counts.total
+                            ) >= 0.85 THEN 5
+                            WHEN (
+                                correct_question_counts.total::FLOAT
+                                / question_counts.total
+                            ) >= 0.65 THEN 4
+                            WHEN (
+                                correct_question_counts.total::FLOAT
+                                / question_counts.total
+                            ) >= 0.45 THEN 3
+                            ELSE 2
+                        END AS score
+                    FROM question_counts, correct_question_counts
+                )
+                UPDATE test_attempts
+                SET
+                    status = 'completed',
+                    finished_at = NOW(),
+                    score = score_data.score
+                FROM score_data
+                WHERE test_attempts.id = $1
+                    AND test_attempts.student_id = $2
+                    AND test_attempts.status = 'in_progress'
+                RETURNING test_attempts.id, test_attempts.score
+            `,
+            [attemptId, userId],
         )
 
         return rows[0]

@@ -54,6 +54,11 @@
     font-weight: 700;
 }
 
+.passedTestText {
+    color: #3782F2;
+    font-size: 18px;
+}
+
 .testCard {
     padding: 10px;
     border-radius: 10px;
@@ -137,15 +142,22 @@
 }
 
 .answer {
+    padding: 10px;
     min-height: 44px;
     margin: 0;
+    border-radius: 8px;
 
     font-size: 16px;
     white-space: pre-wrap;
 }
 
-.answer :global(.ant-radio) {
+.answer :global(.ant-radio),
+.answer :global(.ant-checkbox) {
     margin-right: 10px;
+}
+
+.selectedAnswer {
+    background-color: #DEE7F0;
 }
 
 .questions {
@@ -172,4 +184,9 @@
 .selectedQuestionButton {
     outline: 2px solid #3782F2;
     outline-offset: 0;
+}
+
+.answeredQuestionButton {
+    color: #3782F2;
+    background-color: #A0C8F0;
 }

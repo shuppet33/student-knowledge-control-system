@@ -68,6 +68,7 @@ export const selectAnswerAction = action((
     ctx,
     questionId: string,
     answerId: string,
+    isSelected: boolean,
 ) => {
     const test = ctx.get(activeStudentTestAtom)
 
@@ -86,7 +87,12 @@ export const selectAnswerAction = action((
                 ...question,
                 answers: question.answers.map((answer) => ({
                     ...answer,
-                    isSelected: answer.id === answerId,
+                    isSelected:
+                        question.type === 'multiple'
+                            ? answer.id === answerId
+                                ? isSelected
+                                : answer.isSelected
+                            : answer.id === answerId,
                 })),
             }
         }),

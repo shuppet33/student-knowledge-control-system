@@ -1,5 +1,5 @@
-import { Button, Flex, Radio } from 'antd'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { Button, Checkbox, Flex, Radio } from 'antd'
+import { CheckOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
@@ -8,7 +8,10 @@ import { useLoaderData } from 'react-router'
 import type { StudentSubjectTestsLoaderData } from '$app/router/router.view'
 
 import {
+    finishStudentAttemptAsync,
+    getSubjectTestsResource,
     saveStudentAnswerAsync,
+    selectStudentTestAsync,
     startStudentTestAsync,
 } from '$pages/student/model/student.service.ts'
 import {
@@ -18,7 +21,6 @@ import {
     openStudentSubjectAction,
     prevQuestionAction,
     selectedTestAtom,
-    selectStudentTestAction,
     setCurrentQuestionIndexAction,
 } from '$pages/student/model/student.state.ts'
 
@@ -27,7 +29,10 @@ import { TestCard } from './test-card.view'
 import styles from './subject-tests.module.css'
 
 export const SubjectTestsPage = reatomComponent(({ ctx }) => {
-    const { subject, tests } = useLoaderData<StudentSubjectTestsLoaderData>()
+    const loaderData = useLoaderData<StudentSubjectTestsLoaderData>()
+    const subjectTests = ctx.spy(getSubjectTestsResource.dataAtom)
+    const subject = subjectTests.subject ?? loaderData.subject
+    const tests = subjectTests.subject ? subjectTests.tests : loaderData.tests
 
     if (subject) {
         openStudentSubjectAction(ctx, subject.id)
@@ -39,7 +44,13 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
     const { isPending: isStartingTest } = ctx.spy(
         startStudentTestAsync.statusesAtom,
     )
+    const { isPending: isFinishingTest } = ctx.spy(
+        finishStudentAttemptAsync.statusesAtom,
+    )
     const currentQuestion = activeTest?.questions[currentQuestionIndex]
+    const isLastQuestion =
+        activeTest !== null &&
+        currentQuestionIndex === activeTest.questions.length - 1
 
     return (
         <Flex className={styles.page} vertical gap={20}>
@@ -59,7 +70,7 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                             score={test.score}
                             dateOfAppointment={test.dateOfAppointment}
                             isSelected={selectedTest?.id === test.id}
-                            onClick={() => selectStudentTestAction(ctx, test)}
+                            onClick={() => selectStudentTestAsync(ctx, test)}
                         />
                     ))}
                 </Flex>
@@ -69,7 +80,7 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                         <div className={styles.selectedTestEmpty}>Выберите тест</div>
                     )}
 
-                    {selectedTest && !activeTest && (
+                    {selectedTest && !activeTest && selectedTest.score === null && (
                         <Flex
                             vertical
                             align="center"
@@ -92,6 +103,23 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                         </Flex>
                     )}
 
+                    {selectedTest && !activeTest && selectedTest.score !== null && (
+                        <Flex
+                            vertical
+                            align="center"
+                            justify="center"
+                            gap={12}
+                            className={styles.startTest}
+                        >
+                            <div className={styles.selectedTestTitle}>
+                                {selectedTest.title}
+                            </div>
+                            <div className={styles.passedTestText}>
+                                тест уже пройден
+                            </div>
+                        </Flex>
+                    )}
+
                     {activeTest && currentQuestion && (
                         <Flex vertical gap={26} className={styles.questionView}>
                             <Flex align="center" gap={14}>
@@ -108,29 +136,51 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                                     {currentQuestion.text}
                                 </Flex>
 
-                                <Button
-                                    icon={<RightOutlined />}
-                                    onClick={() => nextQuestionAction(ctx)}
-                                />
+                                {isLastQuestion ? (
+                                    <Button
+                                        type="primary"
+                                        icon={<CheckOutlined />}
+                                        loading={isFinishingTest}
+                                        onClick={() =>
+                                            finishStudentAttemptAsync(ctx)
+                                        }
+                                    />
+                                ) : (
+                                    <Button
+                                        icon={<RightOutlined />}
+                                        onClick={() => nextQuestionAction(ctx)}
+                                    />
+                                )}
                             </Flex>
 
                             <div className={styles.answers}>
-                                {currentQuestion.answers.map((answer) => (
-                                    <Radio
-                                        key={answer.id}
-                                        checked={answer.isSelected}
-                                        className={styles.answer}
-                                        onChange={() =>
-                                            saveStudentAnswerAsync(
-                                                ctx,
-                                                currentQuestion.id,
-                                                answer.id,
-                                            )
-                                        }
-                                    >
-                                        {answer.text}
-                                    </Radio>
-                                ))}
+                                {currentQuestion.answers.map((answer) => {
+                                    const AnswerControl =
+                                        currentQuestion.type === 'multiple'
+                                            ? Checkbox
+                                            : Radio
+
+                                    return (
+                                        <AnswerControl
+                                            key={answer.id}
+                                            checked={answer.isSelected}
+                                            className={`${styles.answer} ${
+                                                answer.isSelected
+                                                    ? styles.selectedAnswer
+                                                    : ''
+                                            }`}
+                                            onChange={() =>
+                                                saveStudentAnswerAsync(
+                                                    ctx,
+                                                    currentQuestion.id,
+                                                    answer.id,
+                                                )
+                                            }
+                                        >
+                                            {answer.text}
+                                        </AnswerControl>
+                                    )
+                                })}
                             </div>
 
                             <Flex gap={10} className={styles.questions}>
@@ -141,6 +191,12 @@ export const SubjectTestsPage = reatomComponent(({ ctx }) => {
                                         className={`${styles.questionButton} ${
                                             index === currentQuestionIndex
                                                 ? styles.selectedQuestionButton
+                                                : ''
+                                        } ${
+                                            question.answers.some(
+                                                (answer) => answer.isSelected,
+                                            )
+                                                ? styles.answeredQuestionButton
                                                 : ''
                                         }`}
                                         onClick={() =>

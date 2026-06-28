@@ -73,6 +73,7 @@ export const studentTestMapper = (test: StudentTestDto): StudentTest => ({
         to: test.questions_count,
     },
     score: test.score,
+    attemptStatus: test.attempt_status,
     dateOfAppointment: test.date_of_appointment,
 })
 
@@ -116,4 +117,5 @@ export const mapSaveStudentAnswerPayloadToDto = (
 ): SaveStudentAnswerDto => ({
     question_id: payload.questionId,
     answer_id: payload.answerId,
+    is_selected: payload.isSelected,
 })

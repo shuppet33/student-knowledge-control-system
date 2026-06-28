@@ -16,3 +16,4 @@ studentRouter.get(
 
 studentRouter.post('/tests/:testId/start', studentController.startTest)
 studentRouter.post('/attempts/:attemptId/answers', studentController.saveAnswer)
+studentRouter.post('/attempts/:attemptId/finish', studentController.finishAttempt)
