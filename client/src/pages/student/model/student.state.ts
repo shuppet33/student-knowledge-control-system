@@ -1,8 +1,10 @@
 import { atom } from '@reatom/framework'
 
+import type { StudentTest } from '$common/api/students/students.types'
+
 export const subjectIdAtom = atom(null as string | null, 'studentSubjectIdAtom')
 
-export const selectedTestIdAtom = atom(
-    null as string | null,
-    'selectedStudentTestIdAtom',
+export const selectedTestAtom = atom(
+    null as StudentTest | null,
+    'selectedStudentTestAtom',
 )
