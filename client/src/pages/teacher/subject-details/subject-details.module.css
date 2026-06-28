@@ -1,0 +1,52 @@
+.layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+}
+
+.sidebar {
+    flex: 0 0 273px;
+    width: 273px;
+    min-height: 632px;
+    padding: 20px;
+
+    border: 2px solid #dee7f0;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.sectionTitle {
+    display: block;
+    margin-bottom: 10px;
+
+    color: #7c90a3;
+    font-size: 14px;
+}
+
+.nameInput {
+    width: 233px;
+    height: 153px !important;
+    padding: 15px;
+
+    border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+}
+
+.relationSelect {
+    max-height: 120px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    min-height: 632px;
+}
