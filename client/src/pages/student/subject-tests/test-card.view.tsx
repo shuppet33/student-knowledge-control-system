@@ -28,7 +28,7 @@ export const TestCard = ({
             className={`${styles.testCard} ${isSelected ? styles.selectedTestCard : ''}`}
             onClick={onClick}
         >
-            <Flex align={'center'} gap={16}>
+            <Flex align={'center'} justify={'space-between'} gap={16}>
                 <div className={styles.testTitle}>{title}</div>
 
                 <Flex gap={10} className={styles.metrics}>
