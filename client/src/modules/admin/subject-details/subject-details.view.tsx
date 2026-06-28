@@ -1,10 +1,6 @@
-import { useEffect } from 'react'
-
 import { Input, Select, Spin, Typography } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
-
-import { useParams } from 'react-router'
 
 // import { RelationPopover } from './relation-popover.view'
 import {
@@ -30,9 +26,14 @@ import styles from './subject-details.module.css'
 const { Text } = Typography
 const { TextArea } = Input
 
-export const SubjectDetails = reatomComponent(({ ctx }) => {
-    const { subjectId } = useParams()
+type SubjectDetailsProps = {
+    subjectId: string
+}
 
+export const SubjectDetails = reatomComponent<SubjectDetailsProps>(({
+    ctx,
+    subjectId,
+}) => {
     const subject = ctx.spy(subjectResource.dataAtom)
     const subjectName = ctx.spy(subjectNameAtom)
 
@@ -49,13 +50,11 @@ export const SubjectDetails = reatomComponent(({ ctx }) => {
     const { isPending: isSavingGroups } = ctx.spy(saveSubjectGroupsAsync.statusesAtom)
     const { isPending: isSavingTeachers } = ctx.spy(saveSubjectTeachersAsync.statusesAtom)
 
-    useEffect(() => {
-        if (subjectId) {
-            subjectIdAtom(ctx, subjectId)
-        }
-    }, [ctx, subjectId])
+    if (ctx.get(subjectIdAtom) !== subjectId) {
+        subjectIdAtom(ctx, subjectId)
+    }
 
-    if (isLoadingSubject && !subject) {
+    if ((isLoadingSubject && !subject) || subject?.id !== subjectId) {
         return <Spin />
     }
 
