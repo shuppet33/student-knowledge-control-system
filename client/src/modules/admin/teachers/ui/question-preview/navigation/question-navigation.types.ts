@@ -1,6 +1,6 @@
-import type { Question } from '../question-preview.types'
+import type { QuestionPreviewNavigationItem } from '../question-preview.types'
 
 export type QuestionNavigationProps = {
-    currentQuestion: number | null
-    questions: Question[]
+    currentQuestion: string | null
+    questions: QuestionPreviewNavigationItem[]
 }

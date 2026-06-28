@@ -1,0 +1,19 @@
+.card {
+    border: 1px solid #dee7f0;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.title {
+    margin: 0 !important;
+}
+
+.usageTag {
+    margin: 0;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.author {
+    font-size: 12px;
+}

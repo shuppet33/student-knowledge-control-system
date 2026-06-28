@@ -45,7 +45,7 @@ export const QuestionNavigation: FC<QuestionNavigationProps> = reatomComponent(
                                     selectedQuestionIdAtom(ctx, question.id)
                                 }
                             >
-                                {question.id}
+                                {question.position}
                             </Button>
                         ))}
                     </Flex>

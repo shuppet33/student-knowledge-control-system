@@ -1,6 +1,6 @@
 export type QuestionAnswerCardProps = {
     answer: {
-        id: number
+        id: string
         text: string
         isCorrect: boolean
     }

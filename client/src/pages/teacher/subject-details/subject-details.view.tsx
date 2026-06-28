@@ -1,27 +1,47 @@
-import { Button, Input, Modal, Select, Spin, Typography } from 'antd'
+import { Button, Flex, Input, Modal, Select, Spin, Typography } from 'antd'
 
 import { reatomComponent } from '@reatom/npm-react'
 
 import { useLoaderData } from 'react-router'
 
 import type { SubjectLoaderData } from '$app/router/router.view'
+import {
+    openQuestionPreviewAction,
+    QuestionPreviewModal,
+} from '$modules/admin/teachers/ui/question-preview'
 
 import {
     changeSubjectNameAction,
     saveTeacherSubjectGroupsAsync,
+    saveTeacherTestAsync,
     teacherGroupsResource,
     teacherSubjectGroupsResource,
     teacherSubjectResource,
+    teacherSubjectTestsResource,
+    teacherTestDetailsResource,
+    toggleTeacherTestActiveAsync,
 } from '$pages/teacher/model/teacher.service'
 import {
+    changeTeacherTestTitleAction,
     closeCreateTestModalAction,
+    closeEditTestModalAction,
+    isAddQuestionModalOpenAtom,
     isCreateTestModalOpenAtom,
+    isEditTestModalOpenAtom,
+    openAddQuestionModalAction,
     openCreateTestModalAction,
+    openEditTestModalAction,
     selectedGroupIdsAtom,
+    selectedTeacherTestGroupIdsAtom,
     setSelectedGroupIdsAction,
+    setSelectedTeacherTestGroupIdsAction,
     subjectIdAtom,
     subjectNameAtom,
+    teacherTestTitleAtom,
 } from '$pages/teacher/model/teacher.state'
+
+import { AddQuestionModal } from './add-question-modal.view'
+import { TeacherTestCard } from './teacher-test-card.view'
 
 import styles from './subject-details.module.css'
 
@@ -42,12 +62,19 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
 
     const subject = ctx.spy(teacherSubjectResource.dataAtom)
     const subjectName = ctx.spy(subjectNameAtom)
-
-    ctx.spy(teacherSubjectGroupsResource.dataAtom)
+    const subjectGroups = ctx.spy(teacherSubjectGroupsResource.dataAtom)
+    const tests = ctx.spy(teacherSubjectTestsResource.dataAtom)
+    const testDetails = ctx.spy(teacherTestDetailsResource.dataAtom)
 
     const allGroups = ctx.spy(teacherGroupsResource.dataAtom)
     const selectedGroupIds = ctx.spy(selectedGroupIdsAtom)
     const isCreateTestModalOpen = ctx.spy(isCreateTestModalOpenAtom)
+    const isEditTestModalOpen = ctx.spy(isEditTestModalOpenAtom)
+    const isAddQuestionModalOpen = ctx.spy(isAddQuestionModalOpenAtom)
+    const teacherTestTitle = ctx.spy(teacherTestTitleAtom)
+    const selectedTeacherTestGroupIds = ctx.spy(
+        selectedTeacherTestGroupIdsAtom,
+    )
 
     const { isPending: isLoadingSubject } = ctx.spy(
         teacherSubjectResource.statusesAtom,
@@ -55,6 +82,13 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
     const { isPending: isSavingGroups } = ctx.spy(
         saveTeacherSubjectGroupsAsync.statusesAtom,
     )
+    const { isPending: isSavingTest } = ctx.spy(
+        saveTeacherTestAsync.statusesAtom,
+    )
+    const { isPending: isLoadingTestDetails } = ctx.spy(
+        teacherTestDetailsResource.statusesAtom,
+    )
+    const subjectGroupIds = subjectGroups.map((group) => group.id)
 
     if ((isLoadingSubject && !subject) || subject?.id !== subjectId) {
         return <Spin />
@@ -117,13 +151,136 @@ const TeacherSubjectDetails = reatomComponent<TeacherSubjectDetailsProps>(({
                 </section>
             </aside>
 
-            <main className={styles.content} />
+            <main className={styles.content}>
+                <Flex vertical gap={16}>
+                    {tests.map((test) => (
+                        <TeacherTestCard
+                            key={test.teacherTestId}
+                            test={test}
+                            onEdit={() => openEditTestModalAction(ctx, test)}
+                            onToggleActive={() =>
+                                toggleTeacherTestActiveAsync(ctx, test)
+                            }
+                        />
+                    ))}
+                </Flex>
+            </main>
 
             <Modal
                 open={isCreateTestModalOpen}
                 title="Добавить тест"
                 footer={null}
                 onCancel={() => closeCreateTestModalAction(ctx)}
+            />
+
+            <Modal
+                open={isEditTestModalOpen}
+                width={760}
+                title="Редактирование теста"
+                okText="Сохранить"
+                cancelText="Отмена"
+                confirmLoading={isSavingTest}
+                onOk={() => saveTeacherTestAsync(ctx)}
+                onCancel={() => closeEditTestModalAction(ctx)}
+            >
+                <Flex vertical gap={16}>
+                    <Flex vertical>
+                        <Text className={styles.sectionTitle}>Заголовок теста:</Text>
+                        <Input
+                            size="large"
+                            value={teacherTestTitle}
+                            placeholder="Название теста"
+                            onChange={(event) =>
+                                changeTeacherTestTitleAction(ctx, event.target.value)
+                            }
+                        />
+                    </Flex>
+
+                    <Flex vertical>
+                        <Text className={styles.sectionTitle}>Доступность групп:</Text>
+
+                        <Select
+                            suffixIcon={false}
+                            mode="multiple"
+                            size="large"
+                            placeholder="Выберите группы"
+                            value={selectedTeacherTestGroupIds}
+                            onChange={(groupIds) => {
+                                setSelectedTeacherTestGroupIdsAction(
+                                    ctx,
+                                    groupIds.includes('all')
+                                        ? subjectGroupIds
+                                        : groupIds,
+                                )
+                            }}
+                            options={[
+                                {
+                                    value: 'all',
+                                    label: 'все',
+                                },
+                                ...subjectGroups.map((group) => ({
+                                    value: group.id,
+                                    label: group.name,
+                                })),
+                            ]}
+                        />
+                    </Flex>
+
+                    <Flex vertical gap={8}>
+                        <Flex vertical>
+                            <Text className={styles.sectionTitle}>
+                                Вопросы: {testDetails?.questionsCount ?? 0}
+                            </Text>
+
+                            {isLoadingTestDetails && <Spin />}
+
+                            {!isLoadingTestDetails && (
+                                <Flex className={styles.questionContainer}>
+                                    {testDetails?.questions.map((question) => (
+                                        <Button
+                                            key={question.id}
+                                            size="small"
+                                            className={styles.question}
+                                            onClick={() =>
+                                                openQuestionPreviewAction(
+                                                    ctx,
+                                                    question.id,
+                                                )
+                                            }
+                                        >
+                                            {question.position}
+                                        </Button>
+                                    ))}
+                                </Flex>
+                            )}
+                        </Flex>
+
+                        <Flex>
+                            <Button
+                                type="primary"
+                                onClick={() =>
+                                    openAddQuestionModalAction(
+                                        ctx,
+                                        testDetails?.questions ?? [],
+                                    )
+                                }
+                            >
+                                +добавить вопрос
+                            </Button>
+                        </Flex>
+                    </Flex>
+
+                    <Flex vertical>
+                        <Text className={styles.sectionTitle}>Выгрузка результатов:</Text>
+                    </Flex>
+
+                </Flex>
+            </Modal>
+
+            {isAddQuestionModalOpen && <AddQuestionModal />}
+
+            <QuestionPreviewModal
+                questions={testDetails?.questions ?? []}
             />
         </div>
     )

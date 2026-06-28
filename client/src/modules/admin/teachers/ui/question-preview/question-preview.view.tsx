@@ -3,8 +3,6 @@ import { CloseOutlined } from '@ant-design/icons'
 
 import { reatomComponent } from '@reatom/npm-react'
 
-import { questions } from '../../teachers.mock'
-
 import { QuestionContent } from './content/question-content.view'
 import { QuestionNavigation } from './navigation/question-navigation.view'
 import { closeQuestionPreviewAction } from './question-preview.state'
@@ -12,23 +10,33 @@ import {
     isQuestionPreviewOpenAtom,
     selectedQuestionIdAtom,
 } from './question-preview.state'
+import type {
+    Question,
+} from './question-preview.types'
 
 import styles from './question-preview.module.css'
 
-export const QuestionPreviewModal = reatomComponent(({ ctx }) => {
+type QuestionPreviewModalProps = {
+    questions: Question[]
+}
+
+export const QuestionPreviewModal = reatomComponent<QuestionPreviewModalProps>(({
+    ctx,
+    questions,
+}) => {
     const isOpen = ctx.spy(isQuestionPreviewOpenAtom)
 
     const selectedQuestionId = ctx.spy(selectedQuestionIdAtom)
-
     const selectedQuestion =
         questions.find((question) => question.id === selectedQuestionId) ??
-        questions[0]
+        questions[0] ??
+        null
 
     return (
         <Modal
             open={isOpen}
             footer={null}
-            width={820}
+            width={920}
             centered
             closeIcon={false}
         >
@@ -41,7 +49,7 @@ export const QuestionPreviewModal = reatomComponent(({ ctx }) => {
                     type="primary"
                     className={styles.questionButton}
                 >
-                    {selectedQuestion.id}
+                    {selectedQuestion?.position ?? ''}
                 </Button>
 
                 <Button
@@ -54,14 +62,16 @@ export const QuestionPreviewModal = reatomComponent(({ ctx }) => {
                 justify="space-between"
                 className={styles.content}
             >
-                <QuestionContent
-                    questionNumber={selectedQuestion.id}
-                    questionText={selectedQuestion.text}
-                    answers={selectedQuestion.answers}
-                />
+                {selectedQuestion && (
+                    <QuestionContent
+                        questionNumber={selectedQuestion.position}
+                        questionText={selectedQuestion.text}
+                        answers={selectedQuestion.answers}
+                    />
+                )}
 
                 <QuestionNavigation
-                    currentQuestion={selectedQuestion.id}
+                    currentQuestion={selectedQuestionId}
                     questions={questions}
                 />
             </Flex>

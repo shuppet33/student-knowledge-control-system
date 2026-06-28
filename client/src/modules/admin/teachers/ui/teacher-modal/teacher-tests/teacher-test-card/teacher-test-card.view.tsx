@@ -5,15 +5,12 @@ import { reatomComponent } from '@reatom/npm-react'
 
 import type { FC } from 'react'
 
-import { questions } from '../../../../teachers.mock'
 import { deleteTeacherTestAsync } from '../../../../teachers.service'
 import {
     expandedTestIdAtom,
     openTestInfoAction,
     toggleTestAction,
 } from '../../../../teachers.state'
-import { TeacherQuestionList } from '../teacher-question-list/teacher-question-list.view'
-
 import type { TeacherTestCardProps } from './teacher-test-card.types'
 
 import styles from './teacher-test-card.module.css'
@@ -25,8 +22,6 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx,
     const { isPending: isDeleting } = ctx.spy(
         deleteTeacherTestAsync.statusesAtom,
     )
-
-    const isExpanded = expandedTestId === test.id
 
     return (
         <Card
@@ -90,8 +85,7 @@ export const TeacherTestCard: FC<TeacherTestCardProps> = reatomComponent(({ ctx,
                     </Popconfirm>
                 </Flex>
             </Flex>
-
-            {isExpanded && <TeacherQuestionList questions={questions} />}
+            {expandedTestId === test.id && null}
         </Card>
     )
 })

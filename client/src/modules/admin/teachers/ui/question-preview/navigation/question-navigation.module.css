@@ -1,8 +1,12 @@
 .questions {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    gap: 8px;
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .button {
+    width: 40px;
     min-width: 40px;
 }

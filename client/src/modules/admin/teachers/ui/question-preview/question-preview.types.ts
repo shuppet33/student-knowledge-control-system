@@ -1,11 +1,17 @@
 export type QuestionAnswer = {
-    id: number
+    id: string
     text: string
     isCorrect: boolean
 }
 
 export type Question = {
-    id: number
+    id: string
+    position: number
     text: string
     answers: QuestionAnswer[]
+}
+
+export type QuestionPreviewNavigationItem = {
+    id: string
+    position: number
 }

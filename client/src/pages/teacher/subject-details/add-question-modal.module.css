@@ -1,0 +1,88 @@
+.content {
+    min-height: 680px;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.questionNumber {
+    width: 40px;
+}
+
+.questionTextBox {
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+}
+
+.questionText {
+    height: 180px !important;
+    resize: none;
+}
+
+.answers {
+    margin-top: 24px;
+}
+
+.answer {
+    width: calc(50% - 10px);
+    min-height: 86px;
+    padding: 12px 10px 12px 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.correctAnswer {
+    border-color: #52c41a;
+}
+
+.answerInput {
+    flex: 1;
+    min-width: 0;
+    height: 60px !important;
+    font-size: 18px;
+    font-weight: 600;
+    resize: none;
+}
+
+.addAnswer {
+    width: 150px;
+    margin-top: 20px;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+}
+
+.questionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+    max-height: 72px;
+    overflow-y: auto;
+}
+
+.questionNavButton {
+    width: 40px;
+    min-width: 40px;
+}
+
+.rightActions {
+    margin-left: auto;
+}
+
+.footer {
+    margin-top: 16px;
+}

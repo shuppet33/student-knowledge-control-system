@@ -1,11 +1,11 @@
 import { action, atom } from '@reatom/framework'
 
-import type { Question } from './question-preview.types'
+import type { QuestionPreviewNavigationItem } from './question-preview.types'
 
 export const isQuestionPreviewOpenAtom = atom(false, 'isQuestionPreviewOpenAtom')
-export const selectedQuestionIdAtom = atom(null as number | null, 'selectedQuestionIdAtom')
+export const selectedQuestionIdAtom = atom(null as string | null, 'selectedQuestionIdAtom')
 
-export const openQuestionPreviewAction = action((ctx, questionId: number) => {
+export const openQuestionPreviewAction = action((ctx, questionId: string) => {
     selectedQuestionIdAtom(ctx, questionId)
     isQuestionPreviewOpenAtom(ctx, true)
 }, 'openQuestionPreviewAction')
@@ -15,7 +15,7 @@ export const closeQuestionPreviewAction = action((ctx) => {
     selectedQuestionIdAtom(ctx, null)
 }, 'closeQuestionPreviewAction')
 
-export const nextQuestionAction = action((ctx, questions: Question[]) => {
+export const nextQuestionAction = action((ctx, questions: QuestionPreviewNavigationItem[]) => {
     const currentQuestionId = ctx.get(selectedQuestionIdAtom)
     const currentIndex = questions.findIndex((question) => question.id === currentQuestionId)
 
@@ -26,7 +26,7 @@ export const nextQuestionAction = action((ctx, questions: Question[]) => {
     selectedQuestionIdAtom(ctx, questions[currentIndex + 1].id)
 }, 'nextQuestionAction')
 
-export const prevQuestionAction = action((ctx, questions: Question[]) => {
+export const prevQuestionAction = action((ctx, questions: QuestionPreviewNavigationItem[]) => {
     const currentQuestionId = ctx.get(selectedQuestionIdAtom)
     const currentIndex = questions.findIndex((question) => question.id === currentQuestionId)
 

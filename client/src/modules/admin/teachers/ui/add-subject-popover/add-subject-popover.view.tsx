@@ -18,8 +18,6 @@ import {
     selectedNewSubjectIdAtom,
 } from '$modules/admin/teachers/teachers.state'
 
-import { QuestionPreviewModal } from '../question-preview'
-
 import styles from './add-subject-popover.module.css'
 
 const { Text } = Typography
@@ -127,8 +125,6 @@ export const AddSubjectPopover = reatomComponent(({ ctx }) => {
                     </Card>
                 )}
             </div>
-
-            <QuestionPreviewModal />
         </>
     )
 })
