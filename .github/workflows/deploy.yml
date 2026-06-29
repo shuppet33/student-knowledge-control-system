@@ -1,0 +1,31 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.NAME }}
+          key: ${{ secrets.SSS }}
+          script: |
+            cd /root/student-knowledge-control-system
+            git pull
+
+            echo "Update packages"
+            pnpm run install:all
+            
+            cd client
+            pnpm run build
+
+            cp -r dist/* /var/www/skcs-tests/
+
+            pm2 restart backend
